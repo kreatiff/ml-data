@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useSongs } from './hooks/useSongs'
 import { useSpotifyAlbumArt } from './hooks/useSpotifyAlbumArt'
 import './App.css'
@@ -9,6 +9,8 @@ function App() {
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' })
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false)
+  const headerRef = useRef(null)
 
   const randomSong = useMemo(() => {
     if (songs.length === 0) return null
@@ -16,6 +18,19 @@ function App() {
   }, [songs])
 
   const { albumArt } = useSpotifyAlbumArt(randomSong?.spotify_uri)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsHeaderCollapsed(true)
+      } else {
+        setIsHeaderCollapsed(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const uniqueSubmitters = useMemo(() => {
     const submitters = [...new Set(songs.map(song => song.submitter_name))]
@@ -107,7 +122,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className="banner-header">
+      <header ref={headerRef} className={`banner-header ${isHeaderCollapsed ? 'collapsed' : ''}`}>
         {albumArt && (
           <>
             <div 
@@ -118,23 +133,22 @@ function App() {
           </>
         )}
         <div className="banner-content">
-          <h1>🎵 Music League Song Search</h1>
-          <p className="subtitle">Browse and search all previously submitted songs</p>
-        </div>
-      </header>
+          <div className="header-text">
+            <h1>Dupleighcates</h1>
+            <p className="subtitle">Browse and search all previously submitted songs</p>
+          </div>
 
-      <div className="filters-section">
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search by song name, artist, album, submitter, or round..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
+          <div className="filters-row">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search by song name, artist, album, submitter, or round..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
 
-        <div className="dropdown-filters">
           <select
             value={selectedSubmitter}
             onChange={(e) => setSelectedSubmitter(e.target.value)}
@@ -174,7 +188,8 @@ function App() {
             {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
           </span>
         </div>
-      </div>
+        </div>
+      </header>
 
       <div className="table-container">
         <table className="songs-table">

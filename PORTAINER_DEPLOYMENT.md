@@ -30,7 +30,7 @@ version: '3.8'
 services:
   music-league-search:
     build:
-      context: https://github.com/YOUR_USERNAME/YOUR_REPO.git#main
+      context: https://github.com/kreatiff/ml-data.git#dev
       dockerfile: Dockerfile
       args:
         - VITE_SUPABASE_URL=https://lvgcgqzhwbpjwmhgdcpa.supabase.co
