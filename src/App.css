@@ -1,8 +1,11 @@
 .app {
   max-width: 1400px;
   margin: 0 auto;
-  min-height: 100vh;
+  height: 100vh;
   padding: 0rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .banner-header {
@@ -12,6 +15,53 @@
   padding: 4rem 2rem 2rem 2rem;
   overflow: hidden;
   border-radius: 0;
+}
+
+.theme-selector-container {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 3;
+}
+
+.theme-selector {
+  padding: 0.75rem 3rem 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background-color: rgba(40, 40, 40, 0.8);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  color: var(--spotify-white);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.theme-selector option {
+  background: var(--spotify-card);
+  color: var(--spotify-white);
+  padding: 0.5rem;
+  font-weight: 500;
+}
+
+.theme-selector:hover {
+  background-color: rgba(40, 40, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.theme-selector:focus {
+  border-color: var(--spotify-green);
+  background-color: rgba(40, 40, 40, 1);
+  box-shadow: 0 0 0 4px rgba(29, 185, 84, 0.15), 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 .banner-background {
@@ -77,7 +127,7 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .search-container {
@@ -169,6 +219,12 @@
   box-shadow: 0 0 0 4px rgba(29, 185, 84, 0.1), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+.filter-select-small {
+  max-width: 150px;
+  font-size: 0.875rem;
+  padding: 1rem 2.5rem 1rem 1rem;
+}
+
 .clear-filters-btn {
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
@@ -228,11 +284,11 @@
 }
 
 .table-container {
+  flex: 1;
   overflow: auto;
   border-radius: 8px;
   background: var(--spotify-elevated);
-  max-height: calc(100vh - 400px);
-  min-height: 500px;
+  min-height: 0;
 }
 
 .songs-table {
@@ -274,6 +330,10 @@
 .songs-table td {
   padding: 0.875rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
 }
 
 .songs-table tbody tr {

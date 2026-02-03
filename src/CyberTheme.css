@@ -1,0 +1,484 @@
+/* ============================================
+   CYBER-BRUTALIST THEME
+   Raw, utilitarian data archive aesthetic
+   ============================================ */
+
+.theme-cyber {
+  font-family: 'Space Mono', monospace;
+}
+
+.theme-cyber .app {
+  background: #050505;
+  padding: 0;
+  max-width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   BANNER HEADER - Terminal Console Style
+   ============================================ */
+
+.theme-cyber .banner-header {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  border-bottom: 4px solid #333333;
+}
+
+.theme-cyber .banner-background,
+.theme-cyber .banner-overlay {
+  display: none;
+}
+
+.theme-cyber .banner-content {
+  background: #111111;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 2px solid #333333;
+  border-radius: 0;
+  padding: 2rem;
+  box-shadow: none;
+  margin: 0;
+}
+
+.theme-cyber .header-text {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #333333;
+  padding-bottom: 1.5rem;
+}
+
+.theme-cyber .banner-header h1 {
+  font-family: 'Stalinist One', sans-serif;
+
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  color: #CCFF00;
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+.theme-cyber .banner-header .subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.875rem;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 1rem 0 0 0;
+  font-weight: 400;
+}
+
+/* ============================================
+   THEME SELECTOR - Top Right Corner
+   ============================================ */
+
+.theme-cyber .theme-selector-container {
+  top: 2rem;
+  right: 2rem;
+}
+
+.theme-cyber .theme-selector {
+  font-family: 'Space Mono', monospace;
+  padding: 0.75rem 3rem 0.75rem 1rem;
+  font-size: 0.75rem;
+  border: 2px solid #E0E0E0;
+  border-radius: 0;
+  background-color: #050505;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #E0E0E0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 0px #CCFF00;
+  transition: all 0.1s ease;
+}
+
+.theme-cyber .theme-selector:hover {
+  background-color: #111111;
+  border-color: #CCFF00;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #CCFF00;
+}
+
+.theme-cyber .theme-selector:focus {
+  border-color: #CCFF00;
+  background-color: #050505;
+  box-shadow: 4px 4px 0px #CCFF00;
+}
+
+/* ============================================
+   FILTERS ROW - Data Input Controls
+   ============================================ */
+
+.theme-cyber .filters-row {
+  gap: 1rem;
+  border-top: 1px solid #333333;
+  padding-top: 1.5rem;
+  flex-wrap: nowrap;
+}
+
+.theme-cyber .search-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.theme-cyber .search-container::before {
+  content: "//";
+  font-family: 'Space Mono', monospace;
+  left: 1rem;
+  font-size: 1rem;
+  opacity: 1;
+  color: #CCFF00;
+}
+
+.theme-cyber .search-input {
+  font-family: 'Space Mono', monospace;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  font-size: 0.875rem;
+  border: 2px solid #333333;
+  border-radius: 0;
+  background: transparent;
+  color: #E0E0E0;
+  font-weight: 400;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.1s ease;
+}
+
+.theme-cyber .search-input::placeholder {
+  color: #666666;
+  opacity: 1;
+  text-transform: uppercase;
+}
+
+.theme-cyber .search-input:hover {
+  background: transparent;
+  border-color: #E0E0E0;
+  box-shadow: none;
+}
+
+.theme-cyber .search-input:focus {
+  background: transparent;
+  border-color: #CCFF00;
+  box-shadow: 4px 4px 0px #CCFF00;
+  transform: translate(-2px, -2px);
+}
+
+/* ============================================
+   FILTER SELECTS - Dropdown Controls
+   ============================================ */
+
+.theme-cyber .filter-select {
+  font-family: 'Space Mono', monospace;
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  font-size: 0.75rem;
+  border: 2px solid #333333;
+  border-radius: 0;
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #E0E0E0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s ease;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23E0E0E0' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+}
+
+.theme-cyber .filter-select option {
+  background: #111111;
+  color: #E0E0E0;
+  font-weight: 400;
+}
+
+.theme-cyber .filter-select:hover {
+  background-color: transparent;
+  border-color: #E0E0E0;
+  box-shadow: none;
+}
+
+.theme-cyber .filter-select:focus {
+  border-color: #CCFF00;
+  background-color: transparent;
+  box-shadow: 4px 4px 0px #CCFF00;
+  transform: translate(-2px, -2px);
+}
+
+.theme-cyber .filter-select-small {
+  max-width: 150px;
+  font-size: 0.7rem;
+  padding: 0.875rem 2rem 0.875rem 1rem;
+}
+
+/* ============================================
+   CLEAR FILTERS BUTTON - Action Button
+   ============================================ */
+
+.theme-cyber .clear-filters-btn {
+  font-family: 'Space Mono', monospace;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #CCFF00;
+  color: #050505;
+  border: 2px solid #CCFF00;
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 4px 4px 0px #E0E0E0;
+  transition: all 0.1s ease;
+}
+
+.theme-cyber .clear-filters-btn::before {
+  display: none;
+}
+
+.theme-cyber .clear-filters-btn:hover {
+  background: #DDFF33;
+  border-color: #DDFF33;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #E0E0E0;
+}
+
+.theme-cyber .clear-filters-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0px #E0E0E0;
+}
+
+/* ============================================
+   RESULT COUNT - Data Badge
+   ============================================ */
+
+.theme-cyber .result-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #CCFF00;
+  background: transparent;
+  border: 2px solid #CCFF00;
+  border-radius: 0;
+  padding: 0.875rem 1.25rem;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   TABLE CONTAINER - Data Grid
+   ============================================ */
+
+.theme-cyber .table-container {
+  border-radius: 0;
+  background: #050505;
+  border: 2px solid #333333;
+  border-top: none;
+  max-height: calc(100vh - 350px);
+  min-height: 600px;
+}
+
+/* ============================================
+   TABLE - The Data Archive
+   ============================================ */
+
+.theme-cyber .songs-table {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  border-collapse: collapse;
+}
+
+.theme-cyber .songs-table thead {
+  background: #111111;
+  border-bottom: 2px solid #333333;
+}
+
+.theme-cyber .songs-table th {
+  font-family: 'Space Mono', monospace;
+  padding: 1rem 1rem;
+  font-weight: 700;
+  color: #666666;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: none;
+  border-right: 1px solid #333333;
+}
+
+.theme-cyber .songs-table th:last-child {
+  border-right: none;
+}
+
+.theme-cyber .songs-table th.sortable {
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.theme-cyber .songs-table th.sortable:hover {
+  color: #CCFF00;
+  background: #050505;
+}
+
+/* ============================================
+   TABLE ROWS - The Glitch Hover Effect
+   ============================================ */
+
+.theme-cyber .songs-table td {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #333333;
+  border-right: 1px solid #222222;
+  color: #E0E0E0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+}
+
+.theme-cyber .songs-table td:last-child {
+  border-right: none;
+}
+
+.theme-cyber .songs-table tbody tr {
+  transition: all 0.05s ease;
+  background: #050505;
+}
+
+.theme-cyber .songs-table tbody tr:hover {
+  background: #E0E0E0;
+  color: #050505;
+}
+
+.theme-cyber .songs-table tbody tr:hover td {
+  color: #050505;
+  border-color: #999999;
+}
+
+.theme-cyber .songs-table tbody tr:hover .song-name,
+.theme-cyber .songs-table tbody tr:hover .votes {
+  color: #050505;
+}
+
+.theme-cyber .songs-table tbody tr:hover .album,
+.theme-cyber .songs-table tbody tr:hover .date {
+  color: #333333;
+}
+
+.theme-cyber .songs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+   TABLE CELL SPECIFIC STYLES
+   ============================================ */
+
+.theme-cyber .song-name {
+  font-weight: 700;
+  color: #E0E0E0;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}
+
+.theme-cyber .album {
+  color: #666666;
+  font-size: 0.8rem;
+}
+
+.theme-cyber .votes {
+  font-weight: 700;
+  color: #CCFF00;
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.theme-cyber .date {
+  color: #666666;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   NO RESULTS STATE
+   ============================================ */
+
+.theme-cyber .no-results {
+  font-family: 'Space Mono', monospace;
+  text-align: center;
+  padding: 4rem 1rem !important;
+  color: #666666;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ============================================
+   LOADING AND ERROR STATES
+   ============================================ */
+
+.theme-cyber .loading,
+.theme-cyber .error {
+  font-family: 'Space Mono', monospace;
+  background: #111111;
+  border: 2px solid #333333;
+  border-radius: 0;
+}
+
+.theme-cyber .loading {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #CCFF00;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  animation: none;
+}
+
+.theme-cyber .error {
+  color: #FF0055;
+  border-color: #FF0055;
+}
+
+.theme-cyber .error h2 {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E0E0E0;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.theme-cyber .error .hint {
+  font-family: 'Space Mono', monospace;
+  background: transparent;
+  border: 1px solid #FF0055;
+  border-radius: 0;
+  border-left-width: 4px;
+  color: #E0E0E0;
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .theme-cyber .banner-header h1 {
+    font-size: 2rem;
+    letter-spacing: -1px;
+  }
+
+  .theme-cyber .songs-table {
+    font-size: 0.75rem;
+  }
+
+  .theme-cyber .songs-table th,
+  .theme-cyber .songs-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}

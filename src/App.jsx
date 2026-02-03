@@ -1,7 +1,39 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSongs } from './hooks/useSongs'
 import { useSpotifyAlbumArt } from './hooks/useSpotifyAlbumArt'
 import './App.css'
+import './CyberTheme.css'
+
+const themes = {
+  default: {
+    name: 'Default',
+    colors: {
+      '--spotify-black': '#000000',
+      '--spotify-bg': '#121212',
+      '--spotify-elevated': '#181818',
+      '--spotify-card': '#282828',
+      '--spotify-green': '#1DB954',
+      '--spotify-green-hover': '#1ED760',
+      '--spotify-white': '#FFFFFF',
+      '--spotify-gray': '#B3B3B3',
+      '--spotify-light-gray': '#E0E0E0',
+    }
+  },
+  cyber: {
+    name: 'Cyber-Brutalist',
+    colors: {
+      '--spotify-black': '#050505',
+      '--spotify-bg': '#050505',
+      '--spotify-elevated': '#111111',
+      '--spotify-card': '#111111',
+      '--spotify-green': '#CCFF00',
+      '--spotify-green-hover': '#DDFF33',
+      '--spotify-white': '#E0E0E0',
+      '--spotify-gray': '#666666',
+      '--spotify-light-gray': '#999999',
+    }
+  }
+}
 
 function App() {
   const { songs, loading, error } = useSongs()
@@ -9,10 +41,21 @@ function App() {
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' })
+  const [selectedTheme, setSelectedTheme] = useState('default')
+
+  useEffect(() => {
+    const theme = themes[selectedTheme]
+    if (theme) {
+      Object.entries(theme.colors).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(key, value)
+      })
+    }
+  }, [selectedTheme])
 
   const randomSong = useMemo(() => {
     if (songs.length === 0) return null
-    return songs[Math.floor(Math.random() * songs.length)]
+    const stableIndex = songs.length > 0 ? Math.floor(songs.length / 2) : 0
+    return songs[stableIndex]
   }, [songs])
 
   const { albumArt } = useSpotifyAlbumArt(randomSong?.spotify_uri)
@@ -106,7 +149,7 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app theme-${selectedTheme}`}>
       <header className="banner-header">
         {albumArt && (
           <>
@@ -117,6 +160,18 @@ function App() {
             <div className="banner-overlay" />
           </>
         )}
+        <div className="theme-selector-container">
+          <select
+            value={selectedTheme}
+            onChange={(e) => setSelectedTheme(e.target.value)}
+            className="theme-selector"
+            title="Select Theme"
+          >
+            {Object.entries(themes).map(([key, theme]) => (
+              <option key={key} value={key}>{theme.name}</option>
+            ))}
+          </select>
+        </div>
         <div className="banner-content">
           <div className="header-text">
             <h1>Dupleighcates</h1>
@@ -148,7 +203,7 @@ function App() {
           <select
             value={selectedRound}
             onChange={(e) => setSelectedRound(e.target.value)}
-            className="filter-select"
+            className="filter-select filter-select-small"
           >
             <option value="">All Rounds</option>
             {uniqueRounds.map(round => (
@@ -213,14 +268,14 @@ function App() {
             ) : (
               filteredAndSortedSongs.map((song) => (
                 <tr key={`${song.round_id}_${song.spotify_uri}`}>
-                  <td className="song-name">{song.song_name}</td>
-                  <td>{song.artists}</td>
-                  <td className="album">{song.album}</td>
-                  <td>{song.submitter_name}</td>
-                  <td>{song.round_name}</td>
-                  <td className="votes">{song.total_votes}</td>
-                  <td className="date">
-                    {new Date(song.created_at).toLocaleDateString()}
+                  <td className="song-name" title={song.song_name}>{song.song_name}</td>
+                  <td title={song.artists}>{song.artists}</td>
+                  <td className="album" title={song.album}>{song.album}</td>
+                  <td title={song.submitter_name}>{song.submitter_name}</td>
+                  <td title={song.round_name}>{song.round_name}</td>
+                  <td className="votes" title={song.total_votes}>{song.total_votes}</td>
+                  <td className="date" title={new Date(song.created_at).toLocaleDateString('en-AU')}>
+                    {new Date(song.created_at).toLocaleDateString('en-AU')}
                   </td>
                 </tr>
               ))

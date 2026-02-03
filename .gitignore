@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 /.env
 .env
+/SECURE_PASSWORD_SETUP.md
+/PORTAINER_DEPLOYMENT.md
+/DEPLOYMENT.md
