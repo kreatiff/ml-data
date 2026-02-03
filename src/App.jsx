@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useSongs } from './hooks/useSongs'
 import { useSpotifyAlbumArt } from './hooks/useSpotifyAlbumArt'
 import './App.css'
@@ -9,8 +9,6 @@ function App() {
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' })
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false)
-  const headerRef = useRef(null)
 
   const randomSong = useMemo(() => {
     if (songs.length === 0) return null
@@ -18,19 +16,6 @@ function App() {
   }, [songs])
 
   const { albumArt } = useSpotifyAlbumArt(randomSong?.spotify_uri)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsHeaderCollapsed(true)
-      } else {
-        setIsHeaderCollapsed(false)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const uniqueSubmitters = useMemo(() => {
     const submitters = [...new Set(songs.map(song => song.submitter_name))]
@@ -122,7 +107,7 @@ function App() {
 
   return (
     <div className="app">
-      <header ref={headerRef} className={`banner-header ${isHeaderCollapsed ? 'collapsed' : ''}`}>
+      <header className="banner-header">
         {albumArt && (
           <>
             <div 

@@ -2,48 +2,16 @@
   max-width: 1400px;
   margin: 0 auto;
   min-height: 100vh;
-  padding: 0 2rem 2rem 2rem;
+  padding: 0rem;
 }
 
 .banner-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: relative;
   text-align: left;
-  margin: 0 0 1rem 0;
-  padding: 2rem;
+  margin: -2rem -2rem 1rem -2rem;
+  padding: 4rem 2rem 2rem 2rem;
   overflow: hidden;
   border-radius: 0;
-  transition: padding 0.3s ease, margin 0.3s ease;
-}
-
-.banner-header.collapsed {
-  padding: 0;
-  margin: 0 0 0.5rem 0;
-}
-
-.banner-header.collapsed .banner-background {
-  opacity: 0.5;
-}
-
-.banner-header.collapsed .banner-content {
-  margin: 0;
-  padding: 1rem 2rem;
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.banner-header.collapsed .header-text {
-  margin-bottom: 1rem;
-}
-
-.banner-header.collapsed h1 {
-  font-size: 1.5rem;
-}
-
-.banner-header.collapsed .subtitle {
-  font-size: 0.85rem;
 }
 
 .banner-background {
@@ -82,7 +50,7 @@
   border-radius: 16px;
   padding: 2rem 2.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
+  margin-top: 10em;
 }
 
 .header-text {
@@ -260,9 +228,11 @@
 }
 
 .table-container {
+  overflow: auto;
   border-radius: 8px;
   background: var(--spotify-elevated);
-  margin-bottom: 2rem;
+  max-height: calc(100vh - 400px);
+  min-height: 500px;
 }
 
 .songs-table {
@@ -288,6 +258,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  white-space: nowrap;
 }
 
 .songs-table th.sortable {
