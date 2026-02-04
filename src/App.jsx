@@ -41,7 +41,9 @@ function App() {
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' })
-  const [selectedTheme, setSelectedTheme] = useState('default')
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    return localStorage.getItem('app_theme') || 'cyber'
+  })
 
   useEffect(() => {
     const theme = themes[selectedTheme]
@@ -49,6 +51,7 @@ function App() {
       Object.entries(theme.colors).forEach(([key, value]) => {
         document.documentElement.style.setProperty(key, value)
       })
+      localStorage.setItem('app_theme', selectedTheme)
     }
   }, [selectedTheme])
 
