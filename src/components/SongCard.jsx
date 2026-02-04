@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import './SongCard.css'
 
 function SongCard({ song }) {
@@ -48,4 +49,4 @@ function SongCard({ song }) {
   )
 }
 
-export default SongCard
+export default memo(SongCard)

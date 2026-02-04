@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useSongs } from './hooks/useSongs'
 import { useSpotifyAlbumArt } from './hooks/useSpotifyAlbumArt'
 import { useIsMobile } from './hooks/useMediaQuery'
+import { useDebounce } from './hooks/useDebounce'
 import SongCard from './components/SongCard'
 import BottomSheet from './components/BottomSheet'
 import './App.css'
@@ -42,6 +43,7 @@ function App() {
   const { songs, loading, error } = useSongs()
   const isMobile = useIsMobile()
   const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' })
@@ -81,8 +83,8 @@ function App() {
   const filteredAndSortedSongs = useMemo(() => {
     let filtered = songs
 
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
+    if (debouncedSearchTerm) {
+      const term = debouncedSearchTerm.toLowerCase()
       filtered = filtered.filter(song => 
         song.song_name?.toLowerCase().includes(term) ||
         song.artists?.toLowerCase().includes(term) ||
@@ -122,7 +124,7 @@ function App() {
     })
 
     return sorted
-  }, [songs, searchTerm, selectedSubmitter, selectedRound, sortConfig])
+  }, [songs, debouncedSearchTerm, selectedSubmitter, selectedRound, sortConfig])
 
   const handleSort = (key) => {
     setSortConfig(prev => ({
