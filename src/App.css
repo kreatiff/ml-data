@@ -116,6 +116,96 @@
   letter-spacing: 0.02em;
 }
 
+.banner-header h1.glitch-text {
+  position: relative;
+  animation: glitch-app 3s infinite;
+}
+
+.banner-header h1.glitch-text::before,
+.banner-header h1.glitch-text::after {
+  content: 'Dupleighcates';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+}
+
+.banner-header h1.glitch-text::before {
+  animation: glitchTop-app 2s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+.banner-header h1.glitch-text::after {
+  animation: glitchBottom-app 2.5s infinite;
+  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+  -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-app {
+  0%, 100% {
+    text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+                 0.025em 0.04em 0 #fffc00;
+  }
+  15% {
+    text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+                 0.025em 0.04em 0 #fffc00;
+  }
+  16% {
+    text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
+                 -0.05em -0.05em 0 #fffc00;
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
+                 -0.05em -0.05em 0 #fffc00;
+  }
+  50% {
+    text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
+                 0 -0.04em 0 #fffc00;
+  }
+  99% {
+    text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
+                 0 -0.04em 0 #fffc00;
+  }
+}
+
+@keyframes glitchTop-app {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes glitchBottom-app {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(3px, 0);
+  }
+  40% {
+    transform: translate(-3px, 0);
+  }
+  60% {
+    transform: translate(3px, 0);
+  }
+  80% {
+    transform: translate(-3px, 0);
+  }
+}
+
 .banner-header .subtitle {
   margin: 0.5rem 0 0 0;
   font-size: 1.2rem;

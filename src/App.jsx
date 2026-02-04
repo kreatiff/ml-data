@@ -178,7 +178,7 @@ function App() {
         </div>
         <div className="banner-content">
           <div className="header-text">
-            <h1>Dupleighcates</h1>
+            <h1 className="glitch-text">Dupleighcates</h1>
             <p className="subtitle">Browse and search all previously submitted songs</p>
           </div>
 
