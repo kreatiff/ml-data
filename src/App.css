@@ -514,22 +514,135 @@
   border-left: 4px solid #ff6b6b;
 }
 
+/* Mobile Styles */
+.mobile-search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--spotify-bg);
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.mobile-search-input {
+  width: 100%;
+  padding: 1rem 1.5rem 1rem 3rem;
+  font-size: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--spotify-white);
+  font-weight: 500;
+}
+
+.mobile-search-input::placeholder {
+  color: var(--spotify-gray);
+}
+
+.mobile-search-bar::before {
+  content: "🔍";
+  position: absolute;
+  left: 1.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.mobile-filter-button {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, var(--spotify-green) 0%, #1ED760 100%);
+  color: var(--spotify-black);
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(29, 185, 84, 0.4);
+  cursor: pointer;
+  z-index: 90;
+  transition: all 0.3s ease;
+}
+
+.mobile-filter-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 16px rgba(29, 185, 84, 0.3);
+}
+
+.filter-icon {
+  font-size: 1.25rem;
+}
+
+.filter-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--spotify-black);
+  color: var(--spotify-green);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 2px solid var(--spotify-green);
+}
+
+.cards-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-result-count {
+  text-align: center;
+  padding: 1rem;
+  color: var(--spotify-gray);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
   .app {
+    padding: 0;
+  }
+
+  .banner-header {
+    margin: 0;
     padding: 1rem;
+    min-height: auto;
   }
 
-  header h1 {
-    font-size: 1.8rem;
+  .banner-header h1 {
+    font-size: 1.75rem;
   }
 
-  header .subtitle {
-    font-size: 1rem;
+  .banner-content {
+    padding: 1.5rem 1rem;
+    margin-top: 0;
   }
 
-  .search-container {
-    flex-direction: column;
-    align-items: stretch;
+  .header-text {
+    margin-bottom: 0;
+  }
+
+  .theme-selector-container {
+    display: none;
   }
 
   .songs-table {

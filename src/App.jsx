@@ -1,9 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useSongs } from './hooks/useSongs'
 import { useSpotifyAlbumArt } from './hooks/useSpotifyAlbumArt'
+import { useIsMobile } from './hooks/useMediaQuery'
+import SongCard from './components/SongCard'
+import BottomSheet from './components/BottomSheet'
 import './App.css'
 import './CyberTheme.css'
-//test
 
 const themes = {
   default: {
@@ -38,6 +40,7 @@ const themes = {
 
 function App() {
   const { songs, loading, error } = useSongs()
+  const isMobile = useIsMobile()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
@@ -45,6 +48,7 @@ function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
     return localStorage.getItem('app_theme') || 'cyber'
   })
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   useEffect(() => {
     const theme = themes[selectedTheme]
@@ -179,10 +183,10 @@ function App() {
         <div className="banner-content">
           <div className="header-text">
             <h1 className="glitch-text">Dupleighcates</h1>
-            <p className="subtitle">Browse and search all previously submitted songs</p>
+            {!isMobile && <p className="subtitle">Browse and search all previously submitted songs</p>}
           </div>
 
-          <div className="filters-row">
+          {!isMobile && <div className="filters-row">
           <div className="search-container">
             <input
               type="text"
@@ -231,62 +235,167 @@ function App() {
           <span className="result-count">
             {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
           </span>
-        </div>
+        </div>}
         </div>
       </header>
+      
+      {isMobile && (
+        <>
+          <div className="mobile-search-bar">
+            <input
+              type="text"
+              placeholder="Search songs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="mobile-search-input"
+            />
+          </div>
+          
+          <button 
+            className="mobile-filter-button"
+            onClick={() => setIsFilterOpen(true)}
+            aria-label="Open filters"
+          >
+            <span className="filter-icon">⚙️</span>
+            {(selectedSubmitter || selectedRound) && (
+              <span className="filter-badge">{[selectedSubmitter, selectedRound].filter(Boolean).length}</span>
+            )}
+          </button>
+          
+          <BottomSheet isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
+            <div className="bottom-sheet-group">
+              <h4 className="bottom-sheet-section-header">Theme</h4>
+              <div className="bottom-sheet-section">
+                <select
+                  value={selectedTheme}
+                  onChange={(e) => setSelectedTheme(e.target.value)}
+                  className="filter-select"
+                >
+                  {Object.entries(themes).map(([key, theme]) => (
+                    <option key={key} value={key}>{theme.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-      <div className="table-container">
-        <table className="songs-table">
-          <thead>
-            <tr>
-              <th onClick={() => handleSort('song_name')} className="sortable">
-                Song {getSortIcon('song_name')}
-              </th>
-              <th onClick={() => handleSort('artists')} className="sortable">
-                Artist {getSortIcon('artists')}
-              </th>
-              <th onClick={() => handleSort('album')} className="sortable">
-                Album {getSortIcon('album')}
-              </th>
-              <th onClick={() => handleSort('submitter_name')} className="sortable">
-                Submitter {getSortIcon('submitter_name')}
-              </th>
-              <th onClick={() => handleSort('round_name')} className="sortable">
-                Round {getSortIcon('round_name')}
-              </th>
-              <th onClick={() => handleSort('total_votes')} className="sortable">
-                Votes {getSortIcon('total_votes')}
-              </th>
-              <th onClick={() => handleSort('created_at')} className="sortable">
-                Submitted {getSortIcon('created_at')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAndSortedSongs.length === 0 ? (
+            <div className="bottom-sheet-group">
+              <h4 className="bottom-sheet-section-header">Filters</h4>
+              <div className="bottom-sheet-section">
+                <label className="bottom-sheet-label">Submitter</label>
+                <select
+                  value={selectedSubmitter}
+                  onChange={(e) => setSelectedSubmitter(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">All Submitters</option>
+                  {uniqueSubmitters.map(submitter => (
+                    <option key={submitter} value={submitter}>{submitter}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="bottom-sheet-section">
+                <label className="bottom-sheet-label">Round</label>
+                <select
+                  value={selectedRound}
+                  onChange={(e) => setSelectedRound(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">All Rounds</option>
+                  {uniqueRounds.map(round => (
+                    <option key={round} value={round}>{round}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {(selectedSubmitter || selectedRound || searchTerm) && (
+              <button
+                onClick={() => {
+                  setSearchTerm('')
+                  setSelectedSubmitter('')
+                  setSelectedRound('')
+                  setIsFilterOpen(false)
+                }}
+                className="clear-filters-btn"
+              >
+                Clear Filters
+              </button>
+            )}
+            
+            <div className="mobile-result-count">
+              {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
+            </div>
+          </BottomSheet>
+        </>
+      )}
+
+{isMobile ? (
+        <div className="cards-container">
+          {filteredAndSortedSongs.length === 0 ? (
+            <div className="no-results">
+              No songs found matching your filters
+            </div>
+          ) : (
+            filteredAndSortedSongs.map((song) => (
+              <SongCard key={`${song.round_id}_${song.spotify_uri}`} song={song} />
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="table-container">
+          <table className="songs-table">
+            <thead>
               <tr>
-                <td colSpan="7" className="no-results">
-                  No songs found matching your filters
-                </td>
+                <th onClick={() => handleSort('song_name')} className="sortable">
+                  Song {getSortIcon('song_name')}
+                </th>
+                <th onClick={() => handleSort('artists')} className="sortable">
+                  Artist {getSortIcon('artists')}
+                </th>
+                <th onClick={() => handleSort('album')} className="sortable">
+                  Album {getSortIcon('album')}
+                </th>
+                <th onClick={() => handleSort('submitter_name')} className="sortable">
+                  Submitter {getSortIcon('submitter_name')}
+                </th>
+                <th onClick={() => handleSort('round_name')} className="sortable">
+                  Round {getSortIcon('round_name')}
+                </th>
+                <th onClick={() => handleSort('total_votes')} className="sortable">
+                  Votes {getSortIcon('total_votes')}
+                </th>
+                <th onClick={() => handleSort('created_at')} className="sortable">
+                  Submitted {getSortIcon('created_at')}
+                </th>
               </tr>
-            ) : (
-              filteredAndSortedSongs.map((song) => (
-                <tr key={`${song.round_id}_${song.spotify_uri}`}>
-                  <td className="song-name" title={song.song_name}>{song.song_name}</td>
-                  <td title={song.artists}>{song.artists}</td>
-                  <td className="album" title={song.album}>{song.album}</td>
-                  <td title={song.submitter_name}>{song.submitter_name}</td>
-                  <td title={song.round_name}>{song.round_name}</td>
-                  <td className="votes" title={song.total_votes}>{song.total_votes}</td>
-                  <td className="date" title={new Date(song.created_at).toLocaleDateString('en-AU')}>
-                    {new Date(song.created_at).toLocaleDateString('en-AU')}
+            </thead>
+            <tbody>
+              {filteredAndSortedSongs.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="no-results">
+                    No songs found matching your filters
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                filteredAndSortedSongs.map((song) => (
+                  <tr key={`${song.round_id}_${song.spotify_uri}`}>
+                    <td className="song-name" title={song.song_name}>{song.song_name}</td>
+                    <td title={song.artists}>{song.artists}</td>
+                    <td className="album" title={song.album}>{song.album}</td>
+                    <td title={song.submitter_name}>{song.submitter_name}</td>
+                    <td title={song.round_name}>{song.round_name}</td>
+                    <td className="votes" title={song.total_votes}>{song.total_votes}</td>
+                    <td className="date" title={new Date(song.created_at).toLocaleDateString('en-AU')}>
+                      {new Date(song.created_at).toLocaleDateString('en-AU')}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

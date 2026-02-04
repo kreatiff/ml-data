@@ -1,0 +1,124 @@
+.song-card {
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.song-card:active {
+  background: var(--spotify-card);
+  transform: scale(0.99);
+}
+
+.song-card-header {
+  margin-bottom: 0.75rem;
+}
+
+.song-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--spotify-white);
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-card-artist {
+  font-size: 0.875rem;
+  color: var(--spotify-gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-card-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.75rem 0;
+}
+
+.song-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.song-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.song-card-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--spotify-gray);
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.song-card-label span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-card-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.song-card-votes {
+  color: var(--spotify-green);
+  font-weight: 700;
+}
+
+.song-card-album {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--spotify-gray);
+  margin-top: 0.25rem;
+  overflow: hidden;
+}
+
+.song-card-album span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cyber Theme Overrides */
+.theme-cyber .song-card {
+  background: #111111;
+  border: 2px solid #333333;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 rgba(204, 255, 0, 0.1);
+}
+
+.theme-cyber .song-card:active {
+  background: #1a1a1a;
+  box-shadow: 2px 2px 0 rgba(204, 255, 0, 0.15);
+}
+
+.theme-cyber .song-card-divider {
+  background: #333333;
+  height: 2px;
+}
+
+.theme-cyber .song-card-title {
+  font-family: 'Space Mono', monospace;
+  letter-spacing: -0.5px;
+}
+
+.theme-cyber .song-card-votes {
+  color: #CCFF00;
+}
