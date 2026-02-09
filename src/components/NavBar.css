@@ -17,6 +17,14 @@
   color: var(--spotify-green);
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.team-icon {
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .nav-links {

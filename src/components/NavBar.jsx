@@ -1,10 +1,20 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useSearchParams } from 'react-router-dom'
 import './NavBar.css'
 
+const TEAM_ICONS = {
+  dux: '🦆',
+  platties: '🦫',
+  funkies: '🕺',
+}
+
 function NavBar() {
+  const [searchParams] = useSearchParams()
+  const team = searchParams.get('team')?.trim().toLowerCase() || ''
+  const teamIcon = TEAM_ICONS[team] || ''
+
   return (
     <nav className="nav-bar">
-      <div className="nav-brand">Dupleighcates</div>
+      <div className="nav-brand">Dupleighcates{teamIcon && <span className="team-icon">{teamIcon}</span>}</div>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Songs
