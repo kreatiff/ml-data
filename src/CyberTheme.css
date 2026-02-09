@@ -467,6 +467,62 @@
    RESPONSIVE ADJUSTMENTS
    ============================================ */
 
+/* Cyber Theme - Tablet Overrides */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .theme-cyber .banner-content {
+    padding: 1.5rem;
+    margin: 0;
+  }
+
+  .theme-cyber .banner-header h1 {
+    font-size: 1.75rem;
+    letter-spacing: -1px;
+  }
+
+  .theme-cyber .banner-header .subtitle {
+    display: none;
+  }
+
+  .theme-cyber .header-text {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .theme-cyber .filters-row {
+    flex-wrap: wrap;
+  }
+
+  .theme-cyber .search-container {
+    flex-basis: 100%;
+    min-width: 200px;
+  }
+
+  .theme-cyber .table-container {
+    min-height: 400px;
+    max-height: calc(100vh - 300px);
+  }
+
+  .theme-cyber .theme-selector-container {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .theme-cyber .theme-selector {
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    font-size: 0.7rem;
+    box-shadow: 3px 3px 0px #CCFF00;
+  }
+
+  .theme-cyber .songs-table {
+    font-size: 0.75rem;
+  }
+
+  .theme-cyber .songs-table th,
+  .theme-cyber .songs-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
 /* Cyber Theme - Mobile Overrides */
 .theme-cyber .mobile-search-bar {
   background: #050505;
