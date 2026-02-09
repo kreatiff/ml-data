@@ -1,0 +1,131 @@
+.heatmap-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.heatmap-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  font-size: 0.78rem;
+}
+
+.heatmap-corner {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--spotify-bg);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.heatmap-col-header {
+  padding: 0.5rem 0.4rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  height: 5.5rem;
+  vertical-align: bottom;
+}
+
+.heatmap-row-header {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--spotify-bg);
+  padding: 0.35rem 0.75rem;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.heatmap-cell {
+  padding: 0.35rem 0.4rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  min-width: 2.2rem;
+  transition: background-color 0.15s;
+  cursor: default;
+}
+
+.heatmap-cell:hover {
+  outline: 1px solid var(--spotify-green);
+  outline-offset: -1px;
+}
+
+.heatmap-self {
+  color: var(--spotify-gray) !important;
+  font-weight: 400;
+  font-size: 0.7rem;
+}
+
+.heatmap-row {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.heatmap-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.heatmap-row-selected {
+  outline: 2px solid var(--spotify-green);
+  outline-offset: -2px;
+}
+
+.heatmap-row-selected .heatmap-row-header {
+  color: var(--spotify-green);
+}
+
+.heatmap-row-dimmed {
+  opacity: 0.2;
+}
+
+.heatmap-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--spotify-gray);
+}
+
+@media (max-width: 600px) {
+  .heatmap-col-header {
+    height: 4rem;
+    font-size: 0.65rem;
+  }
+
+  .heatmap-cell {
+    min-width: 1.8rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.3rem;
+  }
+
+  .heatmap-row-header {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
