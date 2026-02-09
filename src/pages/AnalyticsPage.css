@@ -96,6 +96,91 @@
   color: #FF6B6B;
 }
 
+/* Vote Collection Leaderboard */
+.vote-collection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vote-collection-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.vcr-rank {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--spotify-gray);
+  min-width: 2rem;
+  text-align: center;
+}
+
+.vcr-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vcr-name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.vcr-name {
+  font-weight: 600;
+  color: var(--spotify-white);
+  font-size: 0.95rem;
+}
+
+.vcr-count {
+  font-size: 0.75rem;
+  color: var(--spotify-gray);
+  font-weight: 600;
+}
+
+.vcr-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.vcr-bar-fill {
+  height: 100%;
+  background: var(--spotify-green);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  opacity: 0.7;
+}
+
+.vcr-bar-fill.vcr-complete {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--spotify-green), #00FF88);
+}
+
+.vcr-missing {
+  font-size: 0.7rem;
+  color: var(--spotify-gray);
+  margin-top: 0.3rem;
+  opacity: 0.7;
+}
+
+.vcr-pct {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--spotify-green);
+  min-width: 3rem;
+  text-align: right;
+}
+
 /* Sections */
 .analytics-section {
   margin-bottom: 2.5rem;

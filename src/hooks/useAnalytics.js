@@ -369,6 +369,45 @@ export function useAnalytics({ team } = {}) {
       .sort((a, b) => new Date(a.round_date) - new Date(b.round_date))
   }, [filteredVotes, filteredSubmissions])
 
+  // 6. "Voted by Everyone" leaderboard
+  const voteCollectionBoard = useMemo(() => {
+    if (filteredVotes.length === 0) return []
+
+    // Get all player IDs who appear as submitters in filtered data
+    const playerIds = new Set()
+    filteredSubmissions.forEach(s => playerIds.add(s.submitter_id))
+
+    const playerNameMap = {}
+    filteredSubmissions.forEach(s => { playerNameMap[s.submitter_id] = s.submitter_name })
+
+    const totalOthers = playerIds.size - 1
+    if (totalOthers <= 0) return []
+
+    // For each submitter, collect unique voters who are also in the player set
+    const uniqueVotersPerPlayer = {}
+    playerIds.forEach(id => { uniqueVotersPerPlayer[id] = new Set() })
+
+    filteredVotes.forEach(v => {
+      if (playerIds.has(v.submitter_id) && playerIds.has(v.voter_id) && v.voter_id !== v.submitter_id && v.points_assigned > 0) {
+        uniqueVotersPerPlayer[v.submitter_id].add(v.voter_id)
+      }
+    })
+
+    return [...playerIds].map(id => {
+      const received = uniqueVotersPerPlayer[id]
+      const missing = [...playerIds].filter(pid => pid !== id && !received.has(pid))
+        .map(pid => playerNameMap[pid] || 'Unknown')
+      return {
+        id,
+        name: playerNameMap[id] || 'Unknown',
+        uniqueVoters: received.size,
+        totalOthers,
+        pct: Math.round((received.size / totalOthers) * 100),
+        missing,
+      }
+    }).sort((a, b) => b.uniqueVoters - a.uniqueVoters || a.name.localeCompare(b.name))
+  }, [filteredVotes, filteredSubmissions])
+
   return {
     loading,
     error,
@@ -382,6 +421,7 @@ export function useAnalytics({ team } = {}) {
     topArtists,
     controversialSongs,
     roundTrends,
+    voteCollectionBoard,
     totalVotes: filteredVotes.length,
     totalSubmissions: filteredSubmissions.length,
   }
