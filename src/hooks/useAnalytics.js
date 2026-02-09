@@ -6,7 +6,7 @@ export function useAnalytics({ team } = {}) {
   const [submissions, setSubmissions] = useState([])
   const [competitors, setCompetitors] = useState([])
   const [leagues, setLeagues] = useState([])
-  const [selectedLeague, setSelectedLeague] = useState('')
+  const [selectedLeague, setSelectedLeague] = useState('fe08d6855f204613b30922e34a7486c6')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
