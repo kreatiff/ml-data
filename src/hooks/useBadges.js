@@ -5,7 +5,7 @@ import consistentImg from '../assets/badges/consistent.jpg'
 import oneHitWonderImg from '../assets/badges/one_hit_wonder.jpg'
 import coldStreakImg from '../assets/badges/cold_streak.jpg'
 import summitImg from '../assets/badges/summit.jpg'
-import reignImg from '../assets/badges/reign.png'
+import reignImg from '../assets/badges/reign.jpg'
 import podiumImg from '../assets/badges/podium.jpg'
 import hotStreakImg from '../assets/badges/hot_streak.jpg'
 import darkHorseImg from '../assets/badges/dark_horse.jpg'
@@ -94,15 +94,15 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       if (playerMap[w.submitter_id]) playerMap[w.submitter_id].roundWins++
     })
 
-    // Rounds sorted chronologically by max imported_at
-    const roundImportedAt = {}
+    // Rounds sorted chronologically by round_date (rounds.created_at)
+    const roundDates = {}
     filteredVotes.forEach(v => {
-      if (!roundImportedAt[v.round_id] || v.imported_at > roundImportedAt[v.round_id]) {
-        roundImportedAt[v.round_id] = v.imported_at
+      if (v.round_id && v.round_date && !roundDates[v.round_id]) {
+        roundDates[v.round_id] = v.round_date
       }
     })
-    const sortedRoundIds = Object.keys(roundImportedAt).sort((a, b) => {
-      return new Date(roundImportedAt[a]) - new Date(roundImportedAt[b])
+    const sortedRoundIds = Object.keys(roundDates).sort((a, b) => {
+      return new Date(roundDates[a]) - new Date(roundDates[b])
     })
 
     // Name map for convenience
@@ -172,10 +172,19 @@ export function useBadges(filteredVotes, filteredSubmissions) {
         .map(id => ({ id, total: cumulativePoints[id] }))
         .sort((a, b) => b.total - a.total)
 
-      ranked.forEach((r, i) => { r.rank = i + 1 })
+      ranked.forEach((r, i) => {
+        r.rank = (i === 0 || ranked[i - 1].total !== r.total) ? i + 1 : ranked[i - 1].rank
+      })
 
       standingsHistory.push({ round_id: roundId, rankings: ranked })
     })
+
+    // DEBUG: log standings history to help verify Summit badge
+    console.log('[Badges] Round order:', sortedRoundIds.map(id => ({ id, date: roundDates[id] })))
+    console.log('[Badges] Standings history:', standingsHistory.map(s => ({
+      round_id: s.round_id,
+      top3: s.rankings.slice(0, 3).map(r => `${r.rank}. ${nameMap[r.id] || r.id} (${r.total})`)
+    })))
 
     // 5. Reached the Summit — was ever #1
     const summitPlayers = new Set()
@@ -345,16 +354,16 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.controversial = controversialEntries
 
     // 15. Hipster — most unique artists (artists nobody else submitted)
+    // Use the full artists string per submission (not split by comma)
+    // so "Artist A, Artist B" is one entry, max = number of submissions
     const artistSubmitters = {} // artist → Set of submitter_ids
     filteredSubmissions.forEach(s => {
       if (s.artists) {
-        s.artists.split(/,\s*/).forEach(a => {
-          const trimmed = a.trim()
-          if (trimmed) {
-            if (!artistSubmitters[trimmed]) artistSubmitters[trimmed] = new Set()
-            artistSubmitters[trimmed].add(s.submitter_id)
-          }
-        })
+        const artist = s.artists.trim()
+        if (artist) {
+          if (!artistSubmitters[artist]) artistSubmitters[artist] = new Set()
+          artistSubmitters[artist].add(s.submitter_id)
+        }
       }
     })
     const uniqueArtistCount = {} // submitter_id → count of artists only they submitted
