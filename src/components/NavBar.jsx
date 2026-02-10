@@ -22,6 +22,9 @@ function NavBar() {
         <NavLink to="/analytics" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Analytics
         </NavLink>
+        <NavLink to="/badges" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          Badges
+        </NavLink>
       </div>
     </nav>
   )

@@ -1,0 +1,314 @@
+.badges-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-size: 1rem;
+}
+
+.badges-header {
+  margin-bottom: 2rem;
+}
+
+.badges-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.badges-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--spotify-white);
+  margin: 0;
+}
+
+.badges-page .league-filter {
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--spotify-white);
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B3B3B3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.badges-page .league-filter:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.badges-page .league-filter:focus {
+  border-color: var(--spotify-green);
+}
+
+.badges-page .league-filter option {
+  background: var(--spotify-card);
+  color: var(--spotify-white);
+}
+
+.badges-team-badge {
+  font-size: 1rem;
+  color: var(--spotify-gray);
+}
+
+.badges-team-badge strong {
+  color: #FF6B6B;
+}
+
+.badges-loading,
+.badges-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--spotify-gray);
+  font-size: 1rem;
+}
+
+.badges-category {
+  margin-bottom: 2.5rem;
+}
+
+.badges-category-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.badge-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--spotify-elevated);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.badge-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.badge-locked {
+  opacity: 0.8;
+  filter: grayscale(0.8);
+}
+
+.badge-locked:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.badge-image {
+  width: 175px;
+  height: 175px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.badge-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.badge-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.2rem;
+}
+
+.badge-desc {
+  font-size: 0.9rem;
+  color: var(--spotify-gray);
+  margin-bottom: 0.6rem;
+  line-height: 1.35;
+}
+
+.badge-players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.badge-player {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.badge-player-name {
+  color: var(--spotify-green);
+  font-weight: 600;
+}
+
+.badge-player-stat {
+  color: var(--spotify-gray);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.badge-not-achieved {
+  font-size: 0.9rem;
+  color: var(--spotify-gray);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.badge-view-more {
+  background: none;
+  border: 1px solid var(--spotify-green);
+  color: var(--spotify-green);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  margin-top: 0.4rem;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.badge-view-more:hover {
+  background: var(--spotify-green);
+  color: var(--spotify-black);
+}
+
+/* Badge Modal */
+.badge-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.badge-modal {
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.badge-modal-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.badge-modal-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.badge-modal-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.25rem;
+}
+
+.badge-modal-desc {
+  font-size: 0.9rem;
+  color: var(--spotify-gray);
+  line-height: 1.4;
+}
+
+.badge-modal-close {
+  background: none;
+  border: none;
+  color: var(--spotify-gray);
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0 0.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.badge-modal-close:hover {
+  color: var(--spotify-white);
+}
+
+.badge-modal-players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.badge-modal-player {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.badge-modal-player:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 600px) {
+  .badges-page {
+    padding: 1.25rem 1rem;
+  }
+
+  .badges-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .badges-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .badge-image {
+    width: 64px;
+    height: 64px;
+  }
+
+  .badge-name {
+    font-size: 0.9rem;
+  }
+}

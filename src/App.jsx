@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
+import BadgesPage from './pages/BadgesPage'
 import './App.css'
 import './CyberTheme.css'
 
@@ -58,6 +59,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/badges" element={<BadgesPage />} />
       </Routes>
     </div>
   )

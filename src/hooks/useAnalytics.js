@@ -35,7 +35,7 @@ export function useAnalytics({ team } = {}) {
         }
 
         const [votesData, submissionsData, competitorsData, roundsData] = await Promise.all([
-          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned'),
+          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, imported_at'),
           fetchAll('submissions', 'round_id, spotify_uri, song_name, artists, album, created_at, submitter_id'),
           fetchAll('competitors', 'id, name, team'),
           fetchAll('rounds', 'id, name, created_at, league_id')
@@ -88,7 +88,8 @@ export function useAnalytics({ team } = {}) {
             submitter_team: sub ? (competitorTeamMap[sub.submitter_id] || '') : '',
             round_name: round?.name || 'Unknown',
             round_date: round?.created_at || '',
-            league_id: round?.league_id || ''
+            league_id: round?.league_id || '',
+            imported_at: v.imported_at || ''
           }
         })
 
@@ -422,6 +423,8 @@ export function useAnalytics({ team } = {}) {
     controversialSongs,
     roundTrends,
     voteCollectionBoard,
+    filteredVotes,
+    filteredSubmissions,
     totalVotes: filteredVotes.length,
     totalSubmissions: filteredSubmissions.length,
   }
