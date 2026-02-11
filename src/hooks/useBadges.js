@@ -34,11 +34,11 @@ const BADGE_DEFS = [
   { id: 'kingmaker', name: 'Hit Oracle', image: hitOracleImg, category: 'Voting', description: 'Predicted the crowd favourite the most, voting for the round winner more than anyone else' },
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
   { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Gave points to the last-place song in 5 or more rounds' },
+  { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Voting', description: 'Received at least 1 vote from every other player' },
   // Social
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
   { id: 'hipster', name: 'Hipster', image: hipsterImg, category: 'Social', description: 'Most unique artists (artists nobody else submitted)' },
-  { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Social', description: 'Received at least 1 vote from every other player' },
   // Meta
   { id: 'infinity_gauntlet', name: 'Infinity Gauntlet', image: infinityGauntletImg, category: 'Meta', description: 'Collected every other badge' },
 ]
