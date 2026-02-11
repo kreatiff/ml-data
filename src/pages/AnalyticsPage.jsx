@@ -183,10 +183,10 @@ function AnalyticsPage() {
       {/* Section: Player Position Trajectory */}
       {playerTrajectory.data.length > 0 && (
         <section className="analytics-section">
-          <h2 className="section-title">Position Trajectory</h2>
-          <p className="section-desc">Leaderboard position after each round (lower is better)</p>
+          <h2 className="section-title">Points Trajectory</h2>
+          <p className="section-desc">Cumulative points after each round</p>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={Math.max(400, playerTrajectory.players.length * 22)}>
+            <ResponsiveContainer width="100%" height={600}>
               <LineChart
                 data={playerTrajectory.data}
                 margin={{ top: 10, right: 30, left: 0, bottom: 60 }}
@@ -204,10 +204,8 @@ function AnalyticsPage() {
                 <YAxis
                   stroke="rgba(255,255,255,0.3)"
                   tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                  reversed
-                  domain={[1, playerTrajectory.players.length]}
                   allowDecimals={false}
-                  label={{ value: 'Position', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                  label={{ value: 'Total Points', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -217,7 +215,7 @@ function AnalyticsPage() {
                     color: 'var(--spotify-white)',
                     fontSize: '0.85rem'
                   }}
-                  itemSorter={(item) => item.value}
+                  itemSorter={(item) => -item.value}
                 />
                 <Legend wrapperStyle={{ color: 'var(--spotify-gray)', fontSize: '0.75rem' }} />
                 {playerTrajectory.players.map((name, i) => (
