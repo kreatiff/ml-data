@@ -407,26 +407,18 @@ export function useAnalytics({ team } = {}) {
     filteredSubmissions.forEach(s => { playerNameMap[s.submitter_id] = s.submitter_name })
     const playerIds = Object.keys(playerNameMap)
 
-    // Accumulate cumulative points and derive position after each round
+    // Accumulate cumulative points after each round
     const cumulative = {}
     playerIds.forEach(id => { cumulative[id] = 0 })
 
     const data = sortedRounds.map(round => {
-      // Add this round's points
       playerIds.forEach(id => {
         cumulative[id] += (pointsByRoundPlayer[round.id]?.[id] || 0)
       })
 
-      // Rank players by cumulative points (descending), ties get same rank
-      const ranked = playerIds
-        .map(id => ({ id, pts: cumulative[id] }))
-        .sort((a, b) => b.pts - a.pts)
-
       const entry = { round_name: round.name }
-      let currentRank = 1
-      ranked.forEach((r, i) => {
-        if (i > 0 && r.pts < ranked[i - 1].pts) currentRank = i + 1
-        entry[playerNameMap[r.id]] = currentRank
+      playerIds.forEach(id => {
+        entry[playerNameMap[id]] = cumulative[id]
       })
       return entry
     })
