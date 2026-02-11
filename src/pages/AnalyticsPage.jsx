@@ -9,6 +9,13 @@ import { useIsMobile } from '../hooks/useMediaQuery'
 import VoteHeatmap from '../components/VoteHeatmap'
 import './AnalyticsPage.css'
 
+const PLAYER_COLORS = [
+  '#CCFF00', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F',
+  '#BB8FCE', '#F0876A', '#58D68D', '#5DADE2', '#F1948A',
+  '#85C1E9', '#E59866', '#82E0AA', '#D7BDE2', '#F8C471',
+  '#AED6F1', '#A3E4D7', '#FAD7A0', '#D5F5E3', '#FADBD8'
+]
+
 const SORT_KEYS = {
   name: 'name',
   totalPoints: 'totalPoints',
@@ -25,7 +32,7 @@ function AnalyticsPage() {
   const {
     loading, error, leagues, activeTeam, selectedLeague, setSelectedLeague,
     playerStats, votingPatterns,
-    topArtists, controversialSongs, roundTrends, voteCollectionBoard,
+    topArtists, underdogTriumphs, playerTrajectory, voteCollectionBoard,
     totalVotes, totalSubmissions
   } = useAnalytics({ team: teamParam })
 
@@ -173,6 +180,63 @@ function AnalyticsPage() {
         )}
       </section>
 
+      {/* Section: Player Position Trajectory */}
+      {playerTrajectory.data.length > 0 && (
+        <section className="analytics-section">
+          <h2 className="section-title">Position Trajectory</h2>
+          <p className="section-desc">Leaderboard position after each round (lower is better)</p>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={Math.max(400, playerTrajectory.players.length * 22)}>
+              <LineChart
+                data={playerTrajectory.data}
+                margin={{ top: 10, right: 30, left: 0, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis
+                  dataKey="round_name"
+                  stroke="rgba(255,255,255,0.3)"
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  interval={0}
+                />
+                <YAxis
+                  stroke="rgba(255,255,255,0.3)"
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                  reversed
+                  domain={[1, playerTrajectory.players.length]}
+                  allowDecimals={false}
+                  label={{ value: 'Position', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--spotify-elevated)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: 'var(--spotify-white)',
+                    fontSize: '0.85rem'
+                  }}
+                  itemSorter={(item) => item.value}
+                />
+                <Legend wrapperStyle={{ color: 'var(--spotify-gray)', fontSize: '0.75rem' }} />
+                {playerTrajectory.players.map((name, i) => (
+                  <Line
+                    key={name}
+                    type="monotone"
+                    dataKey={name}
+                    stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                    name={name}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      )}
+
       {/* Section 6: Vote Collection Leaderboard */}
       {voteCollectionBoard.length > 0 && (
         <section className="analytics-section">
@@ -216,155 +280,94 @@ function AnalyticsPage() {
       </section>
 
       {/* Section 3: Most Submitted Artists */}
-      <section className="analytics-section">
-        <h2 className="section-title">Most Submitted Artists</h2>
-        <div className="chart-container">
-          <ResponsiveContainer width="100%" height={Math.max(400, topArtists.length * 28)}>
-            <BarChart
-              data={topArtists}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: isMobile ? 80 : 120, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-              <YAxis
-                type="category"
-                dataKey="name"
-                stroke="rgba(255,255,255,0.3)"
-                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: isMobile ? 11 : 12 }}
-                width={isMobile ? 75 : 115}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: 'var(--spotify-elevated)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '4px',
-                  color: 'var(--spotify-white)',
-                  fontSize: '0.85rem'
-                }}
-              />
-              <Bar dataKey="count" fill={themeGreen} radius={[0, 3, 3, 0]} name="Submissions" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
+      {topArtists.length > 0 && (
+        <section className="analytics-section">
+          <h2 className="section-title">Most Submitted Artists</h2>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={Math.max(400, topArtists.length * 28)}>
+              <BarChart
+                data={topArtists}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: isMobile ? 80 : 120, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  stroke="rgba(255,255,255,0.3)"
+                  tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: isMobile ? 11 : 12 }}
+                  width={isMobile ? 75 : 115}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--spotify-elevated)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: 'var(--spotify-white)',
+                    fontSize: '0.85rem'
+                  }}
+                />
+                <Bar dataKey="count" fill={themeGreen} radius={[0, 3, 3, 0]} name="Submissions" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      )}
 
-      {/* Section 4: Controversial Songs */}
-      <section className="analytics-section">
-        <h2 className="section-title">Most Controversial Songs</h2>
-        <p className="section-desc">Songs with the widest range of opinions (highest vote variance)</p>
-        {isMobile ? (
-          <div className="controversial-cards">
-            {controversialSongs.map((s, i) => (
-              <div key={i} className="controversial-card">
-                <div className="controversial-rank">#{i + 1}</div>
-                <div className="controversial-info">
-                  <div className="controversial-song">{s.song_name}</div>
-                  <div className="controversial-artist">{s.artists}</div>
-                  <div className="controversial-meta">
-                    <span>by {s.submitter_name}</span>
-                    <span>Avg: {s.avgVote}</span>
-                    <span>Spread: {s.minVote}–{s.maxVote}</span>
+      {/* Section 4: Underdog Triumphs */}
+      {underdogTriumphs.length > 0 && (
+        <section className="analytics-section">
+          <h2 className="section-title">Underdog Triumphs</h2>
+          <p className="section-desc">Rounds won by a player ranked outside the top 3 going in</p>
+          {isMobile ? (
+            <div className="underdog-cards">
+              {underdogTriumphs.map((t, i) => (
+                <div key={i} className="underdog-card">
+                  <div className="underdog-rank-badge">#{t.position_before} → 🏆</div>
+                  <div className="underdog-info">
+                    <div className="underdog-winner">{t.winner_name}</div>
+                    <div className="underdog-song">{t.song_name}</div>
+                    <div className="underdog-artist">{t.artists}</div>
+                    <div className="underdog-meta">
+                      <span>{t.round_name}</span>
+                      <span>{t.round_points} pts</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="table-scroll">
-            <table className="analytics-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Song</th>
-                  <th>Artist</th>
-                  <th>Submitter</th>
-                  <th>Round</th>
-                  <th>Avg Vote</th>
-                  <th>Spread</th>
-                  <th>Variance</th>
-                  <th>Total Pts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {controversialSongs.map((s, i) => (
-                  <tr key={i}>
-                    <td className="rank-cell">{i + 1}</td>
-                    <td className="song-name" title={s.song_name}>{s.song_name}</td>
-                    <td title={s.artists}>{s.artists}</td>
-                    <td>{s.submitter_name}</td>
-                    <td title={s.round_name}>{s.round_name}</td>
-                    <td>{s.avgVote}</td>
-                    <td>{s.minVote}–{s.maxVote}</td>
-                    <td><strong>{s.variance}</strong></td>
-                    <td>{s.totalPoints}</td>
+              ))}
+            </div>
+          ) : (
+            <div className="table-scroll">
+              <table className="analytics-table">
+                <thead>
+                  <tr>
+                    <th>Round</th>
+                    <th>Winner</th>
+                    <th>Song</th>
+                    <th>Artist</th>
+                    <th>Ranked</th>
+                    <th>Round Pts</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+                </thead>
+                <tbody>
+                  {underdogTriumphs.map((t, i) => (
+                    <tr key={i}>
+                      <td title={t.round_name}>{t.round_name}</td>
+                      <td><strong>{t.winner_name}</strong></td>
+                      <td className="song-name" title={t.song_name}>{t.song_name}</td>
+                      <td title={t.artists}>{t.artists}</td>
+                      <td className="underdog-position">#{t.position_before} of {t.total_players}</td>
+                      <td>{t.round_points}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
 
-      {/* Section 5: Trends Over Time */}
-      <section className="analytics-section">
-        <h2 className="section-title">Trends Over Time</h2>
-        <p className="section-desc">How scores, submissions, and participation change across rounds</p>
-        <div className="chart-container">
-          <ResponsiveContainer width="100%" height={350}>
-            <LineChart
-              data={roundTrends}
-              margin={{ top: 10, right: 30, left: 0, bottom: 60 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis
-                dataKey="round_name"
-                stroke="rgba(255,255,255,0.3)"
-                tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                angle={-45}
-                textAnchor="end"
-                height={80}
-                interval={0}
-              />
-              <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  background: 'var(--spotify-elevated)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '4px',
-                  color: 'var(--spotify-white)',
-                  fontSize: '0.85rem'
-                }}
-              />
-              <Legend wrapperStyle={{ color: 'var(--spotify-gray)', fontSize: '0.8rem' }} />
-              <Line
-                type="monotone"
-                dataKey="avgScore"
-                stroke={themeGreen}
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                name="Avg Score"
-              />
-              <Line
-                type="monotone"
-                dataKey="submissionCount"
-                stroke="#FF6B6B"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                name="Submissions"
-              />
-              <Line
-                type="monotone"
-                dataKey="voterCount"
-                stroke="#4ECDC4"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                name="Voters"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
     </div>
   )
 }

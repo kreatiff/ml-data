@@ -281,93 +281,159 @@ export function useAnalytics({ team } = {}) {
     })
 
     return Object.entries(artistCount)
+      .filter(([, count]) => count > 1)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 20)
   }, [filteredSubmissions])
 
-  // 4. Controversial Songs (highest vote variance)
-  const controversialSongs = useMemo(() => {
-    if (filteredVotes.length === 0) return []
+  // 4. Underdog Triumphs (rounds won by the lowest-ranked player going in)
+  const underdogTriumphs = useMemo(() => {
+    if (filteredSubmissions.length === 0 || filteredVotes.length === 0) return []
 
-    const songVotes = {}
-    filteredVotes.forEach(v => {
-      const key = `${v.round_id}_${v.spotify_uri}`
-      if (!songVotes[key]) {
-        songVotes[key] = {
-          song_name: v.song_name,
-          artists: v.artists,
-          submitter_name: v.submitter_name,
-          round_name: v.round_name,
-          votes: []
-        }
-      }
-      songVotes[key].votes.push(v.points_assigned)
-    })
-
-    return Object.values(songVotes)
-      .filter(s => s.votes.length >= 3) // Need enough votes for variance to be meaningful
-      .map(s => {
-        const mean = s.votes.reduce((a, b) => a + b, 0) / s.votes.length
-        const variance = s.votes.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / s.votes.length
-        const maxVote = Math.max(...s.votes)
-        const minVote = Math.min(...s.votes)
-        return {
-          ...s,
-          avgVote: Math.round(mean * 100) / 100,
-          variance: Math.round(variance * 100) / 100,
-          spread: maxVote - minVote,
-          voteCount: s.votes.length,
-          maxVote,
-          minVote,
-          totalPoints: s.votes.reduce((a, b) => a + b, 0)
-        }
-      })
-      .sort((a, b) => b.variance - a.variance)
-      .slice(0, 20)
-  }, [filteredVotes])
-
-  // 5. Trends Over Time (per-round stats)
-  const roundTrends = useMemo(() => {
-    if (filteredSubmissions.length === 0) return []
-
-    // Group submissions by round
-    const rounds = {}
+    // Collect rounds sorted chronologically
+    const roundSet = {}
     filteredSubmissions.forEach(s => {
-      if (!rounds[s.round_id]) {
-        rounds[s.round_id] = {
-          round_id: s.round_id,
-          round_name: s.round_name,
-          round_date: s.round_date,
-          submissionCount: 0,
-          voterSet: new Set(),
-          totalPoints: 0,
-          voteCount: 0
+      if (!roundSet[s.round_id]) {
+        roundSet[s.round_id] = { id: s.round_id, name: s.round_name, date: s.round_date }
+      }
+    })
+    const sortedRounds = Object.values(roundSet).sort((a, b) => new Date(a.date) - new Date(b.date))
+
+    // Build per-round per-song scores
+    const songScoresByRound = {}
+    filteredVotes.forEach(v => {
+      if (!songScoresByRound[v.round_id]) songScoresByRound[v.round_id] = {}
+      const key = v.spotify_uri
+      if (!songScoresByRound[v.round_id][key]) {
+        songScoresByRound[v.round_id][key] = {
+          song_name: v.song_name, artists: v.artists,
+          submitter_id: v.submitter_id, pts: 0
         }
       }
-      rounds[s.round_id].submissionCount++
+      songScoresByRound[v.round_id][key].pts += v.points_assigned
     })
 
-    // Add vote data per round
+    // Build per-round per-player totals
+    const pointsByRoundPlayer = {}
     filteredVotes.forEach(v => {
-      if (rounds[v.round_id]) {
-        rounds[v.round_id].voterSet.add(v.voter_id)
-        rounds[v.round_id].totalPoints += v.points_assigned
-        rounds[v.round_id].voteCount++
+      if (!pointsByRoundPlayer[v.round_id]) pointsByRoundPlayer[v.round_id] = {}
+      if (!pointsByRoundPlayer[v.round_id][v.submitter_id]) pointsByRoundPlayer[v.round_id][v.submitter_id] = 0
+      pointsByRoundPlayer[v.round_id][v.submitter_id] += v.points_assigned
+    })
+
+    const playerNameMap = {}
+    filteredSubmissions.forEach(s => { playerNameMap[s.submitter_id] = s.submitter_name })
+    const playerIds = Object.keys(playerNameMap)
+
+    const cumulative = {}
+    playerIds.forEach(id => { cumulative[id] = 0 })
+
+    const triumphs = []
+
+    sortedRounds.forEach((round, roundIdx) => {
+      const totalPlayers = playerIds.length
+
+      // Rank players by cumulative points BEFORE this round
+      const rankedBefore = playerIds
+        .map(id => ({ id, pts: cumulative[id] }))
+        .sort((a, b) => b.pts - a.pts)
+
+      const positionBefore = {}
+      let currentRank = 1
+      rankedBefore.forEach((r, i) => {
+        if (i > 0 && r.pts < rankedBefore[i - 1].pts) currentRank = i + 1
+        positionBefore[r.id] = currentRank
+      })
+
+      // Find winning song this round
+      const songs = Object.values(songScoresByRound[round.id] || {})
+      let winnerSong = null
+      songs.forEach(s => {
+        if (!winnerSong || s.pts > winnerSong.pts) winnerSong = s
+      })
+
+      // Update cumulative for next round
+      playerIds.forEach(id => {
+        cumulative[id] += (pointsByRoundPlayer[round.id]?.[id] || 0)
+      })
+
+      // Skip first round (no prior standings) or if no winner
+      if (roundIdx === 0 || !winnerSong) return
+
+      const winnerId = winnerSong.submitter_id
+      const pos = positionBefore[winnerId] || totalPlayers
+
+      // Only count if winner was outside top 3 going in
+      if (pos <= 3) return
+
+      triumphs.push({
+        round_name: round.name,
+        winner_name: playerNameMap[winnerId] || 'Unknown',
+        song_name: winnerSong.song_name,
+        artists: winnerSong.artists,
+        round_points: winnerSong.pts,
+        position_before: pos,
+        total_players: totalPlayers,
+      })
+    })
+
+    return triumphs.sort((a, b) => b.position_before - a.position_before).slice(0, 15)
+  }, [filteredVotes, filteredSubmissions])
+
+  // 5. Player Position Trajectory (leaderboard position after each round)
+  const playerTrajectory = useMemo(() => {
+    if (filteredSubmissions.length === 0 || filteredVotes.length === 0) return { data: [], players: [] }
+
+    // Collect rounds with dates, sorted chronologically
+    const roundSet = {}
+    filteredSubmissions.forEach(s => {
+      if (!roundSet[s.round_id]) {
+        roundSet[s.round_id] = { id: s.round_id, name: s.round_name, date: s.round_date }
       }
     })
+    const sortedRounds = Object.values(roundSet).sort((a, b) => new Date(a.date) - new Date(b.date))
 
-    return Object.values(rounds)
-      .map(r => ({
-        round_name: r.round_name,
-        round_date: r.round_date,
-        submissionCount: r.submissionCount,
-        voterCount: r.voterSet.size,
-        avgScore: r.submissionCount > 0
-          ? Math.round((r.totalPoints / r.submissionCount) * 100) / 100
-          : 0
-      }))
-      .sort((a, b) => new Date(a.round_date) - new Date(b.round_date))
+    // Build per-round per-submitter point totals
+    const pointsByRoundPlayer = {}
+    filteredVotes.forEach(v => {
+      if (!pointsByRoundPlayer[v.round_id]) pointsByRoundPlayer[v.round_id] = {}
+      if (!pointsByRoundPlayer[v.round_id][v.submitter_id]) pointsByRoundPlayer[v.round_id][v.submitter_id] = 0
+      pointsByRoundPlayer[v.round_id][v.submitter_id] += v.points_assigned
+    })
+
+    // Get all player IDs + names
+    const playerNameMap = {}
+    filteredSubmissions.forEach(s => { playerNameMap[s.submitter_id] = s.submitter_name })
+    const playerIds = Object.keys(playerNameMap)
+
+    // Accumulate cumulative points and derive position after each round
+    const cumulative = {}
+    playerIds.forEach(id => { cumulative[id] = 0 })
+
+    const data = sortedRounds.map(round => {
+      // Add this round's points
+      playerIds.forEach(id => {
+        cumulative[id] += (pointsByRoundPlayer[round.id]?.[id] || 0)
+      })
+
+      // Rank players by cumulative points (descending), ties get same rank
+      const ranked = playerIds
+        .map(id => ({ id, pts: cumulative[id] }))
+        .sort((a, b) => b.pts - a.pts)
+
+      const entry = { round_name: round.name }
+      let currentRank = 1
+      ranked.forEach((r, i) => {
+        if (i > 0 && r.pts < ranked[i - 1].pts) currentRank = i + 1
+        entry[playerNameMap[r.id]] = currentRank
+      })
+      return entry
+    })
+
+    const players = playerIds.map(id => playerNameMap[id]).sort()
+
+    return { data, players }
   }, [filteredVotes, filteredSubmissions])
 
   // 6. "Voted by Everyone" leaderboard
@@ -420,8 +486,8 @@ export function useAnalytics({ team } = {}) {
     playerStats,
     votingPatterns,
     topArtists,
-    controversialSongs,
-    roundTrends,
+    underdogTriumphs,
+    playerTrajectory,
     voteCollectionBoard,
     filteredVotes,
     filteredSubmissions,

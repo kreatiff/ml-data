@@ -4,7 +4,7 @@ import { useAnalytics } from '../hooks/useAnalytics'
 import { useBadges } from '../hooks/useBadges'
 import './BadgesPage.css'
 
-const CATEGORIES = ['Performance', 'Standings', 'Voting', 'Social']
+const CATEGORIES = ['Performance', 'Standings', 'Voting', 'Social', 'Meta']
 
 const MAX_VISIBLE = 3
 
@@ -88,7 +88,56 @@ function BadgesPage() {
           <section key={cat} className="badges-category">
             <h2 className="badges-category-title">{cat}</h2>
             <div className="badges-grid">
-              {catBadges.map(badge => (
+              {catBadges.map(badge => badge.id === 'infinity_gauntlet' ? (
+                <div
+                  key={badge.id}
+                  className="badge-card badge-card-gauntlet"
+                >
+                  <img className={`badge-image badge-image-gauntlet ${badge.achieved ? '' : 'badge-image-locked'}`} src={badge.image} alt={badge.name} />
+                  <div className="badge-info">
+                    <div className="badge-name">{badge.name}</div>
+                    <div className="badge-desc">{badge.description}</div>
+                    {badge.achieved ? (
+                      <div className="badge-players">
+                        {badge.players.map((p, i) => (
+                          <div key={`${p.id}-${i}`} className="badge-player">
+                            <span className="badge-player-name">{p.name}</span>
+                            {p.stat != null ? (
+                              <span className="badge-player-stat">{p.stat}</span>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="badge-not-achieved">Not yet achieved</div>
+                    )}
+                    {badge.closestPlayers && badge.closestPlayers.length > 0 && (
+                      <div className="gauntlet-closest">
+                        <div className="gauntlet-closest-title">Closest Contenders</div>
+                        {badge.closestPlayers.map((c, i) => (
+                          <div key={`${c.id}-${i}`} className="gauntlet-contender">
+                            <div className="gauntlet-contender-header">
+                              <span className="badge-player-name">{c.name}</span>
+                              <span className="badge-player-stat">{c.count}/{badge.totalBadges} badges</span>
+                            </div>
+                            <div className="gauntlet-badge-icons">
+                              {c.badges.map(b => (
+                                <div key={b.id} className="gauntlet-badge-icon-wrapper" title={b.name}>
+                                  <img
+                                    className={`gauntlet-badge-icon ${b.earned ? '' : 'gauntlet-badge-icon-locked'}`}
+                                    src={b.image}
+                                    alt={b.name}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
                 <div
                   key={badge.id}
                   className={`badge-card ${badge.achieved ? '' : 'badge-locked'}`}
