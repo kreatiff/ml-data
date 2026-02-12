@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-const MAX_TRACKS = 20
+const MAX_TRACKS = 50
 
 // The default league (2026) uses 0-4 points; older leagues used 0-2.
 // We detect the max points per league from the data itself.
@@ -60,7 +60,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       })
     }
 
-    const hallOfFameDeduped = dedup(hallOfFame).slice(0, MAX_TRACKS)
+    const hallOfFameDeduped = dedup(hallOfFame).slice(0, 10)
 
     // ── 2. Round Winners — #1 song per round, chronological ──
     const roundWinners = {}
@@ -73,13 +73,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       .sort((a, b) => new Date(a.round_date) - new Date(b.round_date))
     const roundWinnersDeduped = dedup(roundWinnersList).slice(0, MAX_TRACKS)
 
-    // ── 3. Crowd Pleasers — most max-point votes received ──
-    const crowdPleasers = [...allSongs]
-      .filter(s => s.maxVoteCount > 0)
-      .sort((a, b) => b.maxVoteCount - a.maxVoteCount || b.total - a.total)
-    const crowdPleasersDeduped = dedup(crowdPleasers).slice(0, MAX_TRACKS)
-
-    // ── 4. The Bottom Shelf — lowest scoring songs with > 0 votes ──
+    // ── 3. The Bottom Shelf — lowest scoring songs with > 0 votes ──
     const bottomShelf = [...allSongs]
       .filter(s => s.total > 0)
       .sort((a, b) => a.total - b.total || a.song_name.localeCompare(b.song_name))
@@ -96,7 +90,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
     const bestOfPlaylists = (players || []).map(p => {
       const songs = (playerBestOf[p.id] || [])
         .sort((a, b) => b.total - a.total)
-      const songsDeduped = dedup(songs).slice(0, MAX_TRACKS)
+      const songsDeduped = dedup(songs).slice(0, 10)
       return {
         id: `best_of_${p.id}`,
         name: `Best Of ${p.name}`,
@@ -116,7 +110,19 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       }
     })
 
-    // ── 6. Sub-zero — only songs with 0 total points ──
+    // ── 6. Player Highlights — each player's single highest-scoring song ──
+    const playerHighlights = {}
+    allSongs.forEach(s => {
+      if (s.total <= 0) return
+      if (!playerHighlights[s.submitter_id] || s.total > playerHighlights[s.submitter_id].total) {
+        playerHighlights[s.submitter_id] = s
+      }
+    })
+    const playerHighlightsList = Object.values(playerHighlights)
+      .sort((a, b) => b.total - a.total)
+    const playerHighlightsDeduped = dedup(playerHighlightsList).slice(0, MAX_TRACKS)
+
+    // ── 7. Sub-zero — only songs with 0 total points ──
     const subZero = [...allSongs]
       .filter(s => s.total === 0)
       .sort((a, b) => a.song_name.localeCompare(b.song_name))
@@ -156,7 +162,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       {
         id: 'hall_of_fame',
         name: 'Hall of Fame',
-        description: `Top ${hallOfFameDeduped.length} songs by total points across all rounds`,
+        description: `Top ${hallOfFameDeduped.length} songs by total points`,
         icon: '🏆',
         songs: makeSongList(hallOfFameDeduped),
         trackUris: hallOfFameDeduped.map(s => s.spotify_uri),
@@ -170,12 +176,12 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
         trackUris: roundWinnersDeduped.map(s => s.spotify_uri),
       },
       {
-        id: 'crowd_pleasers',
-        name: 'Crowd Pleasers',
-        description: `Songs with the most ${maxPts}-point (max) votes received`,
-        icon: '🎉',
-        songs: makeSongList(crowdPleasersDeduped),
-        trackUris: crowdPleasersDeduped.map(s => s.spotify_uri),
+        id: 'player_highlights',
+        name: 'Player Highlights',
+        description: 'Each player\'s single most successful song',
+        icon: '⭐',
+        songs: makeSongList(playerHighlightsDeduped),
+        trackUris: playerHighlightsDeduped.map(s => s.spotify_uri),
       },
       {
         id: 'bottom_shelf',

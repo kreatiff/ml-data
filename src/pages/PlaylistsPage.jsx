@@ -1,20 +1,47 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { supabase } from '../supabaseClient'
 import './PlaylistsPage.css'
 
-function PlaylistCard({ playlist, onCreate, creating, result }) {
-  const [expanded, setExpanded] = useState(false)
+function TrackListModal({ playlist, onClose }) {
+  return (
+    <div className="playlist-modal-overlay" onClick={onClose}>
+      <div className="playlist-modal" onClick={e => e.stopPropagation()}>
+        <div className="playlist-modal-header">
+          <span className="playlist-card-icon">{playlist.icon}</span>
+          <div>
+            <div className="playlist-card-title">{playlist.name}</div>
+            <div className="playlist-card-desc">{playlist.description}</div>
+          </div>
+          <button className="playlist-modal-close" onClick={onClose}>&times;</button>
+        </div>
+        <div className="playlist-tracks-list">
+          {playlist.songs.map((song, i) => (
+            <div key={`${song.spotify_uri}_${i}`} className="playlist-track-row">
+              <span className="playlist-track-num">{i + 1}</span>
+              <span className="playlist-track-name" title={song.song_name}>{song.song_name}</span>
+              <span className="playlist-track-artist" title={song.artists}>{song.artists}</span>
+              <span className="playlist-track-pts">{song.total}pts</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTracks }) {
   const trackCount = playlist.trackUris.length
+  const displayName = `${prefix}${playlist.name}`
 
   return (
     <div className="playlist-card">
       <div className="playlist-card-header">
         <span className="playlist-card-icon">{playlist.icon}</span>
         <div>
-          <div className="playlist-card-title">{playlist.name}</div>
+          <div className="playlist-card-title">{displayName}</div>
           <div className="playlist-card-desc">{playlist.description}</div>
         </div>
       </div>
@@ -24,34 +51,19 @@ function PlaylistCard({ playlist, onCreate, creating, result }) {
       </div>
 
       {trackCount > 0 && (
-        <>
-          <button
-            className="playlist-tracks-toggle"
-            onClick={() => setExpanded(e => !e)}
-          >
-            {expanded ? 'Hide tracks' : 'Show tracks'}
-          </button>
-
-          {expanded && (
-            <div className="playlist-tracks-list">
-              {playlist.songs.map((song, i) => (
-                <div key={`${song.spotify_uri}_${i}`} className="playlist-track-row">
-                  <span className="playlist-track-num">{i + 1}</span>
-                  <span className="playlist-track-name" title={song.song_name}>{song.song_name}</span>
-                  <span className="playlist-track-artist" title={song.artists}>{song.artists}</span>
-                  <span className="playlist-track-pts">{song.total}pts</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
+        <button
+          className="playlist-tracks-toggle"
+          onClick={() => onShowTracks(playlist)}
+        >
+          Show tracks
+        </button>
       )}
 
       <div className="playlist-card-actions">
         <button
           className="playlist-create-btn"
           disabled={creating || trackCount === 0}
-          onClick={() => onCreate(playlist)}
+          onClick={() => onCreate({ ...playlist, name: `${prefix}${playlist.name}` })}
         >
           {creating ? 'Creating...' : 'Create on Spotify'}
         </button>
@@ -89,22 +101,49 @@ function PlaylistsPage() {
     [playerStats]
   )
 
+  const LEAGUE_YEARS = {
+    '2a40e26e20e846cbae7b66d53c1488f0': '2025',
+    'fe08d6855f204613b30922e34a7486c6': '2026',
+  }
+
+  const leagueName = LEAGUE_YEARS[selectedLeague] || 'All Leagues'
+
   const { featured, bestOfPlaylists } = usePlaylistDefinitions(
     filteredVotes, filteredSubmissions, players
   ) || { featured: [], bestOfPlaylists: [] }
 
-  const [selectedPlayer, setSelectedPlayer] = useState('')
+  const prefix = leagueName ? `${leagueName} — ` : ''
+
   const [creatingId, setCreatingId] = useState(null)
   const [results, setResults] = useState({})
+  const [modalPlaylist, setModalPlaylist] = useState(null)
 
-  const selectedBestOf = useMemo(() => {
-    if (!selectedPlayer) return null
-    return bestOfPlaylists.find(p => p.playerId === selectedPlayer) || null
-  }, [bestOfPlaylists, selectedPlayer])
+  const loadSavedPlaylists = useCallback(async () => {
+    const { data } = await supabase
+      .from('created_playlists')
+      .select('playlist_key, league_id, spotify_url')
+    if (data) {
+      const saved = {}
+      data.forEach(row => {
+        const stateKey = row.league_id
+          ? `${row.league_id}_${row.playlist_key}`
+          : row.playlist_key
+        saved[stateKey] = { success: true, playlistUrl: row.spotify_url }
+      })
+      setResults(prev => ({ ...saved, ...prev }))
+    }
+  }, [])
+
+  useEffect(() => { loadSavedPlaylists() }, [loadSavedPlaylists])
+
+  function getResultKey(playlistId) {
+    return selectedLeague ? `${selectedLeague}_${playlistId}` : playlistId
+  }
 
   async function handleCreate(playlist) {
+    const resultKey = getResultKey(playlist.id)
     setCreatingId(playlist.id)
-    setResults(prev => ({ ...prev, [playlist.id]: null }))
+    setResults(prev => ({ ...prev, [resultKey]: null }))
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('create-playlist', {
@@ -118,17 +157,25 @@ function PlaylistsPage() {
       if (fnError) throw fnError
 
       if (data?.error) {
-        setResults(prev => ({ ...prev, [playlist.id]: { error: data.error } }))
+        setResults(prev => ({ ...prev, [resultKey]: { error: data.error } }))
       } else {
         setResults(prev => ({
           ...prev,
-          [playlist.id]: { success: true, playlistUrl: data.playlistUrl }
+          [resultKey]: { success: true, playlistUrl: data.playlistUrl }
         }))
+
+        await supabase.from('created_playlists').upsert({
+          playlist_key: playlist.id,
+          league_id: selectedLeague || null,
+          spotify_url: data.playlistUrl,
+          spotify_playlist_id: data.playlistId || null,
+          playlist_name: playlist.name,
+        }, { onConflict: 'playlist_key,league_id' })
       }
     } catch (err) {
       setResults(prev => ({
         ...prev,
-        [playlist.id]: { error: err.message || 'Failed to create playlist' }
+        [resultKey]: { error: err.message || 'Failed to create playlist' }
       }))
     } finally {
       setCreatingId(null)
@@ -168,43 +215,83 @@ function PlaylistsPage() {
         </div>
       </div>
 
+      <div className="playlists-columns">
+      <div className="playlists-col-featured">
       <h2 className="playlists-section-title">Featured Playlists</h2>
       <div className="playlists-grid">
         {featured.map(pl => (
           <PlaylistCard
             key={pl.id}
             playlist={pl}
+            prefix={prefix}
             onCreate={handleCreate}
             creating={creatingId === pl.id}
-            result={results[pl.id]}
+            result={results[getResultKey(pl.id)]}
+            onShowTracks={setModalPlaylist}
           />
         ))}
       </div>
-
-      <div className="bestof-section">
-        <h2 className="playlists-section-title">Best Of Player</h2>
-        <select
-          className="bestof-player-select"
-          value={selectedPlayer}
-          onChange={(e) => setSelectedPlayer(e.target.value)}
-        >
-          <option value="">Select a player...</option>
-          {players.map(p => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-
-        {selectedBestOf && (
-          <div className="playlists-grid">
-            <PlaylistCard
-              playlist={selectedBestOf}
-              onCreate={handleCreate}
-              creating={creatingId === selectedBestOf.id}
-              result={results[selectedBestOf.id]}
-            />
-          </div>
-        )}
       </div>
+
+      <div className="playlists-col-bestof">
+        <h2 className="playlists-section-title">Best Of Player</h2>
+        <table className="bestof-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Tracks</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {bestOfPlaylists.map(pl => (
+              <tr key={pl.id}>
+                <td className="bestof-player-name">{pl.playerName}</td>
+                <td className="bestof-track-count">{pl.trackUris.length}</td>
+                <td>
+                  <button
+                    className="playlist-tracks-toggle"
+                    onClick={() => setModalPlaylist(pl)}
+                  >
+                    Show tracks
+                  </button>
+                </td>
+                <td className="bestof-actions">
+                  <button
+                    className="playlist-create-btn"
+                    disabled={creatingId === pl.id || pl.trackUris.length === 0}
+                    onClick={() => handleCreate({ ...pl, name: `${prefix}${pl.name}` })}
+                  >
+                    {creatingId === pl.id ? 'Creating...' : 'Create on Spotify'}
+                  </button>
+                  {results[getResultKey(pl.id)]?.success && (
+                    <a
+                      className="playlist-open-link"
+                      href={results[getResultKey(pl.id)].playlistUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open
+                    </a>
+                  )}
+                  {results[getResultKey(pl.id)]?.error && (
+                    <span className="playlist-error-msg">{results[getResultKey(pl.id)].error}</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      </div>
+
+      {modalPlaylist && (
+        <TrackListModal
+          playlist={modalPlaylist}
+          onClose={() => setModalPlaylist(null)}
+        />
+      )}
     </div>
   )
 }

@@ -51,10 +51,27 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Side-by-side layout */
+.playlists-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.playlists-col-featured {
+  flex: 1;
+  min-width: 0;
+}
+
+.playlists-col-bestof {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Playlist Cards Grid */
 .playlists-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 2.5rem;
 }
@@ -239,40 +256,120 @@
   color: #FF6B6B;
 }
 
-/* Best Of — player selector */
+/* Best Of section */
 .bestof-section {
   margin-top: 1rem;
 }
 
-.bestof-player-select {
-  padding: 0.5rem 2.5rem 0.5rem 1rem;
-  font-size: 0.85rem;
+.bestof-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.bestof-table thead th {
+  text-align: left;
+  font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  background: var(--spotify-card);
+  color: var(--spotify-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bestof-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.1s;
+}
+
+.bestof-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bestof-table td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.bestof-player-name {
   color: var(--spotify-white);
+  font-weight: 600;
+}
+
+.bestof-track-count {
+  color: var(--spotify-gray);
+  font-weight: 600;
+  min-width: 3rem;
+}
+
+.bestof-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Track list modal */
+.playlist-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.playlist-modal {
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.playlist-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.playlist-modal-header > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.playlist-modal-close {
+  background: none;
+  border: none;
+  color: var(--spotify-gray);
+  font-size: 1.5rem;
   cursor: pointer;
-  outline: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  transition: border-color 0.15s;
-  margin-bottom: 1rem;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-.bestof-player-select:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.bestof-player-select:focus {
-  border-color: var(--spotify-green);
-}
-
-.bestof-player-select option {
-  background: var(--spotify-card);
+.playlist-modal-close:hover {
   color: var(--spotify-white);
+}
+
+.playlist-modal .playlist-tracks-list {
+  max-height: none;
+  overflow-y: auto;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.5rem 0;
 }
 
 /* Responsive */
@@ -283,6 +380,10 @@
 
   .playlists-header h1 {
     font-size: 1.4rem;
+  }
+
+  .playlists-columns {
+    flex-direction: column;
   }
 
   .playlists-grid {
