@@ -43,7 +43,7 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
   const trackCount = playlist.trackUris.length
   const displayName = `${prefix}${playlist.name}`
   const currentHash = computeTrackHash(playlist.trackUris)
-  const isSynced = result?.spotifyPlaylistId && result?.savedTrackHash === currentHash
+  const isSynced = result?.spotifyPlaylistId && (!result?.savedTrackHash || result.savedTrackHash === currentHash)
   const isNew = !result?.spotifyPlaylistId
 
   return (
@@ -292,7 +292,7 @@ function PlaylistsPage() {
               const rKey = getResultKey(pl.id)
               const plResult = results[rKey]
               const plHash = computeTrackHash(pl.trackUris)
-              const plSynced = plResult?.spotifyPlaylistId && plResult?.savedTrackHash === plHash
+              const plSynced = plResult?.spotifyPlaylistId && (!plResult?.savedTrackHash || plResult.savedTrackHash === plHash)
               const plIsNew = !plResult?.spotifyPlaylistId
               return (
               <tr key={pl.id}>
