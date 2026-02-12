@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-const MAX_TRACKS = 50
+const MAX_TRACKS = 20
 
 // The default league (2026) uses 0-4 points; older leagues used 0-2.
 // We detect the max points per league from the data itself.

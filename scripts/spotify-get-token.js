@@ -3,7 +3,7 @@
  *
  * Prerequisites:
  *   1. Create/reuse a Spotify app at https://developer.spotify.com/dashboard
- *   2. Add http://localhost:8888/callback as a Redirect URI in the app settings
+ *   2. Add https://dupleighcates-dev.1pod.top/callback as a Redirect URI in the app settings
  *   3. Set environment variables before running:
  *        SPOTIFY_CLIENT_ID=<your_client_id>
  *        SPOTIFY_CLIENT_SECRET=<your_client_secret>
@@ -11,19 +11,20 @@
  * Usage:
  *   node scripts/spotify-get-token.js
  *
- * The script starts a tiny local server, opens the Spotify auth page in your
- * browser, and exchanges the resulting code for a refresh token. Copy the
- * printed refresh token and store it as a Supabase Edge Function secret:
+ * The script opens the Spotify auth page in your browser. After you approve,
+ * Spotify redirects to the callback URL. Copy the full redirect URL from your
+ * browser and paste it when prompted. The script exchanges the code for a
+ * refresh token. Store it as a Supabase Edge Function secret:
  *   supabase secrets set SPOTIFY_REFRESH_TOKEN=<token>
  */
 
-import http from 'node:http'
 import { execSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
+import { createInterface } from 'node:readline'
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
-const REDIRECT_URI = 'http://localhost:8888/callback'
+const REDIRECT_URI = 'https://dupleighcates-dev.1pod.top/callback'
 const SCOPES = 'playlist-modify-public'
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
@@ -40,35 +41,52 @@ authUrl.searchParams.set('scope', SCOPES)
 authUrl.searchParams.set('redirect_uri', REDIRECT_URI)
 authUrl.searchParams.set('state', state)
 
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://localhost:8888`)
-
-  if (url.pathname !== '/callback') {
-    res.writeHead(404)
-    res.end('Not found')
-    return
+// Open browser
+try {
+  if (process.platform === 'win32') {
+    execSync(`start "" "${authUrl.toString()}"`, { shell: 'cmd.exe' })
+  } else if (process.platform === 'darwin') {
+    execSync(`open "${authUrl.toString()}"`)
+  } else {
+    execSync(`xdg-open "${authUrl.toString()}"`)
   }
+  console.log('Opened Spotify authorization page in your browser.\n')
+} catch {
+  console.log('Could not open browser automatically. Visit this URL:\n')
+  console.log(authUrl.toString() + '\n')
+}
 
-  const code = url.searchParams.get('code')
-  const returnedState = url.searchParams.get('state')
-  const error = url.searchParams.get('error')
+console.log('After you approve, Spotify will redirect to the callback URL.')
+console.log('The page may not load — that\'s fine.')
+console.log('Copy the FULL URL from your browser\'s address bar and paste it below.\n')
 
-  if (error) {
-    res.writeHead(400, { 'Content-Type': 'text/html' })
-    res.end(`<h1>Error: ${error}</h1>`)
-    server.close()
-    process.exit(1)
-  }
+const rl = createInterface({ input: process.stdin, output: process.stdout })
 
-  if (returnedState !== state) {
-    res.writeHead(400, { 'Content-Type': 'text/html' })
-    res.end('<h1>State mismatch — possible CSRF attack</h1>')
-    server.close()
-    process.exit(1)
-  }
+rl.question('Paste the redirect URL: ', async (input) => {
+  rl.close()
 
-  // Exchange code for tokens
   try {
+    const redirectUrl = new URL(input.trim())
+    const code = redirectUrl.searchParams.get('code')
+    const returnedState = redirectUrl.searchParams.get('state')
+    const error = redirectUrl.searchParams.get('error')
+
+    if (error) {
+      console.error('Authorization error:', error)
+      process.exit(1)
+    }
+
+    if (returnedState !== state) {
+      console.error('State mismatch — possible CSRF. Try running the script again.')
+      process.exit(1)
+    }
+
+    if (!code) {
+      console.error('No authorization code found in the URL.')
+      process.exit(1)
+    }
+
+    // Exchange code for tokens
     const tokenRes = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -85,10 +103,7 @@ const server = http.createServer(async (req, res) => {
     const data = await tokenRes.json()
 
     if (data.error) {
-      console.error('Token exchange failed:', data)
-      res.writeHead(500, { 'Content-Type': 'text/html' })
-      res.end(`<h1>Token exchange failed</h1><pre>${JSON.stringify(data, null, 2)}</pre>`)
-      server.close()
+      console.error('Token exchange failed:', JSON.stringify(data, null, 2))
       process.exit(1)
     }
 
@@ -99,29 +114,8 @@ const server = http.createServer(async (req, res) => {
     console.log(`  supabase secrets set SPOTIFY_REFRESH_TOKEN=${data.refresh_token}`)
     console.log(`  supabase secrets set SPOTIFY_CLIENT_ID=${CLIENT_ID}`)
     console.log(`  supabase secrets set SPOTIFY_CLIENT_SECRET=${CLIENT_SECRET}`)
-
-    res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end('<h1>Success!</h1><p>You can close this tab. Check the terminal for your refresh token.</p>')
   } catch (err) {
-    console.error('Error exchanging code:', err)
-    res.writeHead(500, { 'Content-Type': 'text/html' })
-    res.end(`<h1>Error</h1><pre>${err.message}</pre>`)
-  }
-
-  server.close()
-})
-
-server.listen(8888, () => {
-  console.log('Listening on http://localhost:8888/callback')
-  console.log('Opening Spotify authorization page...\n')
-
-  // Open browser cross-platform
-  const openCmd = process.platform === 'win32' ? 'start'
-    : process.platform === 'darwin' ? 'open' : 'xdg-open'
-  try {
-    execSync(`${openCmd} "${authUrl.toString()}"`)
-  } catch {
-    console.log('Could not open browser automatically. Visit this URL:')
-    console.log(authUrl.toString())
+    console.error('Error:', err.message)
+    process.exit(1)
   }
 })
