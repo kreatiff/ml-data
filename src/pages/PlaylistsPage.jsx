@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { supabase } from '../supabaseClient'
@@ -113,8 +113,18 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
   )
 }
 
+const LEAGUE_YEARS = {
+  '2a40e26e20e846cbae7b66d53c1488f0': '2025',
+  'fe08d6855f204613b30922e34a7486c6': '2026',
+}
+
+const YEAR_TO_LEAGUE = Object.fromEntries(
+  Object.entries(LEAGUE_YEARS).map(([id, year]) => [year, id])
+)
+
 function PlaylistsPage() {
   const isAdmin = localStorage.getItem('app_is_admin') === 'true'
+  const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
 
@@ -123,15 +133,16 @@ function PlaylistsPage() {
     filteredVotes, filteredSubmissions, playerStats
   } = useAnalytics({ team: teamParam })
 
+  useEffect(() => {
+    if (urlYear && YEAR_TO_LEAGUE[urlYear]) {
+      setSelectedLeague(YEAR_TO_LEAGUE[urlYear])
+    }
+  }, [urlYear, setSelectedLeague])
+
   const players = useMemo(() =>
     playerStats.map(p => ({ id: p.id, name: p.name })),
     [playerStats]
   )
-
-  const LEAGUE_YEARS = {
-    '2a40e26e20e846cbae7b66d53c1488f0': '2025',
-    'fe08d6855f204613b30922e34a7486c6': '2026',
-  }
 
   const leagueName = LEAGUE_YEARS[selectedLeague] || 'All Leagues'
 

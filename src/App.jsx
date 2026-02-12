@@ -74,7 +74,7 @@ function App() {
         <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/badges" element={<BadgesPage />} />
-        <Route path="/playlists" element={<PlaylistsPage />} />
+        <Route path="/playlists/:year?" element={<PlaylistsPage />} />
       </Routes>
     </div>
   )
