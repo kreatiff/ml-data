@@ -97,13 +97,76 @@ async function addTracksToPlaylist(
   }
 }
 
+async function replaceTracksOnPlaylist(
+  accessToken: string,
+  playlistId: string,
+  trackUris: string[]
+): Promise<void> {
+  // PUT replaces all tracks; first batch via PUT, rest via POST
+  const BATCH_SIZE = 100
+  const firstBatch = trackUris.slice(0, BATCH_SIZE)
+
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ uris: firstBatch }),
+  })
+
+  const data = await res.json()
+  if (data.error) {
+    throw new Error(`Failed to replace tracks: ${data.error.message}`)
+  }
+
+  // Add remaining batches if > 100 tracks
+  for (let i = BATCH_SIZE; i < trackUris.length; i += BATCH_SIZE) {
+    const batch = trackUris.slice(i, i + BATCH_SIZE)
+    const addRes = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uris: batch }),
+    })
+
+    const addData = await addRes.json()
+    if (addData.error) {
+      throw new Error(`Failed to add tracks (batch ${i / BATCH_SIZE + 1}): ${addData.error.message}`)
+    }
+  }
+}
+
+async function updatePlaylistDetails(
+  accessToken: string,
+  playlistId: string,
+  name: string,
+  description: string
+): Promise<void> {
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, description }),
+  })
+
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(`Failed to update playlist details: ${data.error?.message || res.statusText}`)
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { name, description, trackUris } = await req.json()
+    const { name, description, trackUris, playlistId: existingPlaylistId } = await req.json()
 
     if (!name || !Array.isArray(trackUris) || trackUris.length === 0) {
       return new Response(
@@ -116,6 +179,25 @@ serve(async (req) => {
     const uniqueUris = [...new Set(trackUris)]
 
     const accessToken = await getAccessToken()
+
+    if (existingPlaylistId) {
+      // Update existing playlist
+      await updatePlaylistDetails(accessToken, existingPlaylistId, name, description || '')
+      await replaceTracksOnPlaylist(accessToken, existingPlaylistId, uniqueUris)
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          playlistId: existingPlaylistId,
+          playlistUrl: `https://open.spotify.com/playlist/${existingPlaylistId}`,
+          tracksAdded: uniqueUris.length,
+          updated: true,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Create new playlist
     const userId = await getSpotifyUserId(accessToken)
     const playlist = await createPlaylist(accessToken, userId, name, description || '')
     await addTracksToPlaylist(accessToken, playlist.id, uniqueUris)

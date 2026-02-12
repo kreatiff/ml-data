@@ -5,6 +5,11 @@ import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { supabase } from '../supabaseClient'
 import './PlaylistsPage.css'
 
+function computeTrackHash(trackUris) {
+  if (!trackUris || !trackUris.length) return ''
+  return [...trackUris].sort().join('|')
+}
+
 function TrackListModal({ playlist, onClose }) {
   return (
     <div className="playlist-modal-overlay" onClick={onClose}>
@@ -21,8 +26,10 @@ function TrackListModal({ playlist, onClose }) {
           {playlist.songs.map((song, i) => (
             <div key={`${song.spotify_uri}_${i}`} className="playlist-track-row">
               <span className="playlist-track-num">{i + 1}</span>
-              <span className="playlist-track-name" title={song.song_name}>{song.song_name}</span>
-              <span className="playlist-track-artist" title={song.artists}>{song.artists}</span>
+              <div className="playlist-track-info">
+                <span className="playlist-track-name" title={song.song_name}>{song.song_name}</span>
+                <span className="playlist-track-artist" title={song.artists}>{song.artists}</span>
+              </div>
               <span className="playlist-track-pts">{song.total}pts</span>
             </div>
           ))}
@@ -35,6 +42,9 @@ function TrackListModal({ playlist, onClose }) {
 function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTracks }) {
   const trackCount = playlist.trackUris.length
   const displayName = `${prefix}${playlist.name}`
+  const currentHash = computeTrackHash(playlist.trackUris)
+  const isSynced = result?.spotifyPlaylistId && result?.savedTrackHash === currentHash
+  const isNew = !result?.spotifyPlaylistId
 
   return (
     <div className="playlist-card">
@@ -46,38 +56,54 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
         </div>
       </div>
 
-      <div className="playlist-card-meta">
-        <strong>{trackCount}</strong> track{trackCount !== 1 ? 's' : ''}
-      </div>
-
-      {trackCount > 0 && (
-        <button
-          className="playlist-tracks-toggle"
-          onClick={() => onShowTracks(playlist)}
-        >
-          Show tracks
-        </button>
-      )}
-
       <div className="playlist-card-actions">
-        <button
-          className="playlist-create-btn"
-          disabled={creating || trackCount === 0}
-          onClick={() => onCreate({ ...playlist, name: `${prefix}${playlist.name}` })}
-        >
-          {creating ? 'Creating...' : 'Create on Spotify'}
-        </button>
+        <div className="playlist-action-left">
+          <div className="playlist-status-group">
+            {trackCount > 0 ? (
+              <button
+                className="playlist-track-count-link"
+                onClick={() => onShowTracks(playlist)}
+              >
+                <strong>{trackCount}</strong> track{trackCount !== 1 ? 's' : ''}
+              </button>
+            ) : (
+              <span className="playlist-track-count-link is-static">
+                <strong>{trackCount}</strong> track{trackCount !== 1 ? 's' : ''}
+              </span>
+            )}
+            <span
+              className={`playlist-sync-status ${
+                isSynced ? 'is-synced' : (isNew ? 'is-new' : 'is-out')
+              }`}
+            >
+              {isSynced ? '✓ Synced' : (isNew ? 'Not created' : '⚠ Out of sync')}
+            </span>
+          </div>
 
-        {result?.success && (
-          <a
-            className="playlist-open-link"
-            href={result.playlistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open in Spotify
-          </a>
-        )}
+        </div>
+        <div className="playlist-action-right">
+                    {(!isSynced || isNew) && (
+            <button
+              className="playlist-create-btn"
+              disabled={creating || trackCount === 0}
+              onClick={() => onCreate({ ...playlist, name: `${prefix}${playlist.name}` })}
+            >
+              {creating
+                ? (isNew ? 'Creating...' : 'Syncing...')
+                : (isNew ? 'Create on Spotify' : 'Sync to Spotify')}
+            </button>
+          )}
+          {result?.success && (
+            <a
+              className="playlist-open-link"
+              href={result.playlistUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in Spotify
+            </a>
+          )}
+        </div>
 
         {result?.error && (
           <span className="playlist-error-msg">{result.error}</span>
@@ -121,14 +147,19 @@ function PlaylistsPage() {
   const loadSavedPlaylists = useCallback(async () => {
     const { data } = await supabase
       .from('created_playlists')
-      .select('playlist_key, league_id, spotify_url')
+      .select('playlist_key, league_id, spotify_url, spotify_playlist_id, track_hash')
     if (data) {
       const saved = {}
       data.forEach(row => {
         const stateKey = row.league_id
           ? `${row.league_id}_${row.playlist_key}`
           : row.playlist_key
-        saved[stateKey] = { success: true, playlistUrl: row.spotify_url }
+        saved[stateKey] = {
+          success: true,
+          playlistUrl: row.spotify_url,
+          spotifyPlaylistId: row.spotify_playlist_id,
+          savedTrackHash: row.track_hash,
+        }
       })
       setResults(prev => ({ ...saved, ...prev }))
     }
@@ -146,11 +177,16 @@ function PlaylistsPage() {
     setResults(prev => ({ ...prev, [resultKey]: null }))
 
     try {
+      const existingResult = results[resultKey]
+      const existingSpotifyId = existingResult?.spotifyPlaylistId || null
+      const currentHash = computeTrackHash(playlist.trackUris)
+
       const { data, error: fnError } = await supabase.functions.invoke('create-playlist', {
         body: {
           name: playlist.name,
           description: playlist.description,
           trackUris: playlist.trackUris,
+          ...(existingSpotifyId ? { playlistId: existingSpotifyId } : {}),
         }
       })
 
@@ -161,7 +197,12 @@ function PlaylistsPage() {
       } else {
         setResults(prev => ({
           ...prev,
-          [resultKey]: { success: true, playlistUrl: data.playlistUrl }
+          [resultKey]: {
+            success: true,
+            playlistUrl: data.playlistUrl,
+            spotifyPlaylistId: data.playlistId,
+            savedTrackHash: currentHash,
+          }
         }))
 
         await supabase.from('created_playlists').upsert({
@@ -170,6 +211,7 @@ function PlaylistsPage() {
           spotify_url: data.playlistUrl,
           spotify_playlist_id: data.playlistId || null,
           playlist_name: playlist.name,
+          track_hash: currentHash,
         }, { onConflict: 'playlist_key,league_id' })
       }
     } catch (err) {
@@ -241,30 +283,41 @@ function PlaylistsPage() {
               <th>Player</th>
               <th>Tracks</th>
               <th></th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
-            {bestOfPlaylists.map(pl => (
+            {bestOfPlaylists.map(pl => {
+              const rKey = getResultKey(pl.id)
+              const plResult = results[rKey]
+              const plHash = computeTrackHash(pl.trackUris)
+              const plSynced = plResult?.spotifyPlaylistId && plResult?.savedTrackHash === plHash
+              const plIsNew = !plResult?.spotifyPlaylistId
+              return (
               <tr key={pl.id}>
-                <td className="bestof-player-name">{pl.playerName}</td>
-                <td className="bestof-track-count">{pl.trackUris.length}</td>
-                <td>
+                <td className="bestof-player-name">
+                  {pl.playerName}
+                  {plSynced && <span className="playlist-synced-badge">✓</span>}
+                </td>
+                <td className="bestof-track-count">
                   <button
                     className="playlist-tracks-toggle"
                     onClick={() => setModalPlaylist(pl)}
                   >
-                    Show tracks
+                    {pl.trackUris.length} tracks
                   </button>
                 </td>
                 <td className="bestof-actions">
+                  {(!plSynced || plIsNew) && (
                   <button
                     className="playlist-create-btn"
                     disabled={creatingId === pl.id || pl.trackUris.length === 0}
                     onClick={() => handleCreate({ ...pl, name: `${prefix}${pl.name}` })}
                   >
-                    {creatingId === pl.id ? 'Creating...' : 'Create on Spotify'}
+                    {creatingId === pl.id
+                      ? (plIsNew ? 'Creating...' : 'Syncing...')
+                      : (plIsNew ? 'Create on Spotify' : 'Sync to Spotify')}
                   </button>
+                  )}
                   {results[getResultKey(pl.id)]?.success && (
                     <a
                       className="playlist-open-link"
@@ -280,7 +333,8 @@ function PlaylistsPage() {
                   )}
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>

@@ -73,13 +73,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       .sort((a, b) => new Date(a.round_date) - new Date(b.round_date))
     const roundWinnersDeduped = dedup(roundWinnersList).slice(0, MAX_TRACKS)
 
-    // ── 3. The Bottom Shelf — lowest scoring songs with > 0 votes ──
-    const bottomShelf = [...allSongs]
-      .filter(s => s.total > 0)
-      .sort((a, b) => a.total - b.total || a.song_name.localeCompare(b.song_name))
-    const bottomShelfDeduped = dedup(bottomShelf).slice(0, MAX_TRACKS)
-
-    // ── 5. Best Of [Player] — per player, their highest scoring songs (no 0-point songs) ──
+    // ── 3. Best Of [Player] — per player, their highest scoring songs (no 0-point songs) ──
     const playerBestOf = {}
     allSongs.forEach(s => {
       if (s.total <= 0) return
@@ -122,34 +116,6 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
       .sort((a, b) => b.total - a.total)
     const playerHighlightsDeduped = dedup(playerHighlightsList).slice(0, MAX_TRACKS)
 
-    // ── 7. Sub-zero — only songs with 0 total points ──
-    const subZero = [...allSongs]
-      .filter(s => s.total === 0)
-      .sort((a, b) => a.song_name.localeCompare(b.song_name))
-    const subZeroDeduped = dedup(subZero).slice(0, MAX_TRACKS)
-
-    // Also include submissions that received NO votes at all
-    const scoredKeys = new Set(Object.keys(songScores))
-    const noVoteSongs = filteredSubmissions
-      .filter(s => !scoredKeys.has(`${s.round_id}_${s.spotify_uri}`))
-      .map(s => ({
-        spotify_uri: s.spotify_uri,
-        song_name: s.song_name,
-        artists: s.artists,
-        total: 0,
-        round_name: s.round_name,
-      }))
-
-    const allSubZero = [...subZeroDeduped.map(s => ({
-      spotify_uri: s.spotify_uri,
-      song_name: s.song_name,
-      artists: s.artists,
-      total: 0,
-      round_name: s.round_name,
-    })), ...noVoteSongs]
-
-    const subZeroFinal = dedup(allSubZero).slice(0, MAX_TRACKS)
-
     const makeSongList = (songs) => songs.map(s => ({
       song_name: s.song_name,
       artists: s.artists,
@@ -182,28 +148,6 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
         icon: '⭐',
         songs: makeSongList(playerHighlightsDeduped),
         trackUris: playerHighlightsDeduped.map(s => s.spotify_uri),
-      },
-      {
-        id: 'bottom_shelf',
-        name: 'The Bottom Shelf',
-        description: 'Lowest-scoring songs that still got some love (more than 0 votes)',
-        icon: '📉',
-        songs: makeSongList(bottomShelfDeduped),
-        trackUris: bottomShelfDeduped.map(s => s.spotify_uri),
-      },
-      {
-        id: 'sub_zero',
-        name: 'Sub-zero',
-        description: 'Songs that received zero points — the ultimate underdogs',
-        icon: '🥶',
-        songs: subZeroFinal.map(s => ({
-          song_name: s.song_name,
-          artists: s.artists,
-          total: 0,
-          round_name: s.round_name,
-          spotify_uri: s.spotify_uri,
-        })),
-        trackUris: subZeroFinal.map(s => s.spotify_uri),
       },
     ]
 
