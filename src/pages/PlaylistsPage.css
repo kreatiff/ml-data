@@ -1,6 +1,5 @@
 .playlists-page {
   max-width: 1400px;
-  margin: 0 auto;
   padding: 2rem 1.5rem;
 }
 
@@ -244,7 +243,9 @@
 
 .playlist-card-actions .playlist-tracks-toggle,
 .playlist-card-actions .playlist-open-link,
-.playlist-card-actions .playlist-create-btn {
+.playlist-card-actions .playlist-create-btn,
+.bestof-actions .playlist-create-btn,
+.bestof-actions .playlist-open-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -264,14 +265,17 @@
 
 .playlist-card-actions .playlist-tracks-toggle:hover,
 .playlist-card-actions .playlist-open-link:hover,
-.playlist-card-actions .playlist-create-btn:hover {
+.playlist-card-actions .playlist-create-btn:hover,
+.bestof-actions .playlist-create-btn:hover,
+.bestof-actions .playlist-open-link:hover {
   background-color: #111111;
   border-color: #CCFF00;
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px #CCFF00;
 }
 
-.playlist-card-actions .playlist-create-btn:disabled {
+.playlist-card-actions .playlist-create-btn:disabled,
+.bestof-actions .playlist-create-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;

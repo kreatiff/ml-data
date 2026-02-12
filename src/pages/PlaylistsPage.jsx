@@ -39,7 +39,7 @@ function TrackListModal({ playlist, onClose }) {
   )
 }
 
-function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTracks }) {
+function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTracks, isAdmin }) {
   const trackCount = playlist.trackUris.length
   const displayName = `${prefix}${playlist.name}`
   const currentHash = computeTrackHash(playlist.trackUris)
@@ -82,7 +82,7 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
 
         </div>
         <div className="playlist-action-right">
-                    {(!isSynced || isNew) && (
+                    {isAdmin && (!isSynced || isNew) && (
             <button
               className="playlist-create-btn"
               disabled={creating || trackCount === 0}
@@ -114,6 +114,7 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
 }
 
 function PlaylistsPage() {
+  const isAdmin = localStorage.getItem('app_is_admin') === 'true'
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
 
@@ -270,6 +271,7 @@ function PlaylistsPage() {
             creating={creatingId === pl.id}
             result={results[getResultKey(pl.id)]}
             onShowTracks={setModalPlaylist}
+            isAdmin={isAdmin}
           />
         ))}
       </div>
@@ -307,7 +309,7 @@ function PlaylistsPage() {
                   </button>
                 </td>
                 <td className="bestof-actions">
-                  {(!plSynced || plIsNew) && (
+                  {isAdmin && (!plSynced || plIsNew) && (
                   <button
                     className="playlist-create-btn"
                     disabled={creatingId === pl.id || pl.trackUris.length === 0}

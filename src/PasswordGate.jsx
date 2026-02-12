@@ -4,6 +4,7 @@ import './PasswordGate.css'
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 const STORAGE_KEY = 'app_access_token'
+const ADMIN_KEY = 'app_is_admin'
 
 function PasswordGate({ children }) {
   const [password, setPassword] = useState('')
@@ -32,6 +33,11 @@ function PasswordGate({ children }) {
 
       if (data.success && data.token) {
         localStorage.setItem(STORAGE_KEY, data.token)
+        if (data.isAdmin) {
+          localStorage.setItem(ADMIN_KEY, 'true')
+        } else {
+          localStorage.removeItem(ADMIN_KEY)
+        }
         setIsAuthenticated(true)
         setError('')
       } else {

@@ -54,6 +54,19 @@ function App() {
     }
   }, [selectedTheme])
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.altKey && e.key === 'a') {
+        e.preventDefault()
+        localStorage.removeItem('app_access_token')
+        localStorage.removeItem('app_is_admin')
+        window.location.reload()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
     <div className={`app theme-${selectedTheme}`}>
       <NavBar />
