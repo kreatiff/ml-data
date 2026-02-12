@@ -4,6 +4,7 @@ import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import BadgesPage from './pages/BadgesPage'
+import PlaylistsPage from './pages/PlaylistsPage'
 import './App.css'
 import './CyberTheme.css'
 
@@ -60,6 +61,7 @@ function App() {
         <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/badges" element={<BadgesPage />} />
+        <Route path="/playlists" element={<PlaylistsPage />} />
       </Routes>
     </div>
   )
