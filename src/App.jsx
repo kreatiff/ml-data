@@ -4,6 +4,7 @@ import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import BadgesPage from './pages/BadgesPage'
+import PlaylistsPage from './pages/PlaylistsPage'
 import './App.css'
 import './CyberTheme.css'
 
@@ -53,6 +54,19 @@ function App() {
     }
   }, [selectedTheme])
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.altKey && e.key === 'a') {
+        e.preventDefault()
+        localStorage.removeItem('app_access_token')
+        localStorage.removeItem('app_is_admin')
+        window.location.reload()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
     <div className={`app theme-${selectedTheme}`}>
       <NavBar />
@@ -60,6 +74,7 @@ function App() {
         <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/badges" element={<BadgesPage />} />
+        <Route path="/playlists" element={<PlaylistsPage />} />
       </Routes>
     </div>
   )
