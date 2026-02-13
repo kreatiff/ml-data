@@ -731,3 +731,52 @@
     display: none;
   }
 }
+
+/* Salmon Mode Popup */
+.salmon-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: salmonFadeIn 0.3s ease;
+}
+
+.salmon-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  animation: salmonBounce 0.5s ease;
+}
+
+.salmon-popup-img {
+  width: 280px;
+  max-width: 80vw;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(250, 128, 114, 0.5);
+}
+
+.salmon-popup-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #fa8072;
+  text-shadow: 0 0 20px rgba(250, 128, 114, 0.6);
+  margin: 0;
+}
+
+@keyframes salmonFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes salmonBounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}

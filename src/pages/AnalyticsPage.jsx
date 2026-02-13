@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { useSalmonMode, SALMON_YEAR_MAP } from '../hooks/useSalmonMode'
 import VoteHeatmap from '../components/VoteHeatmap'
 import './AnalyticsPage.css'
 
@@ -42,9 +43,12 @@ function AnalyticsPage() {
     totalVotes, totalSubmissions
   } = useAnalytics({ team: teamParam })
 
+  const { getLeagueName } = useSalmonMode()
+
   useEffect(() => {
-    if (urlYear && YEAR_TO_LEAGUE[urlYear]) {
-      setSelectedLeague(YEAR_TO_LEAGUE[urlYear])
+    const leagueId = YEAR_TO_LEAGUE[urlYear] || SALMON_YEAR_MAP[urlYear?.toLowerCase()]
+    if (urlYear && leagueId) {
+      setSelectedLeague(leagueId)
     }
   }, [urlYear, setSelectedLeague])
 
@@ -102,11 +106,11 @@ function AnalyticsPage() {
             <select
               value={selectedLeague}
               onChange={(e) => setSelectedLeague(e.target.value)}
-              className="league-filter"
+              className="theme-selector"
             >
               <option value="">All Leagues</option>
               {leagues.map(l => (
-                <option key={l.id} value={l.id}>{l.name || l.id}</option>
+                <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
               ))}
             </select>
           )}

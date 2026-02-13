@@ -57,7 +57,7 @@
   font-weight: 700;
   letter-spacing: -2px;
   text-transform: uppercase;
-  color: #CCFF00;
+  color: var(--spotify-green);
   text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
   margin: 0;
 }
@@ -94,21 +94,21 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 4px 4px 0px #CCFF00;
+  box-shadow: 4px 4px 0px var(--spotify-green);
   transition: all 0.1s ease;
 }
 
 .theme-cyber .theme-selector:hover {
   background-color: #111111;
-  border-color: #CCFF00;
+  border-color: var(--spotify-green);
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px #CCFF00;
+  box-shadow: 6px 6px 0px var(--spotify-green);
 }
 
 .theme-cyber .theme-selector:focus {
-  border-color: #CCFF00;
+  border-color: var(--spotify-green);
   background-color: #050505;
-  box-shadow: 4px 4px 0px #CCFF00;
+  box-shadow: 4px 4px 0px var(--spotify-green);
 }
 
 /* ============================================
@@ -133,7 +133,7 @@
   left: 1rem;
   font-size: 1rem;
   opacity: 1;
-  color: #CCFF00;
+  color: var(--spotify-green);
 }
 
 .theme-cyber .search-input {
@@ -166,8 +166,8 @@
 
 .theme-cyber .search-input:focus {
   background: transparent;
-  border-color: #CCFF00;
-  box-shadow: 4px 4px 0px #CCFF00;
+  border-color: var(--spotify-green);
+  box-shadow: 4px 4px 0px var(--spotify-green);
   transform: translate(-2px, -2px);
 }
 
@@ -206,9 +206,9 @@
 }
 
 .theme-cyber .filter-select:focus {
-  border-color: #CCFF00;
+  border-color: var(--spotify-green);
   background-color: transparent;
-  box-shadow: 4px 4px 0px #CCFF00;
+  box-shadow: 4px 4px 0px var(--spotify-green);
   transform: translate(-2px, -2px);
 }
 
@@ -227,9 +227,9 @@
   padding: 0.875rem 1.5rem;
   font-size: 0.75rem;
   font-weight: 700;
-  background: #CCFF00;
+  background: var(--spotify-green);
   color: #050505;
-  border: 2px solid #CCFF00;
+  border: 2px solid var(--spotify-green);
   border-radius: 0;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -261,9 +261,9 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #CCFF00;
+  color: var(--spotify-green);
   background: transparent;
-  border: 2px solid #CCFF00;
+  border: 2px solid var(--spotify-green);
   border-radius: 0;
   padding: 0.875rem 1.25rem;
   backdrop-filter: none;
@@ -322,7 +322,7 @@
 }
 
 .theme-cyber .songs-table th.sortable:hover {
-  color: #CCFF00;
+  color: var(--spotify-green);
   background: #050505;
 }
 
@@ -392,7 +392,7 @@
 
 .theme-cyber .votes {
   font-weight: 700;
-  color: #CCFF00;
+  color: var(--spotify-green);
   text-align: center;
   font-size: 1rem;
   letter-spacing: 1px;
@@ -433,7 +433,7 @@
 .theme-cyber .loading {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #CCFF00;
+  color: var(--spotify-green);
   text-transform: uppercase;
   letter-spacing: 4px;
   animation: none;
@@ -510,7 +510,7 @@
   .theme-cyber .theme-selector {
     padding: 0.5rem 2.5rem 0.5rem 0.75rem;
     font-size: 0.7rem;
-    box-shadow: 3px 3px 0px #CCFF00;
+    box-shadow: 3px 3px 0px var(--spotify-green);
   }
 
   .theme-cyber .songs-table {
@@ -537,12 +537,12 @@
 }
 
 .theme-cyber .mobile-search-input:focus {
-  border-color: #CCFF00;
+  border-color: var(--spotify-green);
   box-shadow: 0 0 0 2px rgba(204, 255, 0, 0.1);
 }
 
 .theme-cyber .mobile-filter-button {
-  background: #CCFF00;
+  background: var(--spotify-green);
   color: #050505;
   border-radius: 0;
   box-shadow: 4px 4px 0 rgba(204, 255, 0, 0.5);
@@ -558,8 +558,8 @@
 
 .theme-cyber .filter-badge {
   background: #050505;
-  color: #CCFF00;
-  border: 1px solid #CCFF00;
+  color: var(--spotify-green);
+  border: 1px solid var(--spotify-green);
 }
 
 @media (max-width: 768px) {

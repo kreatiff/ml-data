@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
+import { useSalmonMode, SALMON_YEAR_MAP } from '../hooks/useSalmonMode'
 import { supabase } from '../supabaseClient'
 import './PlaylistsPage.css'
 
@@ -133,9 +134,12 @@ function PlaylistsPage() {
     filteredVotes, filteredSubmissions, playerStats
   } = useAnalytics({ team: teamParam })
 
+  const { getLeagueName, salmonMode } = useSalmonMode()
+
   useEffect(() => {
-    if (urlYear && YEAR_TO_LEAGUE[urlYear]) {
-      setSelectedLeague(YEAR_TO_LEAGUE[urlYear])
+    const leagueId = YEAR_TO_LEAGUE[urlYear] || SALMON_YEAR_MAP[urlYear?.toLowerCase()]
+    if (urlYear && leagueId) {
+      setSelectedLeague(leagueId)
     }
   }, [urlYear, setSelectedLeague])
 
@@ -144,7 +148,9 @@ function PlaylistsPage() {
     [playerStats]
   )
 
-  const leagueName = LEAGUE_YEARS[selectedLeague] || 'All Leagues'
+  const leagueName = salmonMode
+    ? getLeagueName(selectedLeague, LEAGUE_YEARS[selectedLeague] || 'All Leagues')
+    : (LEAGUE_YEARS[selectedLeague] || 'All Leagues')
 
   const { featured, bestOfPlaylists } = usePlaylistDefinitions(
     filteredVotes, filteredSubmissions, players
@@ -258,11 +264,11 @@ function PlaylistsPage() {
             <select
               value={selectedLeague}
               onChange={(e) => setSelectedLeague(e.target.value)}
-              className="league-filter"
+              className="theme-selector"
             >
               <option value="">All Leagues</option>
               {leagues.map(l => (
-                <option key={l.id} value={l.id}>{l.name || l.id}</option>
+                <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
               ))}
             </select>
           )}
