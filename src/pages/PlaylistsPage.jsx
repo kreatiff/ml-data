@@ -137,9 +137,13 @@ function PlaylistsPage() {
   const { getLeagueName, salmonMode } = useSalmonMode()
 
   useEffect(() => {
-    const leagueId = YEAR_TO_LEAGUE[urlYear] || SALMON_YEAR_MAP[urlYear?.toLowerCase()]
-    if (urlYear && leagueId) {
-      setSelectedLeague(leagueId)
+    if (urlYear?.toLowerCase() === 'all') {
+      setSelectedLeague('')
+    } else {
+      const leagueId = YEAR_TO_LEAGUE[urlYear] || SALMON_YEAR_MAP[urlYear?.toLowerCase()]
+      if (urlYear && leagueId) {
+        setSelectedLeague(leagueId)
+      }
     }
   }, [urlYear, setSelectedLeague])
 
