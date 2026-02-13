@@ -352,6 +352,11 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               <SongCard key={`${song.round_id}_${song.spotify_uri}`} song={song} />
             ))
           )}
+          {!salmonMode && (
+            <div className="salmon-prophecy">
+              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+            </div>
+          )}
         </div>
       ) : (
         <div className="table-container">
@@ -405,6 +410,11 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               )}
             </tbody>
           </table>
+          {!salmonMode && (
+            <div className="salmon-prophecy">
+              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+            </div>
+          )}
         </div>
       )}
 

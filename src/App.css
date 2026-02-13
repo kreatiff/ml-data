@@ -732,6 +732,21 @@
   }
 }
 
+/* Salmon Prophecy */
+.salmon-prophecy {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-style: italic;
+  color: var(--spotify-gray);
+  font-size: 0.8rem;
+  opacity: 1;
+  letter-spacing: 0.02em;
+  max-width: 800px;
+  margin: 0 auto;
+}.salmon-prophecy:hover {
+  opacity: 1;
+  color: salmon
+}
 /* Salmon Mode Popup */
 .salmon-popup-overlay {
   position: fixed;

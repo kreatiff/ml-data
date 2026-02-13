@@ -4,8 +4,8 @@ const STORAGE_KEY = 'salmon_mode'
 const EVENT_NAME = 'salmonModeChanged'
 
 const SALMON_NAMES = {
-  '2a40e26e20e846cbae7b66d53c1488f0': '1 BS',
-  'fe08d6855f204613b30922e34a7486c6': '1 AS',
+  '2a40e26e20e846cbae7b66d53c1488f0': '1BS',
+  'fe08d6855f204613b30922e34a7486c6': '1AS',
 }
 
 export function useSalmonMode() {

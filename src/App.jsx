@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { useSalmonMode } from './hooks/useSalmonMode'
 import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
@@ -43,16 +44,18 @@ function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
     return localStorage.getItem('app_theme') || 'cyber'
   })
+  const { salmonMode } = useSalmonMode()
 
   useEffect(() => {
     const theme = themes[selectedTheme]
     if (theme) {
       Object.entries(theme.colors).forEach(([key, value]) => {
+        if (salmonMode && (key === '--spotify-green' || key === '--spotify-green-hover')) return
         document.documentElement.style.setProperty(key, value)
       })
       localStorage.setItem('app_theme', selectedTheme)
     }
-  }, [selectedTheme])
+  }, [selectedTheme, salmonMode])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
