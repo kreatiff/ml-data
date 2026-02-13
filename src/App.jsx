@@ -72,8 +72,8 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
-        <Route path="/badges" element={<BadgesPage />} />
+        <Route path="/analytics/:year?" element={<AnalyticsPage />} />
+        <Route path="/badges/:year?" element={<BadgesPage />} />
         <Route path="/playlists/:year?" element={<PlaylistsPage />} />
       </Routes>
     </div>

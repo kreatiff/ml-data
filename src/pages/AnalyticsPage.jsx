@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams, useParams } from 'react-router-dom'
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
@@ -25,7 +25,13 @@ const SORT_KEYS = {
   bestSongScore: 'bestSongScore',
 }
 
+const YEAR_TO_LEAGUE = {
+  '2025': '2a40e26e20e846cbae7b66d53c1488f0',
+  '2026': 'fe08d6855f204613b30922e34a7486c6',
+}
+
 function AnalyticsPage() {
+  const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
 
@@ -35,6 +41,12 @@ function AnalyticsPage() {
     topArtists, underdogTriumphs, playerTrajectory, voteCollectionBoard,
     totalVotes, totalSubmissions
   } = useAnalytics({ team: teamParam })
+
+  useEffect(() => {
+    if (urlYear && YEAR_TO_LEAGUE[urlYear]) {
+      setSelectedLeague(YEAR_TO_LEAGUE[urlYear])
+    }
+  }, [urlYear, setSelectedLeague])
 
   const isMobile = useIsMobile()
   const [playerSort, setPlayerSort] = useState({ key: 'totalPoints', dir: 'desc' })

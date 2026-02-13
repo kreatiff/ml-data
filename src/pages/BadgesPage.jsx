@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { useBadges } from '../hooks/useBadges'
 import './BadgesPage.css'
@@ -8,7 +8,13 @@ const CATEGORIES = ['Performance', 'Standings', 'Voting', 'Social', 'Meta']
 
 const MAX_VISIBLE = 3
 
+const YEAR_TO_LEAGUE = {
+  '2025': '2a40e26e20e846cbae7b66d53c1488f0',
+  '2026': 'fe08d6855f204613b30922e34a7486c6',
+}
+
 function BadgesPage() {
+  const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
   const [modalBadge, setModalBadge] = useState(null)
@@ -17,6 +23,12 @@ function BadgesPage() {
     loading, error, leagues, activeTeam, selectedLeague, setSelectedLeague,
     filteredVotes, filteredSubmissions
   } = useAnalytics({ team: teamParam })
+
+  useEffect(() => {
+    if (urlYear && YEAR_TO_LEAGUE[urlYear]) {
+      setSelectedLeague(YEAR_TO_LEAGUE[urlYear])
+    }
+  }, [urlYear, setSelectedLeague])
 
   const badges = useBadges(filteredVotes, filteredSubmissions)
 
