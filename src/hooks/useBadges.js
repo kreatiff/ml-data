@@ -15,6 +15,7 @@ import nonConformistImg from '../assets/badges/non_conformist.jpg'
 import crowdPleaserImg from '../assets/badges/crowd_pleaser.jpg'
 import controversialImg from '../assets/badges/controversial.jpg'
 import hipsterImg from '../assets/badges/hipster.jpg'
+import placeholderImg from '../assets/badges/hipster.jpg'
 
 const BADGE_DEFS = [
   // Performance
@@ -32,6 +33,7 @@ const BADGE_DEFS = [
   { id: 'kingmaker', name: 'Hit Oracle', image: hitOracleImg, category: 'Voting', description: 'Predicted the crowd favourite the most, voting for the round winner more than anyone else' },
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
   { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Most points given to songs that finished last in their round' },
+  { id: 'commentator', name: 'Commentator', image: placeholderImg, category: 'Voting', description: 'Left a comment on every song in at least one round' },
   // Social
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
@@ -367,6 +369,41 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.hipster = pickMax(
       Object.entries(uniqueArtistCount).map(([id, count]) => ({ id, name: nameMap[id] || 'Unknown', stat: count }))
     )
+
+    // 16. Commentator — left a comment on every song in at least one round
+    const roundSongCounts = {} // round_id → total song count
+    filteredSubmissions.forEach(s => {
+      roundSongCounts[s.round_id] = (roundSongCounts[s.round_id] || 0) + 1
+    })
+    
+    const voterComments = {} // voter_id → { round_id → commented_count }
+    filteredVotes.forEach(v => {
+      if (v.comment && v.comment.trim()) {
+        if (!voterComments[v.voter_id]) voterComments[v.voter_id] = {}
+        if (!voterComments[v.voter_id][v.round_id]) voterComments[v.voter_id][v.round_id] = 0
+        voterComments[v.voter_id][v.round_id]++
+      }
+    })
+    
+    const commentatorPlayers = []
+    Object.entries(voterComments).forEach(([voterId, roundData]) => {
+      const completedRounds = []
+      Object.entries(roundData).forEach(([roundId, commentCount]) => {
+        const totalSongs = roundSongCounts[roundId] || 0
+        // They commented on every song in this round (excluding their own submission)
+        if (commentCount === totalSongs - 1 || (commentCount === totalSongs && !filteredSubmissions.some(s => s.submitter_id === voterId && s.round_id === roundId))) {
+          completedRounds.push(roundId)
+        }
+      })
+      if (completedRounds.length > 0) {
+        commentatorPlayers.push({
+          id: voterId,
+          name: nameMap[voterId] || 'Unknown',
+          stat: `${completedRounds.length} round${completedRounds.length > 1 ? 's' : ''}`
+        })
+      }
+    })
+    badgeResults.commentator = commentatorPlayers
 
     // ── Assemble final badges array ──
     return BADGE_DEFS.map(def => ({

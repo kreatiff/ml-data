@@ -35,7 +35,7 @@ export function useAnalytics({ team } = {}) {
         }
 
         const [votesData, submissionsData, competitorsData, roundsData] = await Promise.all([
-          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, imported_at'),
+          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, comment, imported_at'),
           fetchAll('submissions', 'round_id, spotify_uri, song_name, artists, album, created_at, submitter_id'),
           fetchAll('competitors', 'id, name, team'),
           fetchAll('rounds', 'id, name, created_at, league_id')
@@ -80,6 +80,7 @@ export function useAnalytics({ team } = {}) {
             voter_name: competitorMap[v.voter_id] || 'Unknown',
             voter_team: competitorTeamMap[v.voter_id] || '',
             points_assigned: v.points_assigned,
+            comment: v.comment || '',
             song_name: sub?.song_name || 'Unknown',
             artists: sub?.artists || 'Unknown',
             album: sub?.album || '',
