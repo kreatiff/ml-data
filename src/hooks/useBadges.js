@@ -17,6 +17,8 @@ import controversialImg from '../assets/badges/controversial.jpg'
 import hipsterImg from '../assets/badges/hipster.jpg'
 import gottaCatchEmAllImg from '../assets/badges/pokemon.jpg'
 import infinityGauntletImg from '../assets/badges/infinity_gauntlet.jpg'
+import commentatorImg from '../assets/badges/commentator.png'
+import keyboardWarriorImg from '../assets/badges/keyboard_warrior.jpg'
 
 const BADGE_DEFS = [
   // Performance
@@ -35,7 +37,9 @@ const BADGE_DEFS = [
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
   { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Gave points to the last-place song in 5 or more rounds' },
   { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Voting', description: 'Received at least 1 vote from every other player' },
-  { id: 'commentator', name: 'Commentator', image: placeholderImg, category: 'Voting', description: 'Left a comment on every song in at least one round' },
+  { id: 'commentator', name: 'Dedicated Commentator', image: commentatorImg, category: 'Voting', description: 'Left a comment on every song in at least one round' },
+  { id: 'keyboard_warrior', name: 'Keyboard Warrior', image: keyboardWarriorImg, category: 'Voting', description: 'Commented on more than 50% of all submitted songs. Bonus points if they built a custom keyboard to do it.' },
+
   // Social
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
@@ -461,15 +465,20 @@ export function useBadges(filteredVotes, filteredSubmissions) {
           completedRounds.push(roundId)
         }
       })
-      if (completedRounds.length > 0) {
+      if (completedRounds.length >= 3) {
         commentatorPlayers.push({
           id: voterId,
           name: nameMap[voterId] || 'Unknown',
-          stat: `${completedRounds.length} round${completedRounds.length > 1 ? 's' : ''}`
+          stat: completedRounds.length,
+          displayStat: `${completedRounds.length} round${completedRounds.length > 1 ? 's' : ''}`
         })
       }
     })
-    badgeResults.commentator = commentatorPlayers
+    badgeResults.commentator = commentatorPlayers.sort((a, b) => b.stat - a.stat).map(p => ({
+      id: p.id,
+      name: p.name,
+      stat: p.displayStat
+    }))
 
     // ── Assemble final badges array ──
     return BADGE_DEFS.map(def => {
