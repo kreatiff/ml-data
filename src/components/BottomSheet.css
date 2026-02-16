@@ -157,7 +157,7 @@
 }
 
 .theme-cyber .bottom-sheet-handle {
-  background: #CCFF00;
+  background: var(--spotify-green);
   opacity: 0.5;
 }
 

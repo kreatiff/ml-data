@@ -5,7 +5,7 @@ import consistentImg from '../assets/badges/consistent.jpg'
 import oneHitWonderImg from '../assets/badges/one_hit_wonder.jpg'
 import coldStreakImg from '../assets/badges/cold_streak.jpg'
 import summitImg from '../assets/badges/summit.jpg'
-import reignImg from '../assets/badges/reign.png'
+import reignImg from '../assets/badges/reign.jpg'
 import podiumImg from '../assets/badges/podium.jpg'
 import hotStreakImg from '../assets/badges/hot_streak.jpg'
 import darkHorseImg from '../assets/badges/dark_horse.jpg'
@@ -15,29 +15,33 @@ import nonConformistImg from '../assets/badges/non_conformist.jpg'
 import crowdPleaserImg from '../assets/badges/crowd_pleaser.jpg'
 import controversialImg from '../assets/badges/controversial.jpg'
 import hipsterImg from '../assets/badges/hipster.jpg'
-import placeholderImg from '../assets/badges/hipster.jpg'
+import gottaCatchEmAllImg from '../assets/badges/pokemon.jpg'
+import infinityGauntletImg from '../assets/badges/infinity_gauntlet.jpg'
 
 const BADGE_DEFS = [
   // Performance
   { id: 'crown_jewel', name: 'Crown Jewel', image: crownJewelImg, category: 'Performance', description: 'Won the most rounds' },
   { id: 'consistent', name: 'Consistent', image: consistentImg, category: 'Performance', description: 'Highest average points per song (min 3 rounds)' },
   { id: 'one_hit_wonder', name: 'One Hit Wonder', image: oneHitWonderImg, category: 'Performance', description: 'Has a song scoring 2x+ their own average' },
-  { id: 'cold_streak', name: 'Cold Streak', image: coldStreakImg, category: 'Performance', description: 'Most submissions with 0 points' },
+  { id: 'cold_streak', name: 'Cold Streak', image: coldStreakImg, category: 'Performance', description: 'Had 5 or more songs score 0 points' },
   // Standings History
   { id: 'summit', name: 'Reached the Summit', image: summitImg, category: 'Standings', description: 'Was #1 overall at any point during the league' },
   { id: 'reign', name: 'Reign', image: reignImg, category: 'Standings', description: 'Most consecutive rounds spent at #1 overall' },
-  { id: 'podium', name: 'Podium', image: podiumImg, category: 'Standings', description: 'Most consecutive rounds at #2 or #3 overall' },
+  { id: 'podium', name: 'Podium', image: podiumImg, category: 'Standings', description: 'Most consecutive rounds in the top 3 overall' },
   { id: 'hot_streak', name: 'Hot Streak', image: hotStreakImg, category: 'Standings', description: 'Most consecutive rounds finishing top 3 in a round' },
   { id: 'dark_horse', name: 'Dark Horse', image: darkHorseImg, category: 'Standings', description: 'Won a round while ranked in the bottom half overall' },
   // Voting Style
   { id: 'kingmaker', name: 'Hit Oracle', image: hitOracleImg, category: 'Voting', description: 'Predicted the crowd favourite the most, voting for the round winner more than anyone else' },
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
-  { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Most points given to songs that finished last in their round' },
+  { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Gave points to the last-place song in 5 or more rounds' },
+  { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Voting', description: 'Received at least 1 vote from every other player' },
   { id: 'commentator', name: 'Commentator', image: placeholderImg, category: 'Voting', description: 'Left a comment on every song in at least one round' },
   // Social
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
   { id: 'hipster', name: 'Hipster', image: hipsterImg, category: 'Social', description: 'Most unique artists (artists nobody else submitted)' },
+  // Meta
+  { id: 'infinity_gauntlet', name: 'Infinity Gauntlet', image: infinityGauntletImg, category: 'Meta', description: 'Collected every other badge' },
 ]
 
 export function useBadges(filteredVotes, filteredSubmissions) {
@@ -96,15 +100,15 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       if (playerMap[w.submitter_id]) playerMap[w.submitter_id].roundWins++
     })
 
-    // Rounds sorted chronologically by max imported_at
-    const roundImportedAt = {}
+    // Rounds sorted chronologically by round_date (rounds.created_at)
+    const roundDates = {}
     filteredVotes.forEach(v => {
-      if (!roundImportedAt[v.round_id] || v.imported_at > roundImportedAt[v.round_id]) {
-        roundImportedAt[v.round_id] = v.imported_at
+      if (v.round_id && v.round_date && !roundDates[v.round_id]) {
+        roundDates[v.round_id] = v.round_date
       }
     })
-    const sortedRoundIds = Object.keys(roundImportedAt).sort((a, b) => {
-      return new Date(roundImportedAt[a]) - new Date(roundImportedAt[b])
+    const sortedRoundIds = Object.keys(roundDates).sort((a, b) => {
+      return new Date(roundDates[a]) - new Date(roundDates[b])
     })
 
     // Name map for convenience
@@ -147,11 +151,10 @@ export function useBadges(filteredVotes, filteredSubmissions) {
         return { id, name: p.name, stat: `Best: ${p.bestSongScore} (avg ${avg})` }
       })
 
-    // 4. Cold Streak — most submissions with 0 points
-    const zeroEntries = Object.entries(playerMap)
-      .filter(([, p]) => p.zeroSongs > 0)
-      .map(([id, p]) => ({ id, name: p.name, stat: p.zeroSongs }))
-    badgeResults.cold_streak = pickMax(zeroEntries)
+    // 4. Cold Streak — had 5 or more songs score 0 points
+    badgeResults.cold_streak = Object.entries(playerMap)
+      .filter(([, p]) => p.zeroSongs >= 5)
+      .map(([id, p]) => ({ id, name: p.name, stat: `${p.zeroSongs} songs` }))
 
     // ── Standings History ──
     // Simulate cumulative standings after each round
@@ -174,10 +177,19 @@ export function useBadges(filteredVotes, filteredSubmissions) {
         .map(id => ({ id, total: cumulativePoints[id] }))
         .sort((a, b) => b.total - a.total)
 
-      ranked.forEach((r, i) => { r.rank = i + 1 })
+      ranked.forEach((r, i) => {
+        r.rank = (i === 0 || ranked[i - 1].total !== r.total) ? i + 1 : ranked[i - 1].rank
+      })
 
       standingsHistory.push({ round_id: roundId, rankings: ranked })
     })
+
+    // DEBUG: log standings history to help verify Summit badge
+    console.log('[Badges] Round order:', sortedRoundIds.map(id => ({ id, date: roundDates[id] })))
+    console.log('[Badges] Standings history:', standingsHistory.map(s => ({
+      round_id: s.round_id,
+      top3: s.rankings.slice(0, 3).map(r => `${r.rank}. ${nameMap[r.id] || r.id} (${r.total})`)
+    })))
 
     // 5. Reached the Summit — was ever #1
     const summitPlayers = new Set()
@@ -206,13 +218,13 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       allPlayerIds.map(id => ({ id, name: nameMap[id] || 'Unknown', stat: reignStreaks[id].max }))
     )
 
-    // 7. Podium — most consecutive rounds at #2 or #3 overall
+    // 7. Podium — most consecutive rounds in the top 3 overall
     const podiumStreaks = {}
     allPlayerIds.forEach(id => { podiumStreaks[id] = { max: 0, current: 0 } })
     standingsHistory.forEach(s => {
       allPlayerIds.forEach(id => {
         const r = s.rankings.find(x => x.id === id)
-        if (r && (r.rank === 2 || r.rank === 3)) {
+        if (r && r.rank <= 3) {
           podiumStreaks[id].current++
           if (podiumStreaks[id].current > podiumStreaks[id].max) podiumStreaks[id].max = podiumStreaks[id].current
         } else {
@@ -303,18 +315,19 @@ export function useBadges(filteredVotes, filteredSubmissions) {
           })
       : []
 
-    // 12. Non-conformist — most points given to songs that finished last in their round
-    const nonconformistPts = {}
+    // 12. Non-conformist — gave points to the last-place song in 5 or more rounds
+    const nonconformistRounds = {}
     filteredVotes.forEach(v => {
       const key = `${v.round_id}_${v.spotify_uri}`
       const ss = songScores[key]
       if (ss && ss.total === roundLastPlace[v.round_id] && v.points_assigned > 0) {
-        nonconformistPts[v.voter_id] = (nonconformistPts[v.voter_id] || 0) + v.points_assigned
+        if (!nonconformistRounds[v.voter_id]) nonconformistRounds[v.voter_id] = new Set()
+        nonconformistRounds[v.voter_id].add(v.round_id)
       }
     })
-    badgeResults.nonconformist = pickMax(
-      Object.entries(nonconformistPts).map(([id, pts]) => ({ id, name: nameMap[id] || 'Unknown', stat: pts }))
-    )
+    badgeResults.nonconformist = Object.entries(nonconformistRounds)
+      .filter(([, rounds]) => rounds.size >= 5)
+      .map(([id, rounds]) => ({ id, name: nameMap[id] || 'Unknown', stat: `${rounds.size} rounds` }))
 
     // ── Social ──
 
@@ -347,16 +360,16 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.controversial = controversialEntries
 
     // 15. Hipster — most unique artists (artists nobody else submitted)
+    // Use the full artists string per submission (not split by comma)
+    // so "Artist A, Artist B" is one entry, max = number of submissions
     const artistSubmitters = {} // artist → Set of submitter_ids
     filteredSubmissions.forEach(s => {
       if (s.artists) {
-        s.artists.split(/,\s*/).forEach(a => {
-          const trimmed = a.trim()
-          if (trimmed) {
-            if (!artistSubmitters[trimmed]) artistSubmitters[trimmed] = new Set()
-            artistSubmitters[trimmed].add(s.submitter_id)
-          }
-        })
+        const artist = s.artists.trim()
+        if (artist) {
+          if (!artistSubmitters[artist]) artistSubmitters[artist] = new Set()
+          artistSubmitters[artist].add(s.submitter_id)
+        }
       }
     })
     const uniqueArtistCount = {} // submitter_id → count of artists only they submitted
@@ -369,6 +382,59 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.hipster = pickMax(
       Object.entries(uniqueArtistCount).map(([id, count]) => ({ id, name: nameMap[id] || 'Unknown', stat: count }))
     )
+
+    // 16. Gotta Catch 'em All — received at least 1 vote from every other player
+    const uniqueVotersPerPlayer = {}
+    allPlayerIds.forEach(id => { uniqueVotersPerPlayer[id] = new Set() })
+    filteredVotes.forEach(v => {
+      if (v.voter_id !== v.submitter_id && v.points_assigned > 0 && uniqueVotersPerPlayer[v.submitter_id]) {
+        uniqueVotersPerPlayer[v.submitter_id].add(v.voter_id)
+      }
+    })
+    const totalOthers = allPlayerIds.length - 1
+    badgeResults.gotta_catch_em_all = totalOthers > 0
+      ? allPlayerIds
+          .filter(id => uniqueVotersPerPlayer[id].size >= totalOthers)
+          .map(id => ({ id, name: nameMap[id] || 'Unknown', stat: `${uniqueVotersPerPlayer[id].size}/${totalOthers} voters` }))
+      : []
+
+    // 17. Infinity Gauntlet — collected every other badge
+    const otherBadgeDefs = BADGE_DEFS.filter(d => d.id !== 'infinity_gauntlet')
+    const otherBadgeIds = otherBadgeDefs.map(d => d.id)
+    const badgeNameMap = {}
+    otherBadgeDefs.forEach(d => { badgeNameMap[d.id] = d.name })
+
+    // Track which badges each player has earned
+    const playerBadgeSet = {} // playerId → Set of badge ids
+    otherBadgeIds.forEach(bid => {
+      ;(badgeResults[bid] || []).forEach(p => {
+        if (!playerBadgeSet[p.id]) playerBadgeSet[p.id] = new Set()
+        playerBadgeSet[p.id].add(bid)
+      })
+    })
+
+    // Winners: players with all badges
+    badgeResults.infinity_gauntlet = Object.entries(playerBadgeSet)
+      .filter(([, badges]) => badges.size === otherBadgeIds.length)
+      .map(([id, badges]) => ({ id, name: nameMap[id] || 'Unknown', stat: `${badges.size}/${otherBadgeIds.length} badges` }))
+
+    // Closest contenders: top 3 counts (excluding winners), with per-badge earned status
+    const contenders = Object.entries(playerBadgeSet)
+      .filter(([, badges]) => badges.size < otherBadgeIds.length)
+      .map(([id, badges]) => ({
+        id,
+        name: nameMap[id] || 'Unknown',
+        count: badges.size,
+        badges: otherBadgeDefs.map(d => ({ id: d.id, name: d.name, image: d.image, earned: badges.has(d.id) })),
+      }))
+      .sort((a, b) => b.count - a.count)
+
+    // Take top 3, expanding for ties at the 3rd position
+    let closestPlayers = []
+    if (contenders.length > 0) {
+      const cutoff = contenders.length >= 3 ? contenders[2].count : contenders[contenders.length - 1].count
+      closestPlayers = contenders.filter(c => c.count >= cutoff)
+    }
 
     // 16. Commentator — left a comment on every song in at least one round
     const roundSongCounts = {} // round_id → total song count
@@ -406,10 +472,17 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.commentator = commentatorPlayers
 
     // ── Assemble final badges array ──
-    return BADGE_DEFS.map(def => ({
-      ...def,
-      players: badgeResults[def.id] || [],
-      achieved: (badgeResults[def.id] || []).length > 0,
-    }))
+    return BADGE_DEFS.map(def => {
+      const result = {
+        ...def,
+        players: badgeResults[def.id] || [],
+        achieved: (badgeResults[def.id] || []).length > 0,
+      }
+      if (def.id === 'infinity_gauntlet') {
+        result.closestPlayers = closestPlayers
+        result.totalBadges = otherBadgeIds.length
+      }
+      return result
+    })
   }, [filteredVotes, filteredSubmissions])
 }

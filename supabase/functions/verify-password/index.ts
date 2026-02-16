@@ -14,6 +14,7 @@ serve(async (req) => {
   try {
     const { password } = await req.json()
     const correctPassword = Deno.env.get('ACCESS_PASSWORD')
+    const adminPassword = Deno.env.get('ADMIN_PASSWORD')
 
     if (!correctPassword) {
       return new Response(
@@ -25,9 +26,13 @@ serve(async (req) => {
       )
     }
 
-    if (password === correctPassword) {
+    const isAdmin = !!(adminPassword && password === adminPassword)
+    const isValid = isAdmin || password === correctPassword
+
+    if (isValid) {
       const tokenData = {
         authenticated: true,
+        isAdmin,
         timestamp: Date.now(),
       }
       
@@ -41,6 +46,7 @@ serve(async (req) => {
         JSON.stringify({ 
           success: true,
           token: token,
+          isAdmin,
           message: 'Authentication successful'
         }),
         { 

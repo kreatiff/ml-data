@@ -1,6 +1,5 @@
 .analytics-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1400px;
   padding: 1.5rem;
 }
 
@@ -318,14 +317,14 @@
   color: var(--spotify-green);
 }
 
-/* Controversial Cards (mobile) */
-.controversial-cards {
+/* Underdog Triumphs Cards (mobile) */
+.underdog-cards {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.controversial-card {
+.underdog-card {
   display: flex;
   gap: 0.75rem;
   padding: 0.75rem;
@@ -334,41 +333,52 @@
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.controversial-rank {
+.underdog-rank-badge {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--spotify-gray);
-  min-width: 2rem;
+  color: var(--spotify-green);
+  min-width: 3.5rem;
   text-align: center;
   padding-top: 0.1rem;
+  white-space: nowrap;
 }
 
-.controversial-info {
+.underdog-info {
   flex: 1;
   min-width: 0;
 }
 
-.controversial-song {
+.underdog-winner {
   font-weight: 700;
   color: var(--spotify-white);
   font-size: 0.9rem;
+}
+
+.underdog-song {
+  color: var(--spotify-light-gray);
+  font-size: 0.85rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.controversial-artist {
-  color: var(--spotify-light-gray);
+.underdog-artist {
+  color: var(--spotify-gray);
   font-size: 0.8rem;
   margin-bottom: 0.25rem;
 }
 
-.controversial-meta {
+.underdog-meta {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
   font-size: 0.75rem;
   color: var(--spotify-gray);
+}
+
+.underdog-position {
+  color: var(--spotify-green);
+  font-weight: 600;
 }
 
 /* Chart Container */
@@ -390,7 +400,7 @@
 /* Song name in tables */
 .song-name {
   font-weight: 600;
-  color: var(--spotify-white) !important;
+  color: var(--spotify-white);
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;

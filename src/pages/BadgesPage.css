@@ -290,6 +290,106 @@
   border-bottom: none;
 }
 
+/* Infinity Gauntlet — full-width card */
+.badge-card-gauntlet {
+  grid-column: 1 / -1;
+}
+
+.badge-image-gauntlet {
+  width: 240px;
+  height: 240px;
+}
+
+.badge-image-locked {
+  filter: grayscale(0.8);
+  opacity: 0.8;
+}
+
+.gauntlet-closest {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gauntlet-closest-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+
+.gauntlet-contender {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.gauntlet-contender:last-child {
+  border-bottom: none;
+}
+
+.gauntlet-contender-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.gauntlet-badge-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+}
+
+.gauntlet-badge-icon-wrapper {
+  position: relative;
+  cursor: default;
+}
+
+.gauntlet-badge-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.15s;
+}
+
+.gauntlet-badge-icon-locked {
+  filter: grayscale(1);
+  opacity: 0.8;
+}
+
+.gauntlet-badge-icon-wrapper:hover .gauntlet-badge-icon {
+  transform: scale(1.15);
+}
+
+.gauntlet-badge-icon-wrapper::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--spotify-card, #282828);
+  color: var(--spotify-white, #fff);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.gauntlet-badge-icon-wrapper:hover::after {
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
   .badges-page {
     padding: 1.25rem 1rem;
@@ -303,12 +403,40 @@
     grid-template-columns: 1fr;
   }
 
+  .badge-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
   .badge-image {
-    width: 64px;
-    height: 64px;
+    width: 160px;
+    height: 160px;
+  }
+
+  .badge-image-gauntlet {
+    width: 200px;
+    height: 200px;
+  }
+
+  .badge-player {
+    justify-content: center;
   }
 
   .badge-name {
     font-size: 0.9rem;
+  }
+
+  .gauntlet-contender-header {
+    justify-content: center;
+  }
+
+  .gauntlet-badge-icons {
+    justify-content: center;
+  }
+
+  .gauntlet-badge-icon {
+    width: 48px;
+    height: 48px;
   }
 }

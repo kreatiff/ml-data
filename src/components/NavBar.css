@@ -12,6 +12,7 @@
 }
 
 .nav-brand {
+  font-family: 'Stalinist One', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--spotify-green);

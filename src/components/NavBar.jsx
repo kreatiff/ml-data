@@ -14,7 +14,7 @@ function NavBar() {
 
   return (
     <nav className="nav-bar">
-      <div className="nav-brand">Dupleighcates{teamIcon && <span className="team-icon">{teamIcon}</span>}</div>
+      <div className="nav-brand">Dupleighcates{localStorage.getItem('app_is_admin') === 'true' && ' 🔑'}{teamIcon && <span className="team-icon">{teamIcon}</span>}</div>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Songs
@@ -24,6 +24,9 @@ function NavBar() {
         </NavLink>
         <NavLink to="/badges" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Badges
+        </NavLink>
+        <NavLink to="/playlists" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          Playlists
         </NavLink>
       </div>
     </nav>

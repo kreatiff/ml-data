@@ -120,5 +120,5 @@
 }
 
 .theme-cyber .song-card-votes {
-  color: #CCFF00;
+  color: var(--spotify-green);
 }

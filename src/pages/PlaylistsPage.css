@@ -1,0 +1,564 @@
+.playlists-page {
+  max-width: 1400px;
+  padding: 2rem 1.5rem;
+}
+
+.playlists-loading,
+.playlists-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--spotify-gray);
+  font-size: 1rem;
+}
+
+.playlists-error h2 {
+  color: #FF6B6B;
+  margin-bottom: 0.5rem;
+}
+
+.playlists-header {
+  margin-bottom: 2rem;
+}
+
+.playlists-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.playlists-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--spotify-white);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.playlists-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Side-by-side layout */
+.playlists-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.playlists-col-featured {
+  flex: 1;
+  min-width: 0;
+}
+
+.playlists-col-bestof {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Playlist Cards Grid */
+.playlists-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.playlist-card {
+  background: var(--spotify-elevated);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.playlist-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.playlist-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.playlist-card-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.playlist-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin: 0 0 0.2rem 0;
+}
+
+.playlist-card-desc {
+  font-size: 0.82rem;
+  color: var(--spotify-gray);
+  line-height: 1.35;
+}
+
+.playlist-card-meta {
+  font-size: 0.78rem;
+  color: var(--spotify-gray);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.playlist-card-meta strong {
+  color: var(--spotify-green);
+}
+
+.playlist-track-count-link {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  color: var(--spotify-gray);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 3px;
+  transition: all 0.1s ease;
+}
+
+.playlist-track-count-link.is-static {
+  cursor: default;
+}
+
+.playlist-track-count-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--spotify-green);
+}
+
+.playlist-track-count-link strong {
+  color: inherit;
+}
+
+.bestof-table .playlist-tracks-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  color: var(--spotify-gray);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 3px;
+  transition: all 0.1s ease;
+}
+
+.bestof-table .playlist-tracks-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--spotify-green);
+}
+
+/* Playlist card action bar */
+.playlist-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.playlist-action-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.playlist-status-group {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.playlist-action-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.playlist-sync-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+  margin-left: -1px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.playlist-sync-status.is-synced {
+  color: var(--spotify-green);
+  border-color: rgba(29, 185, 84, 0.5);
+  background: rgba(29, 185, 84, 0.12);
+}
+
+.playlist-sync-status.is-out {
+  color: #f6c453;
+  border-color: rgba(246, 196, 83, 0.6);
+  background: rgba(246, 196, 83, 0.12);
+}
+
+.playlist-sync-status.is-new {
+  color: #9aa0a6;
+  border-color: rgba(154, 160, 166, 0.5);
+  background: rgba(154, 160, 166, 0.12);
+}
+
+.playlist-card-actions .playlist-tracks-toggle,
+.playlist-card-actions .playlist-open-link,
+.playlist-card-actions .playlist-create-btn,
+.bestof-actions .playlist-create-btn,
+.bestof-actions .playlist-open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border: 2px solid #E0E0E0;
+  border-radius: 0;
+  background-color: #050505;
+  color: #E0E0E0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+  transition: all 0.1s ease;
+  text-decoration: none;
+}
+
+.playlist-card-actions .playlist-tracks-toggle:hover,
+.playlist-card-actions .playlist-open-link:hover,
+.playlist-card-actions .playlist-create-btn:hover,
+.bestof-actions .playlist-create-btn:hover,
+.bestof-actions .playlist-open-link:hover {
+  background-color: #111111;
+  border-color: var(--spotify-green);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--spotify-green);
+}
+
+.playlist-card-actions .playlist-create-btn:disabled,
+.bestof-actions .playlist-create-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 2px 2px 0px #666666;
+}
+
+/* Track preview list */
+.playlist-tracks-toggle {
+  cursor: pointer;
+}
+
+.playlist-tracks-list {
+  max-height: 240px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.playlist-track-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.78rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.playlist-track-row:last-child {
+  border-bottom: none;
+}
+
+.playlist-track-num {
+  color: var(--spotify-gray);
+  min-width: 1.5rem;
+  text-align: right;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.playlist-track-name {
+  color: var(--spotify-white);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.playlist-track-artist {
+  color: var(--spotify-gray);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+  flex-shrink: 0;
+}
+
+.playlist-track-pts {
+  color: var(--spotify-green);
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  min-width: 2rem;
+  text-align: right;
+}
+
+/* Create button */
+.playlist-card-actions {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.playlist-create-btn {
+  background: var(--spotify-green);
+  color: var(--spotify-black);
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.playlist-create-btn:hover {
+  background: var(--spotify-green-hover);
+  transform: scale(1.02);
+}
+
+.playlist-create-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.playlist-open-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--spotify-green);
+  text-decoration: none;
+}
+
+.playlist-open-link:hover {
+  text-decoration: underline;
+}
+
+.playlist-status {
+  font-size: 0.78rem;
+  color: var(--spotify-gray);
+  font-style: italic;
+}
+
+.playlist-error-msg {
+  font-size: 0.78rem;
+  color: #FF6B6B;
+}
+
+/* Best Of section */
+.bestof-section {
+  margin-top: 1rem;
+}
+
+.bestof-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.bestof-table thead th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bestof-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.1s;
+}
+
+.bestof-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bestof-table td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.bestof-player-name {
+  color: var(--spotify-white);
+  font-weight: 600;
+}
+
+.bestof-track-count {
+  color: var(--spotify-gray);
+  font-weight: 600;
+  min-width: 3rem;
+}
+
+.bestof-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Track list modal */
+.playlist-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.playlist-modal {
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.playlist-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.playlist-modal-header > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.playlist-modal-close {
+  background: none;
+  border: none;
+  color: var(--spotify-gray);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.playlist-modal-close:hover {
+  color: var(--spotify-white);
+}
+
+.playlist-modal .playlist-tracks-list {
+  max-height: none;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.playlist-modal .playlist-track-row {
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.95rem;
+}
+
+.playlist-modal .playlist-track-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.playlist-modal .playlist-track-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.playlist-modal .playlist-track-artist {
+  font-size: 0.75rem;
+  color: var(--spotify-gray);
+}
+
+.playlist-modal .playlist-track-num {
+  font-size: 0.85rem;
+}
+
+.playlist-modal .playlist-track-pts {
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .playlists-page {
+    padding: 1.25rem 1rem;
+  }
+
+  .playlists-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .playlists-columns {
+    flex-direction: column;
+  }
+
+  .playlists-grid {
+    grid-template-columns: 1fr;
+  }
+}

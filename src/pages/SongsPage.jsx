@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useSongs } from '../hooks/useSongs'
 import { useSpotifyAlbumArt } from '../hooks/useSpotifyAlbumArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import { useDebounce } from '../hooks/useDebounce'
 import SongCard from '../components/SongCard'
 import BottomSheet from '../components/BottomSheet'
+import { useSalmonMode } from '../hooks/useSalmonMode'
+import salmonImg from '../assets/salmon_mode.png'
 
 const themes = {
   default: {
@@ -40,7 +42,33 @@ const themes = {
 function SongsPage({ selectedTheme, setSelectedTheme }) {
   const { songs, loading, error } = useSongs()
   const isMobile = useIsMobile()
+  const { salmonMode, activateSalmonMode, deactivateSalmonMode, formatDate } = useSalmonMode()
   const [searchTerm, setSearchTerm] = useState('')
+  const [salmonPopupText, setSalmonPopupText] = useState('')
+  const salmonTimerRef = useRef(null)
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value
+    setSearchTerm(val)
+    if (val.toLowerCase() === 'salmon') {
+      setSearchTerm('')
+      if (salmonTimerRef.current) clearTimeout(salmonTimerRef.current)
+      const activating = !salmonMode
+      setSalmonPopupText(activating ? 'Activating Salmon Mode...' : 'Deactivating Salmon Mode...')
+      salmonTimerRef.current = setTimeout(() => {
+        if (activating) {
+          activateSalmonMode()
+        } else {
+          deactivateSalmonMode()
+        }
+        salmonTimerRef.current = setTimeout(() => setSalmonPopupText(''), 1200)
+      }, 1500)
+    }
+  }
+
+  useEffect(() => {
+    return () => { if (salmonTimerRef.current) clearTimeout(salmonTimerRef.current) }
+  }, [])
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [selectedSubmitter, setSelectedSubmitter] = useState('')
   const [selectedRound, setSelectedRound] = useState('')
@@ -175,7 +203,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               type="text"
               placeholder="Search by song name, artist, album, submitter, or round..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="search-input"
             />
           </div>
@@ -229,7 +257,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               type="text"
               placeholder="Search songs..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="mobile-search-input"
             />
           </div>
@@ -324,6 +352,11 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               <SongCard key={`${song.round_id}_${song.spotify_uri}`} song={song} />
             ))
           )}
+          {!salmonMode && (
+            <div className="salmon-prophecy">
+              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+            </div>
+          )}
         </div>
       ) : (
         <div className="table-container">
@@ -369,14 +402,28 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
                     <td title={song.submitter_name}>{song.submitter_name}</td>
                     <td title={song.round_name}>{song.round_name}</td>
                     <td className="votes" title={song.total_votes}>{song.total_votes}</td>
-                    <td className="date" title={new Date(song.created_at).toLocaleDateString('en-AU')}>
-                      {new Date(song.created_at).toLocaleDateString('en-AU')}
+                    <td className="date" title={formatDate(song.created_at)}>
+                      {formatDate(song.created_at)}
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
+          {!salmonMode && (
+            <div className="salmon-prophecy">
+              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+            </div>
+          )}
+        </div>
+      )}
+
+      {salmonPopupText && (
+        <div className="salmon-popup-overlay">
+          <div className="salmon-popup">
+            <img src={salmonImg} alt="Salmon Mode" className="salmon-popup-img" />
+            <p className="salmon-popup-text">{salmonPopupText}</p>
+          </div>
         </div>
       )}
     </div>
