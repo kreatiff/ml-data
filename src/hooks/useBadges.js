@@ -37,7 +37,7 @@ const BADGE_DEFS = [
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
   { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Gave points to the last-place song in 5 or more rounds' },
   { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Voting', description: 'Received at least 1 vote from every other player' },
-  { id: 'commentator', name: 'Dedicated Commentator', image: commentatorImg, category: 'Voting', description: 'Left a comment on every song in at least one round' },
+  { id: 'commentator', name: 'Dedicated Commentator', image: commentatorImg, category: 'Voting', description: 'Left a comment on every song in at least 3 rounds' },
   { id: 'keyboard_warrior', name: 'Keyboard Warrior', image: keyboardWarriorImg, category: 'Voting', description: 'Commented on more than 50% of all submitted songs. Bonus points if they built a custom keyboard to do it.' },
 
   // Social
