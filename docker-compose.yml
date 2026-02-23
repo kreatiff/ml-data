@@ -11,4 +11,4 @@ services:
     ports:
       - "${PORT}:80"
     restart: unless-stopped
-    container_name: dupleighcates
+    container_name: dupleighcates-${BRANCH}
