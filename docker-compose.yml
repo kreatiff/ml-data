@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   music-league-search:
     build:
@@ -13,4 +11,4 @@ services:
     ports:
       - "3000:80"
     restart: unless-stopped
-    container_name: music-league-search
+    container_name: dupleighcates
