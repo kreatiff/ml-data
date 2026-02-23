@@ -17,6 +17,8 @@ import controversialImg from '../assets/badges/controversial.jpg'
 import hipsterImg from '../assets/badges/hipster.jpg'
 import gottaCatchEmAllImg from '../assets/badges/pokemon.jpg'
 import infinityGauntletImg from '../assets/badges/infinity_gauntlet.jpg'
+import commentatorImg from '../assets/badges/commentator.png'
+import keyboardWarriorImg from '../assets/badges/keyboard_warrior.jpg'
 
 const BADGE_DEFS = [
   // Performance
@@ -35,6 +37,9 @@ const BADGE_DEFS = [
   { id: 'stalker', name: 'Stalker', image: stalkerImg, category: 'Voting', description: 'Highest total points given to a single other player' },
   { id: 'nonconformist', name: 'Non-conformist', image: nonConformistImg, category: 'Voting', description: 'Gave points to the last-place song in 5 or more rounds' },
   { id: 'gotta_catch_em_all', name: "Gotta Catch 'em All", image: gottaCatchEmAllImg, category: 'Voting', description: 'Received at least 1 vote from every other player' },
+  { id: 'commentator', name: 'Dedicated Commentator', image: commentatorImg, category: 'Voting', description: 'Left a comment on every song in at least 3 rounds' },
+  { id: 'keyboard_warrior', name: 'Keyboard Warrior', image: keyboardWarriorImg, category: 'Voting', description: 'Commented on more than 50% of all submitted songs. Bonus points if they built a custom keyboard to do it.' },
+
   // Social
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
@@ -434,6 +439,46 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       const cutoff = contenders.length >= 3 ? contenders[2].count : contenders[contenders.length - 1].count
       closestPlayers = contenders.filter(c => c.count >= cutoff)
     }
+
+    // 16. Commentator — left a comment on every song in at least one round
+    const roundSongCounts = {} // round_id → total song count
+    filteredSubmissions.forEach(s => {
+      roundSongCounts[s.round_id] = (roundSongCounts[s.round_id] || 0) + 1
+    })
+    
+    const voterComments = {} // voter_id → { round_id → commented_count }
+    filteredVotes.forEach(v => {
+      if (v.comment && v.comment.trim()) {
+        if (!voterComments[v.voter_id]) voterComments[v.voter_id] = {}
+        if (!voterComments[v.voter_id][v.round_id]) voterComments[v.voter_id][v.round_id] = 0
+        voterComments[v.voter_id][v.round_id]++
+      }
+    })
+    
+    const commentatorPlayers = []
+    Object.entries(voterComments).forEach(([voterId, roundData]) => {
+      const completedRounds = []
+      Object.entries(roundData).forEach(([roundId, commentCount]) => {
+        const totalSongs = roundSongCounts[roundId] || 0
+        // They commented on every song in this round (excluding their own submission)
+        if (commentCount === totalSongs - 1 || (commentCount === totalSongs && !filteredSubmissions.some(s => s.submitter_id === voterId && s.round_id === roundId))) {
+          completedRounds.push(roundId)
+        }
+      })
+      if (completedRounds.length >= 3) {
+        commentatorPlayers.push({
+          id: voterId,
+          name: nameMap[voterId] || 'Unknown',
+          stat: completedRounds.length,
+          displayStat: `${completedRounds.length} round${completedRounds.length > 1 ? 's' : ''}`
+        })
+      }
+    })
+    badgeResults.commentator = commentatorPlayers.sort((a, b) => b.stat - a.stat).map(p => ({
+      id: p.id,
+      name: p.name,
+      stat: p.displayStat
+    }))
 
     // ── Assemble final badges array ──
     return BADGE_DEFS.map(def => {
