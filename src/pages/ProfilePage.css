@@ -1,0 +1,205 @@
+.profile-page {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: var(--spotify-white);
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+}
+
+.profile-header h1 {
+  font-family: 'Stalinist One', sans-serif;
+  font-size: 2.5rem;
+  color: var(--spotify-green);
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -1px;
+}
+
+.profile-id {
+  font-family: 'Space Mono', monospace;
+  color: #666;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.status-banner {
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-left: 4px solid;
+}
+
+.status-error {
+  background: rgba(255, 0, 85, 0.1);
+  border-color: #FF0055;
+  color: #FF0055;
+}
+
+.status-success {
+  background: rgba(29, 185, 84, 0.1);
+  border-color: var(--spotify-green);
+  color: var(--spotify-green);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.profile-card {
+  background: #111;
+  border: 2px solid #333;
+  padding: 2rem;
+}
+
+.profile-card h2 {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.2rem;
+  color: #E0E0E0;
+  margin: 0 0 2rem 0;
+  border-bottom: 1px dotted #666;
+  padding-bottom: 0.5rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.cyber-input {
+  font-family: 'Space Mono', monospace;
+  padding: 0.75rem 1rem;
+  background: #050505;
+  border: 1px solid #333;
+  color: #E0E0E0;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.cyber-input:focus {
+  outline: none;
+  border-color: var(--spotify-green);
+  box-shadow: 2px 2px 0px var(--spotify-green);
+}
+
+.avatar-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.avatar-preview-container {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #050505;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.avatar-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #999;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cyber-button {
+  font-family: 'Space Mono', monospace;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #333;
+  color: #E0E0E0;
+  border: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+}
+
+.cyber-button:hover:not(:disabled) {
+  background: #444;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px #000;
+}
+
+.cyber-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-btn {
+  background: var(--spotify-green);
+  color: #000;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: var(--spotify-green-hover);
+  box-shadow: 4px 4px 0px #E0E0E0;
+}
+
+.danger-btn {
+  background: transparent;
+  color: #FF0055;
+  border: 1px solid #FF0055;
+  margin-top: 1rem;
+}
+
+.danger-btn:hover:not(:disabled) {
+  background: #FF0055;
+  color: #000;
+  box-shadow: 4px 4px 0px #E0E0E0;
+}
+
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

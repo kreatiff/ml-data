@@ -75,6 +75,15 @@
   flex-shrink: 0;
 }
 
+.song-card-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .song-card-votes {
   color: var(--spotify-green);
   font-weight: 700;

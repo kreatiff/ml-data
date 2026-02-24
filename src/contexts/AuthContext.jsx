@@ -8,14 +8,29 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const fetchProfile = async (userId) => {
+    if (!userId) {
+      setProfile(null)
+      return
+    }
+    const { data } = await supabase
+      .from('competitors')
+      .select('*')
+      .eq('auth_user_id', userId)
+      .single()
+    setProfile(data)
+  }
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       setSession(initialSession)
       setUser(initialSession?.user ?? null)
+      if (initialSession?.user) fetchProfile(initialSession.user.id)
       setLoading(false)
     })
 
@@ -24,6 +39,7 @@ export function AuthProvider({ children }) {
       (_event, newSession) => {
         setSession(newSession)
         setUser(newSession?.user ?? null)
+        fetchProfile(newSession?.user?.id)
       }
     )
 
@@ -78,13 +94,23 @@ export function AuthProvider({ children }) {
     return { error }
   }, [])
 
+  const updatePassword = useCallback(async (newPassword) => {
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+    return { data, error }
+  }, [])
+
   const value = {
     user,
+    profile,
     session,
     loading,
     signUp,
     signIn,
     signOut,
+    updatePassword,
+    refreshProfile: () => fetchProfile(user?.id)
   }
 
   return (

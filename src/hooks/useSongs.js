@@ -22,7 +22,7 @@ export function useSongs() {
             artists,
             album,
             created_at,
-            submitter:competitors!submissions_submitter_fk(name),
+            submitter:competitors!submissions_submitter_fk(name, avatar_url),
             round:rounds!submissions_round_fk(name, created_at)
           `)
           .order('created_at', { ascending: false })
@@ -49,6 +49,7 @@ export function useSongs() {
           album: submission.album,
           created_at: submission.created_at,
           submitter_name: submission.submitter?.name || 'Unknown',
+          submitter_avatar_url: submission.submitter?.avatar_url || null,
           round_name: submission.round?.name || 'Unknown',
           round_date: submission.round?.created_at,
           total_votes: votesMap[`${submission.round_id}_${submission.spotify_uri}`] || 0
@@ -80,7 +81,7 @@ export function useSongs() {
       try {
         // Try to load from cache first
         const cachedData = await loadData()
-        
+
         if (cachedData && isMounted) {
           console.log('Loading songs from cache:', cachedData.length)
           setSongs(cachedData)
@@ -111,7 +112,7 @@ export function useSongs() {
   const refetch = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const { data: submissions, error: submissionsError } = await supabase
         .from('submissions')
@@ -122,7 +123,7 @@ export function useSongs() {
           artists,
           album,
           created_at,
-          submitter:competitors!submissions_submitter_fk(name),
+          submitter:competitors!submissions_submitter_fk(name, avatar_url),
           round:rounds!submissions_round_fk(name, created_at)
         `)
         .order('created_at', { ascending: false })
@@ -149,6 +150,7 @@ export function useSongs() {
         album: submission.album,
         created_at: submission.created_at,
         submitter_name: submission.submitter?.name || 'Unknown',
+        submitter_avatar_url: submission.submitter?.avatar_url || null,
         round_name: submission.round?.name || 'Unknown',
         round_date: submission.round?.created_at,
         total_votes: votesMap[`${submission.round_id}_${submission.spotify_uri}`] || 0

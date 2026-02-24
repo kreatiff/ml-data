@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import InitialsAvatar from './InitialsAvatar'
 import './SongCard.css'
 
 function SongCard({ song }) {
@@ -12,13 +13,17 @@ function SongCard({ song }) {
           by {song.artists}
         </div>
       </div>
-      
+
       <div className="song-card-divider" />
-      
+
       <div className="song-card-details">
         <div className="song-card-row">
           <div className="song-card-label">
-            <span className="song-card-icon">👤</span>
+            {song.submitter_avatar_url ? (
+              <img src={song.submitter_avatar_url} alt="Profile" className="song-card-avatar" />
+            ) : (
+              <InitialsAvatar name={song.submitter_name} size={20} />
+            )}
             <span>{song.submitter_name}</span>
           </div>
           <div className="song-card-label">
@@ -26,7 +31,7 @@ function SongCard({ song }) {
             <span title={song.round_name}>{song.round_name}</span>
           </div>
         </div>
-        
+
         <div className="song-card-row">
           <div className="song-card-label">
             <span className="song-card-icon">⭐</span>
@@ -37,7 +42,7 @@ function SongCard({ song }) {
             <span>{new Date(song.created_at).toLocaleDateString('en-AU')}</span>
           </div>
         </div>
-        
+
         {song.album && (
           <div className="song-card-album" title={song.album}>
             <span className="song-card-icon">💿</span>

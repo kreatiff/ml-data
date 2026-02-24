@@ -6,6 +6,7 @@ import { useDebounce } from '../hooks/useDebounce'
 import SongCard from '../components/SongCard'
 import BottomSheet from '../components/BottomSheet'
 import { useSalmonMode } from '../hooks/useSalmonMode'
+import InitialsAvatar from '../components/InitialsAvatar'
 import salmonImg from '../assets/salmon_mode.png'
 
 const themes = {
@@ -98,7 +99,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
 
     if (debouncedSearchTerm) {
       const term = debouncedSearchTerm.toLowerCase()
-      filtered = filtered.filter(song => 
+      filtered = filtered.filter(song =>
         song.song_name?.toLowerCase().includes(term) ||
         song.artists?.toLowerCase().includes(term) ||
         song.album?.toLowerCase().includes(term) ||
@@ -128,7 +129,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
 
       const aStr = String(aVal).toLowerCase()
       const bStr = String(bVal).toLowerCase()
-      
+
       if (sortConfig.direction === 'asc') {
         return aStr < bStr ? -1 : aStr > bStr ? 1 : 0
       } else {
@@ -172,8 +173,8 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
       <header className="banner-header">
         {albumArt && (
           <>
-            <div 
-              className="banner-background" 
+            <div
+              className="banner-background"
               style={{ backgroundImage: `url(${albumArt})` }}
             />
             <div className="banner-overlay" />
@@ -198,58 +199,58 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
           </div>
 
           {!isMobile && <div className="filters-row">
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search by song name, artist, album, submitter, or round..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-          </div>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search by song name, artist, album, submitter, or round..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-input"
+              />
+            </div>
 
-          <select
-            value={selectedSubmitter}
-            onChange={(e) => setSelectedSubmitter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="">All Submitters</option>
-            {uniqueSubmitters.map(submitter => (
-              <option key={submitter} value={submitter}>{submitter}</option>
-            ))}
-          </select>
-
-          <select
-            value={selectedRound}
-            onChange={(e) => setSelectedRound(e.target.value)}
-            className="filter-select filter-select-small"
-          >
-            <option value="">All Rounds</option>
-            {uniqueRounds.map(round => (
-              <option key={round} value={round}>{round}</option>
-            ))}
-          </select>
-
-          {(selectedSubmitter || selectedRound || searchTerm) && (
-            <button
-              onClick={() => {
-                setSearchTerm('')
-                setSelectedSubmitter('')
-                setSelectedRound('')
-              }}
-              className="clear-filters-btn"
+            <select
+              value={selectedSubmitter}
+              onChange={(e) => setSelectedSubmitter(e.target.value)}
+              className="filter-select"
             >
-              Clear Filters
-            </button>
-          )}
+              <option value="">All Submitters</option>
+              {uniqueSubmitters.map(submitter => (
+                <option key={submitter} value={submitter}>{submitter}</option>
+              ))}
+            </select>
 
-          <span className="result-count">
-            {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
-          </span>
-        </div>}
+            <select
+              value={selectedRound}
+              onChange={(e) => setSelectedRound(e.target.value)}
+              className="filter-select filter-select-small"
+            >
+              <option value="">All Rounds</option>
+              {uniqueRounds.map(round => (
+                <option key={round} value={round}>{round}</option>
+              ))}
+            </select>
+
+            {(selectedSubmitter || selectedRound || searchTerm) && (
+              <button
+                onClick={() => {
+                  setSearchTerm('')
+                  setSelectedSubmitter('')
+                  setSelectedRound('')
+                }}
+                className="clear-filters-btn"
+              >
+                Clear Filters
+              </button>
+            )}
+
+            <span className="result-count">
+              {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
+            </span>
+          </div>}
         </div>
       </header>
-      
+
       {isMobile && (
         <>
           <div className="mobile-search-bar">
@@ -261,8 +262,8 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               className="mobile-search-input"
             />
           </div>
-          
-          <button 
+
+          <button
             className="mobile-filter-button"
             onClick={() => setIsFilterOpen(true)}
             aria-label="Open filters"
@@ -272,7 +273,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
               <span className="filter-badge">{[selectedSubmitter, selectedRound].filter(Boolean).length}</span>
             )}
           </button>
-          
+
           <BottomSheet isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)}>
             <div className="bottom-sheet-group">
               <h4 className="bottom-sheet-section-header">Theme</h4>
@@ -333,7 +334,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
                 Clear Filters
               </button>
             )}
-            
+
             <div className="mobile-result-count">
               {filteredAndSortedSongs.length} {filteredAndSortedSongs.length === 1 ? 'song' : 'songs'}
             </div>
@@ -341,7 +342,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
         </>
       )}
 
-{isMobile ? (
+      {isMobile ? (
         <div className="cards-container">
           {filteredAndSortedSongs.length === 0 ? (
             <div className="no-results">
@@ -399,7 +400,16 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
                     <td className="song-name" title={song.song_name}>{song.song_name}</td>
                     <td title={song.artists}>{song.artists}</td>
                     <td className="album" title={song.album}>{song.album}</td>
-                    <td title={song.submitter_name}>{song.submitter_name}</td>
+                    <td title={song.submitter_name}>
+                      <div className="table-submitter">
+                        {song.submitter_avatar_url ? (
+                          <img src={song.submitter_avatar_url} alt="Profile" className="table-avatar" />
+                        ) : (
+                          <InitialsAvatar name={song.submitter_name} size={24} />
+                        )}
+                        <span>{song.submitter_name}</span>
+                      </div>
+                    </td>
                     <td title={song.round_name}>{song.round_name}</td>
                     <td className="votes" title={song.total_votes}>{song.total_votes}</td>
                     <td className="date" title={formatDate(song.created_at)}>

@@ -7,6 +7,7 @@ import SongsPage from './pages/SongsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import BadgesPage from './pages/BadgesPage'
 import PlaylistsPage from './pages/PlaylistsPage'
+import ProfilePage from './pages/ProfilePage'
 import './App.css'
 import './CyberTheme.css'
 
@@ -78,6 +79,7 @@ function App() {
         <Route path="/analytics/:year?" element={<AnalyticsPage />} />
         <Route path="/badges/:year?" element={<BadgesPage />} />
         <Route path="/playlists/:year?" element={<PlaylistsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </div>
   )

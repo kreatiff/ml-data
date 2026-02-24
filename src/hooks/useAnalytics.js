@@ -35,7 +35,7 @@ export function useAnalytics({ team } = {}) {
         }
 
         const [votesData, submissionsData, competitorsData, roundsData] = await Promise.all([
-          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, comment, imported_at'),
+          fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, comment, imported_at, created_at'),
           fetchAll('submissions', 'round_id, spotify_uri, song_name, artists, album, created_at, submitter_id'),
           fetchAll('competitors', 'id, name, team'),
           fetchAll('rounds', 'id, name, created_at, league_id')
@@ -90,7 +90,8 @@ export function useAnalytics({ team } = {}) {
             round_name: round?.name || 'Unknown',
             round_date: round?.created_at || '',
             league_id: round?.league_id || '',
-            imported_at: v.imported_at || ''
+            imported_at: v.imported_at || '',
+            vote_created_at: v.created_at || ''
           }
         })
 
@@ -251,7 +252,7 @@ export function useAnalytics({ team } = {}) {
     filteredVotes.forEach(v => {
       voterSet.add(v.voter_name)
       submitterSet.add(v.submitter_name)
-      
+
       if (!matrix[v.voter_name]) matrix[v.voter_name] = {}
       if (!matrix[v.voter_name][v.submitter_name]) matrix[v.voter_name][v.submitter_name] = 0
       matrix[v.voter_name][v.submitter_name] += v.points_assigned

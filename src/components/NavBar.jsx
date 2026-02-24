@@ -1,4 +1,6 @@
 import { NavLink, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import InitialsAvatar from './InitialsAvatar'
 import './NavBar.css'
 
 const TEAM_ICONS = {
@@ -9,6 +11,8 @@ const TEAM_ICONS = {
 
 function NavBar() {
   const [searchParams] = useSearchParams()
+  const { user, profile } = useAuth()
+
   const team = searchParams.get('team')?.trim().toLowerCase() || ''
   const teamIcon = TEAM_ICONS[team] || ''
 
@@ -28,6 +32,15 @@ function NavBar() {
         <NavLink to="/playlists" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Playlists
         </NavLink>
+        {user && (
+          <NavLink to="/profile" className={({ isActive }) => `nav-link profile-link ${isActive ? 'active' : ''}`} title="Profile">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Profile" className="nav-avatar" />
+            ) : (
+              <InitialsAvatar name={profile?.name || user?.email} size={28} />
+            )}
+          </NavLink>
+        )}
       </div>
     </nav>
   )

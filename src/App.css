@@ -90,12 +90,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(18, 18, 18, 0.3) 0%,
-    rgba(18, 18, 18, 0.6) 50%,
-    var(--spotify-bg) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(18, 18, 18, 0.3) 0%,
+      rgba(18, 18, 18, 0.6) 50%,
+      var(--spotify-bg) 100%);
 }
 
 .banner-content {
@@ -152,63 +150,82 @@
 }
 
 @keyframes glitch-app {
-  0%, 100% {
+
+  0%,
+  100% {
     text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
-                 0.025em 0.04em 0 #fffc00;
+      0.025em 0.04em 0 #fffc00;
   }
+
   15% {
     text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
-                 0.025em 0.04em 0 #fffc00;
+      0.025em 0.04em 0 #fffc00;
   }
+
   16% {
     text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
-                 -0.05em -0.05em 0 #fffc00;
+      -0.05em -0.05em 0 #fffc00;
   }
+
   49% {
     text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
-                 -0.05em -0.05em 0 #fffc00;
+      -0.05em -0.05em 0 #fffc00;
   }
+
   50% {
     text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
-                 0 -0.04em 0 #fffc00;
+      0 -0.04em 0 #fffc00;
   }
+
   99% {
     text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
-                 0 -0.04em 0 #fffc00;
+      0 -0.04em 0 #fffc00;
   }
 }
 
 @keyframes glitchTop-app {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0);
   }
+
   20% {
     transform: translate(-2px, 2px);
   }
+
   40% {
     transform: translate(-2px, -2px);
   }
+
   60% {
     transform: translate(2px, 2px);
   }
+
   80% {
     transform: translate(2px, -2px);
   }
 }
 
 @keyframes glitchBottom-app {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0);
   }
+
   20% {
     transform: translate(3px, 0);
   }
+
   40% {
     transform: translate(-3px, 0);
   }
+
   60% {
     transform: translate(3px, 0);
   }
+
   80% {
     transform: translate(-3px, 0);
   }
@@ -289,9 +306,9 @@
   color: var(--spotify-white);
   cursor: pointer;
   outline: none;
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23B3B3B3' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -470,6 +487,26 @@
   font-size: 0.875rem;
 }
 
+.table-submitter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.table-avatar-placeholder {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 .no-results {
   text-align: center;
   padding: 4rem 1rem !important;
@@ -493,9 +530,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -743,10 +783,13 @@
   letter-spacing: 0.02em;
   max-width: 800px;
   margin: 0 auto;
-}.salmon-prophecy:hover {
+}
+
+.salmon-prophecy:hover {
   opacity: 1;
   color: salmon
 }
+
 /* Salmon Mode Popup */
 .salmon-popup-overlay {
   position: fixed;
@@ -786,12 +829,27 @@
 }
 
 @keyframes salmonFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes salmonBounce {
-  0% { transform: scale(0.5); opacity: 0; }
-  60% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
