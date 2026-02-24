@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { useAuth } from './contexts/AuthContext'
 import { useSalmonMode } from './hooks/useSalmonMode'
 import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
@@ -45,6 +46,7 @@ function App() {
     return localStorage.getItem('app_theme') || 'cyber'
   })
   const { salmonMode } = useSalmonMode()
+  const { signOut } = useAuth()
 
   useEffect(() => {
     const theme = themes[selectedTheme]
@@ -61,14 +63,12 @@ function App() {
     const handleKeyDown = (e) => {
       if (e.altKey && e.key === 'a') {
         e.preventDefault()
-        localStorage.removeItem('app_access_token')
-        localStorage.removeItem('app_is_admin')
-        window.location.reload()
+        signOut()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [signOut])
 
   return (
     <div className={`app theme-${selectedTheme}`}>
