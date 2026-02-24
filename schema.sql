@@ -25,6 +25,7 @@ CREATE TABLE public.competitors (
   id text NOT NULL,
   name text NOT NULL,
   team text,
+  auth_user_id uuid UNIQUE REFERENCES auth.users(id),
   CONSTRAINT competitors_pkey PRIMARY KEY (id)
 );
 

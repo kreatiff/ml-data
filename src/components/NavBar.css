@@ -55,6 +55,32 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+.profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+}
+
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--spotify-gray);
+  transition: border-color 0.15s;
+}
+
+.profile-link.active .nav-avatar,
+.profile-link:hover .nav-avatar {
+  border-color: var(--spotify-green);
+}
+
+.nav-avatar-placeholder {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 @media (max-width: 600px) {
   .nav-bar {
     padding: 0 1rem;

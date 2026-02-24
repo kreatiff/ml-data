@@ -19,6 +19,7 @@ import gottaCatchEmAllImg from '../assets/badges/pokemon.jpg'
 import infinityGauntletImg from '../assets/badges/infinity_gauntlet.jpg'
 import commentatorImg from '../assets/badges/commentator.png'
 import keyboardWarriorImg from '../assets/badges/keyboard_warrior.jpg'
+import procrastinatorGeneralImg from '../assets/badges/procrastinator_general.jpg'
 
 const BADGE_DEFS = [
   // Performance
@@ -44,6 +45,7 @@ const BADGE_DEFS = [
   { id: 'crowd_pleaser', name: 'Crowd Pleaser', image: crowdPleaserImg, category: 'Social', description: 'Most 4-point votes received across all rounds' },
   { id: 'controversial', name: 'Controversial', image: controversialImg, category: 'Social', description: 'Submitted the song with the highest vote variance' },
   { id: 'hipster', name: 'Hipster', image: hipsterImg, category: 'Social', description: 'Most unique artists (artists nobody else submitted)' },
+  { id: 'procrastinator_general', name: 'Procrastinator General', image: procrastinatorGeneralImg, category: 'Social', description: 'Voted last in at least 2 rounds' },
   // Meta
   { id: 'infinity_gauntlet', name: 'Infinity Gauntlet', image: infinityGauntletImg, category: 'Meta', description: 'Collected every other badge' },
 ]
@@ -312,11 +314,11 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     Object.values(pairPoints).forEach(pts => { if (pts > maxPairPts) maxPairPts = pts })
     badgeResults.stalker = maxPairPts > 0
       ? Object.entries(pairPoints)
-          .filter(([, pts]) => pts === maxPairPts)
-          .map(([key]) => {
-            const [voterId, submitterId] = key.split('_')
-            return { id: voterId, name: nameMap[voterId] || 'Unknown', stat: `${maxPairPts} pts → ${nameMap[submitterId] || 'Unknown'}` }
-          })
+        .filter(([, pts]) => pts === maxPairPts)
+        .map(([key]) => {
+          const [voterId, submitterId] = key.split('_')
+          return { id: voterId, name: nameMap[voterId] || 'Unknown', stat: `${maxPairPts} pts → ${nameMap[submitterId] || 'Unknown'}` }
+        })
       : []
 
     // 12. Non-conformist — gave points to the last-place song in 5 or more rounds
@@ -398,11 +400,38 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     const totalOthers = allPlayerIds.length - 1
     badgeResults.gotta_catch_em_all = totalOthers > 0
       ? allPlayerIds
-          .filter(id => uniqueVotersPerPlayer[id].size >= totalOthers)
-          .map(id => ({ id, name: nameMap[id] || 'Unknown', stat: `${uniqueVotersPerPlayer[id].size}/${totalOthers} voters` }))
+        .filter(id => uniqueVotersPerPlayer[id].size >= totalOthers)
+        .map(id => ({ id, name: nameMap[id] || 'Unknown', stat: `${uniqueVotersPerPlayer[id].size}/${totalOthers} voters` }))
       : []
 
-    // 17. Infinity Gauntlet — collected every other badge
+    // 18. Procrastinator General — voted last in at least 1 round
+    const lastVoterCounts = {}
+    sortedRoundIds.forEach(roundId => {
+      // Find the latest vote_created_at per voter in this round
+      const voterLatest = {} // voter_id → max created_at
+      filteredVotes.forEach(v => {
+        if (v.round_id !== roundId || !v.vote_created_at) return
+        if (!voterLatest[v.voter_id] || v.vote_created_at > voterLatest[v.voter_id]) {
+          voterLatest[v.voter_id] = v.vote_created_at
+        }
+      })
+      const entries = Object.entries(voterLatest)
+      if (entries.length === 0) return
+      // Find the voter(s) with the latest timestamp
+      let maxTs = ''
+      entries.forEach(([, ts]) => { if (ts > maxTs) maxTs = ts })
+      entries.forEach(([voterId, ts]) => {
+        if (ts === maxTs) {
+          lastVoterCounts[voterId] = (lastVoterCounts[voterId] || 0) + 1
+        }
+      })
+    })
+    badgeResults.procrastinator_general = Object.entries(lastVoterCounts)
+      .filter(([, count]) => count >= 2)
+      .map(([id, count]) => ({ id, name: nameMap[id] || 'Unknown', stat: `${count} round${count > 1 ? 's' : ''}` }))
+      .sort((a, b) => parseInt(b.stat) - parseInt(a.stat))
+
+    // 19. Infinity Gauntlet — collected every other badge
     const otherBadgeDefs = BADGE_DEFS.filter(d => d.id !== 'infinity_gauntlet')
     const otherBadgeIds = otherBadgeDefs.map(d => d.id)
     const badgeNameMap = {}
@@ -411,7 +440,7 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     // Track which badges each player has earned
     const playerBadgeSet = {} // playerId → Set of badge ids
     otherBadgeIds.forEach(bid => {
-      ;(badgeResults[bid] || []).forEach(p => {
+      ; (badgeResults[bid] || []).forEach(p => {
         if (!playerBadgeSet[p.id]) playerBadgeSet[p.id] = new Set()
         playerBadgeSet[p.id].add(bid)
       })
@@ -445,7 +474,7 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     filteredSubmissions.forEach(s => {
       roundSongCounts[s.round_id] = (roundSongCounts[s.round_id] || 0) + 1
     })
-    
+
     const voterComments = {} // voter_id → { round_id → commented_count }
     filteredVotes.forEach(v => {
       if (v.comment && v.comment.trim()) {
@@ -454,7 +483,7 @@ export function useBadges(filteredVotes, filteredSubmissions) {
         voterComments[v.voter_id][v.round_id]++
       }
     })
-    
+
     const commentatorPlayers = []
     Object.entries(voterComments).forEach(([voterId, roundData]) => {
       const completedRounds = []
