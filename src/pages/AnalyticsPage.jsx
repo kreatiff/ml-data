@@ -6,7 +6,8 @@ import {
 } from 'recharts'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { useIsMobile } from '../hooks/useMediaQuery'
-import { useSalmonMode, SALMON_YEAR_MAP } from '../hooks/useSalmonMode'
+import { useSalmonMode } from '../hooks/useSalmonMode'
+import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import VoteHeatmap from '../components/VoteHeatmap'
 import './AnalyticsPage.css'
 
@@ -26,10 +27,7 @@ const SORT_KEYS = {
   bestSongScore: 'bestSongScore',
 }
 
-const YEAR_TO_LEAGUE = {
-  '2025': '2a40e26e20e846cbae7b66d53c1488f0',
-  '2026': 'fe08d6855f204613b30922e34a7486c6',
-}
+
 
 function AnalyticsPage() {
   const { year: urlYear } = useParams()
@@ -126,10 +124,15 @@ function AnalyticsPage() {
     return playerSort.dir === 'asc' ? '\u2191' : '\u2193'
   }
 
-  const themeGreen = useMemo(() => {
-    const val = getComputedStyle(document.documentElement).getPropertyValue('--spotify-green').trim()
-    return val || '#CCFF00'
-  }, [])
+  const [themeGreen, setThemeGreen] = useState('#CCFF00')
+  useEffect(() => {
+    // Re-read after a microtask so CSS variable changes from theme/salmon are applied
+    const id = requestAnimationFrame(() => {
+      const val = getComputedStyle(document.documentElement).getPropertyValue('--spotify-green').trim()
+      setThemeGreen(val || '#CCFF00')
+    })
+    return () => cancelAnimationFrame(id)
+  }, [selectedLeague])
 
   // Close fullscreen on Escape key
   useEffect(() => {

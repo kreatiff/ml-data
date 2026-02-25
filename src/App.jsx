@@ -1,46 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import { useSalmonMode } from './hooks/useSalmonMode'
+import { themes } from './constants/themes'
 import NavBar from './components/NavBar'
 import SongsPage from './pages/SongsPage'
-import AnalyticsPage from './pages/AnalyticsPage'
-import BadgesPage from './pages/BadgesPage'
-import PlaylistsPage from './pages/PlaylistsPage'
-import ProfilePage from './pages/ProfilePage'
 import './App.css'
 import './CyberTheme.css'
 
-const themes = {
-  default: {
-    name: 'Default',
-    colors: {
-      '--spotify-black': '#000000',
-      '--spotify-bg': '#121212',
-      '--spotify-elevated': '#181818',
-      '--spotify-card': '#282828',
-      '--spotify-green': '#1DB954',
-      '--spotify-green-hover': '#1ED760',
-      '--spotify-white': '#FFFFFF',
-      '--spotify-gray': '#B3B3B3',
-      '--spotify-light-gray': '#E0E0E0',
-    }
-  },
-  cyber: {
-    name: 'Cyber-Brutalist',
-    colors: {
-      '--spotify-black': '#050505',
-      '--spotify-bg': '#050505',
-      '--spotify-elevated': '#111111',
-      '--spotify-card': '#111111',
-      '--spotify-green': '#CCFF00',
-      '--spotify-green-hover': '#DDFF33',
-      '--spotify-white': '#E0E0E0',
-      '--spotify-gray': '#666666',
-      '--spotify-light-gray': '#999999',
-    }
-  }
-}
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'))
+const BadgesPage = lazy(() => import('./pages/BadgesPage'))
+const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 
 function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -74,15 +45,18 @@ function App() {
   return (
     <div className={`app theme-${selectedTheme}`}>
       <NavBar />
-      <Routes>
-        <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
-        <Route path="/analytics/:year?" element={<AnalyticsPage />} />
-        <Route path="/badges/:year?" element={<BadgesPage />} />
-        <Route path="/playlists/:year?" element={<PlaylistsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-      </Routes>
+      <Suspense fallback={<div className="loading">Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
+          <Route path="/analytics/:year?" element={<AnalyticsPage />} />
+          <Route path="/badges/:year?" element={<BadgesPage />} />
+          <Route path="/playlists/:year?" element={<PlaylistsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+      </Suspense>
     </div>
   )
 }
 
 export default App
+

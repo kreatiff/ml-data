@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, memo } from 'react'
 import './VoteHeatmap.css'
 
 function VoteHeatmap({ matrix, voters, submitters }) {
@@ -86,4 +86,4 @@ function VoteHeatmap({ matrix, voters, submitters }) {
   )
 }
 
-export default VoteHeatmap
+export default memo(VoteHeatmap)

@@ -190,13 +190,6 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       standingsHistory.push({ round_id: roundId, rankings: ranked })
     })
 
-    // DEBUG: log standings history to help verify Summit badge
-    console.log('[Badges] Round order:', sortedRoundIds.map(id => ({ id, date: roundDates[id] })))
-    console.log('[Badges] Standings history:', standingsHistory.map(s => ({
-      round_id: s.round_id,
-      top3: s.rankings.slice(0, 3).map(r => `${r.rank}. ${nameMap[r.id] || r.id} (${r.total})`)
-    })))
-
     // 5. Reached the Summit — was ever #1
     const summitPlayers = new Set()
     standingsHistory.forEach(s => {

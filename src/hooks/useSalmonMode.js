@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
+import { SALMON_NAMES } from '../constants/leagues'
 
 const STORAGE_KEY = 'salmon_mode'
 const EVENT_NAME = 'salmonModeChanged'
 
-const SALMON_NAMES = {
-  '2a40e26e20e846cbae7b66d53c1488f0': '1BS',
-  'fe08d6855f204613b30922e34a7486c6': '1AS',
-}
+
 
 export function useSalmonMode() {
   const [salmonMode, setSalmonMode] = useState(() => {
@@ -71,7 +69,4 @@ export function useSalmonMode() {
   return { salmonMode, activateSalmonMode, deactivateSalmonMode, getLeagueName, formatDate }
 }
 
-export const SALMON_YEAR_MAP = {
-  '1bs': '2a40e26e20e846cbae7b66d53c1488f0',
-  '1as': 'fe08d6855f204613b30922e34a7486c6',
-}
+

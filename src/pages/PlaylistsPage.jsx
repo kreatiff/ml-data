@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
+import { useAuth } from '../contexts/AuthContext'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
-import { useSalmonMode, SALMON_YEAR_MAP } from '../hooks/useSalmonMode'
+import { useSalmonMode } from '../hooks/useSalmonMode'
+import { LEAGUE_YEARS, YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import { supabase } from '../supabaseClient'
 import './PlaylistsPage.css'
 
@@ -73,9 +75,8 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
               </span>
             )}
             <span
-              className={`playlist-sync-status ${
-                isSynced ? 'is-synced' : (isNew ? 'is-new' : 'is-out')
-              }`}
+              className={`playlist-sync-status ${isSynced ? 'is-synced' : (isNew ? 'is-new' : 'is-out')
+                }`}
             >
               {isSynced ? '✓ Synced' : (isNew ? 'Not created' : '⚠ Out of sync')}
             </span>
@@ -83,7 +84,7 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
 
         </div>
         <div className="playlist-action-right">
-                    {isAdmin && (!isSynced || isNew) && (
+          {isAdmin && (!isSynced || isNew) && (
             <button
               className="playlist-create-btn"
               disabled={creating || trackCount === 0}
@@ -114,17 +115,10 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
   )
 }
 
-const LEAGUE_YEARS = {
-  '2a40e26e20e846cbae7b66d53c1488f0': '2025',
-  'fe08d6855f204613b30922e34a7486c6': '2026',
-}
 
-const YEAR_TO_LEAGUE = Object.fromEntries(
-  Object.entries(LEAGUE_YEARS).map(([id, year]) => [year, id])
-)
 
 function PlaylistsPage() {
-  const isAdmin = localStorage.getItem('app_is_admin') === 'true'
+  const { isAdmin } = useAuth()
   const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
@@ -280,87 +274,87 @@ function PlaylistsPage() {
       </div>
 
       <div className="playlists-columns">
-      <div className="playlists-col-featured">
-      <h2 className="playlists-section-title">Featured Playlists</h2>
-      <div className="playlists-grid">
-        {featured.map(pl => (
-          <PlaylistCard
-            key={pl.id}
-            playlist={pl}
-            prefix={prefix}
-            onCreate={handleCreate}
-            creating={creatingId === pl.id}
-            result={results[getResultKey(pl.id)]}
-            onShowTracks={setModalPlaylist}
-            isAdmin={isAdmin}
-          />
-        ))}
-      </div>
-      </div>
+        <div className="playlists-col-featured">
+          <h2 className="playlists-section-title">Featured Playlists</h2>
+          <div className="playlists-grid">
+            {featured.map(pl => (
+              <PlaylistCard
+                key={pl.id}
+                playlist={pl}
+                prefix={prefix}
+                onCreate={handleCreate}
+                creating={creatingId === pl.id}
+                result={results[getResultKey(pl.id)]}
+                onShowTracks={setModalPlaylist}
+                isAdmin={isAdmin}
+              />
+            ))}
+          </div>
+        </div>
 
-      <div className="playlists-col-bestof">
-        <h2 className="playlists-section-title">Best Of Player</h2>
-        <table className="bestof-table">
-          <thead>
-            <tr>
-              <th>Player</th>
-              <th>Tracks</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {bestOfPlaylists.map(pl => {
-              const rKey = getResultKey(pl.id)
-              const plResult = results[rKey]
-              const plHash = computeTrackHash(pl.trackUris)
-              const plSynced = plResult?.spotifyPlaylistId && (!plResult?.savedTrackHash || plResult.savedTrackHash === plHash)
-              const plIsNew = !plResult?.spotifyPlaylistId
-              return (
-              <tr key={pl.id}>
-                <td className="bestof-player-name">
-                  {pl.playerName}
-                  {plSynced && <span className="playlist-synced-badge">✓</span>}
-                </td>
-                <td className="bestof-track-count">
-                  <button
-                    className="playlist-tracks-toggle"
-                    onClick={() => setModalPlaylist(pl)}
-                  >
-                    {pl.trackUris.length} tracks
-                  </button>
-                </td>
-                <td className="bestof-actions">
-                  {isAdmin && (!plSynced || plIsNew) && (
-                  <button
-                    className="playlist-create-btn"
-                    disabled={creatingId === pl.id || pl.trackUris.length === 0}
-                    onClick={() => handleCreate({ ...pl, name: `${prefix}${pl.name}` })}
-                  >
-                    {creatingId === pl.id
-                      ? (plIsNew ? 'Creating...' : 'Syncing...')
-                      : (plIsNew ? 'Create on Spotify' : 'Sync to Spotify')}
-                  </button>
-                  )}
-                  {results[getResultKey(pl.id)]?.success && (
-                    <a
-                      className="playlist-open-link"
-                      href={results[getResultKey(pl.id)].playlistUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Open
-                    </a>
-                  )}
-                  {results[getResultKey(pl.id)]?.error && (
-                    <span className="playlist-error-msg">{results[getResultKey(pl.id)].error}</span>
-                  )}
-                </td>
+        <div className="playlists-col-bestof">
+          <h2 className="playlists-section-title">Best Of Player</h2>
+          <table className="bestof-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Tracks</th>
+                <th></th>
               </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {bestOfPlaylists.map(pl => {
+                const rKey = getResultKey(pl.id)
+                const plResult = results[rKey]
+                const plHash = computeTrackHash(pl.trackUris)
+                const plSynced = plResult?.spotifyPlaylistId && (!plResult?.savedTrackHash || plResult.savedTrackHash === plHash)
+                const plIsNew = !plResult?.spotifyPlaylistId
+                return (
+                  <tr key={pl.id}>
+                    <td className="bestof-player-name">
+                      {pl.playerName}
+                      {plSynced && <span className="playlist-synced-badge">✓</span>}
+                    </td>
+                    <td className="bestof-track-count">
+                      <button
+                        className="playlist-tracks-toggle"
+                        onClick={() => setModalPlaylist(pl)}
+                      >
+                        {pl.trackUris.length} tracks
+                      </button>
+                    </td>
+                    <td className="bestof-actions">
+                      {isAdmin && (!plSynced || plIsNew) && (
+                        <button
+                          className="playlist-create-btn"
+                          disabled={creatingId === pl.id || pl.trackUris.length === 0}
+                          onClick={() => handleCreate({ ...pl, name: `${prefix}${pl.name}` })}
+                        >
+                          {creatingId === pl.id
+                            ? (plIsNew ? 'Creating...' : 'Syncing...')
+                            : (plIsNew ? 'Create on Spotify' : 'Sync to Spotify')}
+                        </button>
+                      )}
+                      {results[getResultKey(pl.id)]?.success && (
+                        <a
+                          className="playlist-open-link"
+                          href={results[getResultKey(pl.id)].playlistUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open
+                        </a>
+                      )}
+                      {results[getResultKey(pl.id)]?.error && (
+                        <span className="playlist-error-msg">{results[getResultKey(pl.id)].error}</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {modalPlaylist && (

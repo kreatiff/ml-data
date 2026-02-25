@@ -2,17 +2,15 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { useBadges } from '../hooks/useBadges'
-import { useSalmonMode, SALMON_YEAR_MAP } from '../hooks/useSalmonMode'
+import { useSalmonMode } from '../hooks/useSalmonMode'
+import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import './BadgesPage.css'
 
 const CATEGORIES = ['Performance', 'Standings', 'Voting', 'Social', 'Meta']
 
 const MAX_VISIBLE = 3
 
-const YEAR_TO_LEAGUE = {
-  '2025': '2a40e26e20e846cbae7b66d53c1488f0',
-  '2026': 'fe08d6855f204613b30922e34a7486c6',
-}
+
 
 function BadgesPage() {
   const { year: urlYear } = useParams()

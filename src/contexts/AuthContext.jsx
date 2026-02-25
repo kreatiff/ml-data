@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProfile = async (userId) => {
+  const fetchProfile = useCallback(async (userId) => {
     if (!userId) {
       setProfile(null)
       return
@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
       .eq('auth_user_id', userId)
       .single()
     setProfile(data)
-  }
+  }, [])
 
   useEffect(() => {
     // Get initial session

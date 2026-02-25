@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../supabaseClient'
+import { DEFAULT_LEAGUE_ID } from '../constants/leagues'
 
 export function useAnalytics({ team } = {}) {
   const [votes, setVotes] = useState([])
   const [submissions, setSubmissions] = useState([])
   const [competitors, setCompetitors] = useState([])
   const [leagues, setLeagues] = useState([])
-  const [selectedLeague, setSelectedLeague] = useState('fe08d6855f204613b30922e34a7486c6')
+  const [selectedLeague, setSelectedLeague] = useState(DEFAULT_LEAGUE_ID)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
