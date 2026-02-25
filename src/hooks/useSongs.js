@@ -23,7 +23,7 @@ export function useSongs() {
             album,
             created_at,
             submitter:competitors!submissions_submitter_fk(name, avatar_url),
-            round:rounds!submissions_round_fk(name, created_at)
+            round:rounds!submissions_round_fk(name, started_at)
           `)
           .order('created_at', { ascending: false })
 
@@ -51,7 +51,7 @@ export function useSongs() {
           submitter_name: submission.submitter?.name || 'Unknown',
           submitter_avatar_url: submission.submitter?.avatar_url || null,
           round_name: submission.round?.name || 'Unknown',
-          round_date: submission.round?.created_at,
+          round_date: submission.round?.started_at,
           total_votes: votesMap[`${submission.round_id}_${submission.spotify_uri}`] || 0
         }))
 
@@ -124,7 +124,7 @@ export function useSongs() {
           album,
           created_at,
           submitter:competitors!submissions_submitter_fk(name, avatar_url),
-          round:rounds!submissions_round_fk(name, created_at)
+          round:rounds!submissions_round_fk(name, started_at)
         `)
         .order('created_at', { ascending: false })
 
@@ -152,7 +152,7 @@ export function useSongs() {
         submitter_name: submission.submitter?.name || 'Unknown',
         submitter_avatar_url: submission.submitter?.avatar_url || null,
         round_name: submission.round?.name || 'Unknown',
-        round_date: submission.round?.created_at,
+        round_date: submission.round?.started_at,
         total_votes: votesMap[`${submission.round_id}_${submission.spotify_uri}`] || 0
       }))
 

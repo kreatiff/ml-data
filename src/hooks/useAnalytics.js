@@ -38,7 +38,7 @@ export function useAnalytics({ team } = {}) {
           fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, comment, imported_at, created_at'),
           fetchAll('submissions', 'round_id, spotify_uri, song_name, artists, album, created_at, submitter_id'),
           fetchAll('competitors', 'id, name, team'),
-          fetchAll('rounds', 'id, name, created_at, league_id')
+          fetchAll('rounds', 'id, name, started_at, league_id')
         ])
 
         // Leagues fetch is non-fatal (may be blocked by RLS)
@@ -62,7 +62,7 @@ export function useAnalytics({ team } = {}) {
         setCompetitors(competitorsData)
 
         const roundMap = {}
-        roundsData.forEach(r => { roundMap[r.id] = { name: r.name, created_at: r.created_at, league_id: r.league_id } })
+        roundsData.forEach(r => { roundMap[r.id] = { name: r.name, started_at: r.started_at, league_id: r.league_id } })
 
         const submissionMap = {}
         submissionsData.forEach(s => {
@@ -88,7 +88,7 @@ export function useAnalytics({ team } = {}) {
             submitter_name: sub ? (competitorMap[sub.submitter_id] || 'Unknown') : 'Unknown',
             submitter_team: sub ? (competitorTeamMap[sub.submitter_id] || '') : '',
             round_name: round?.name || 'Unknown',
-            round_date: round?.created_at || '',
+            round_date: round?.started_at || '',
             league_id: round?.league_id || '',
             imported_at: v.imported_at || '',
             vote_created_at: v.created_at || ''
@@ -106,7 +106,7 @@ export function useAnalytics({ team } = {}) {
           submitter_name: competitorMap[s.submitter_id] || 'Unknown',
           submitter_team: competitorTeamMap[s.submitter_id] || '',
           round_name: roundMap[s.round_id]?.name || 'Unknown',
-          round_date: roundMap[s.round_id]?.created_at || '',
+          round_date: roundMap[s.round_id]?.started_at || '',
           league_id: roundMap[s.round_id]?.league_id || ''
         }))
 

@@ -12,11 +12,14 @@ The application supports multiple leagues/teams (e.g. dux, platties, funkies) an
 
 ## Database Architecture
 The application uses a robust relational model in PostgreSQL, accessed directly via `@supabase/supabase-js`.
-- **`leagues`** & **`competitors`** & **`rounds`**: Foundational taxonomy.
-- **`submissions`**: Contains song metadata (`song_name`, `artists`, `album`, `spotify_uri`) and generates a `search_tsv` column for fast text-search. Also uses `pg_trgm` indexes for fuzzy matching.
-- **`votes`**: Contains individual votes points (0-4).
-- **`aggregate_votes`**: A materialized-style table kept in sync via a Postgres trigger (`update_aggregate_votes`) on the `votes` table to automatically recalculate `total_votes` per submission.
-- **`song_search` (View)**: The primary read interface for the frontend, heavily joining all tables together.
+- **`leagues`**: League taxonomy (id, name, created_at).
+- **`competitors`**: Player profiles with `name`, `team`, `avatar_url`, `auth_user_id` (linked to Supabase Auth), and `role` (admin/user with check constraint). Protected by a `prevent_role_escalation` trigger.
+- **`rounds`**: Round metadata with `created_at` (bulk-creation timestamp, not reliable for ordering), `started_at` (derived from earliest submission — the canonical round date for sorting/analytics), `name`, `description`, `playlist_url`, `league_id`, `imported_at`. The `started_at` column is auto-updated by a trigger (`trg_update_round_started_at`) on new submissions.
+- **`submissions`**: Song metadata (`song_name`, `artists`, `album`, `spotify_uri`, `comment`, `visible_to_voters`) with a `search_tsv` generated column for fast text-search and `pg_trgm` indexes for fuzzy matching.
+- **`votes`**: Individual vote records with `points_assigned` (0-4), `comment`, and `imported_at`.
+- **`aggregate_votes`**: A materialized-style table kept in sync via a Postgres trigger (`update_aggregate_votes`) on the `votes` table to automatically recalculate `total_votes` per submission. Does NOT have RLS enabled.
+- **`created_playlists`**: Tracks Spotify playlists created by the app, with `playlist_key`, `league_id`, `spotify_url`, `spotify_playlist_id`, `playlist_name`, `track_hash`, unique on `(playlist_key, league_id)`.
+- **`song_search` (View)**: The primary read interface joining submissions, rounds, competitors, and aggregate_votes. Includes `submitter_avatar_url`.
 - **`search_song_best(q)` (RPC)**: A custom Postgres function that orchestrates fuzzy search matching to retrieve the exact song from string queries like "song by artist".
 
 ## Frontend Architecture

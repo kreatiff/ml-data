@@ -1,6 +1,6 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
--- Generated from live Supabase MusicLeagueData project on 2026-02-11.
+-- Generated from live Supabase MusicLeagueData project on 2026-02-25.
 
 -- ============================================================
 -- Custom Domains
@@ -25,17 +25,21 @@ CREATE TABLE public.competitors (
   id text NOT NULL,
   name text NOT NULL,
   team text,
+  avatar_url text,
   auth_user_id uuid UNIQUE REFERENCES auth.users(id),
+  role text NOT NULL DEFAULT 'user' CHECK (role = ANY (ARRAY['admin', 'user'])),
   CONSTRAINT competitors_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE public.rounds (
   id text NOT NULL UNIQUE,
   created_at timestamp with time zone NOT NULL,
+  started_at timestamp with time zone,
   name text NOT NULL,
   description text,
   playlist_url text,
   league_id text NOT NULL DEFAULT '''fe08d6855f204613b30922e34a7486c6''::text'::text,
+  imported_at timestamp with time zone DEFAULT (now() AT TIME ZONE 'aest'::text),
   CONSTRAINT rounds_pkey PRIMARY KEY (id),
   CONSTRAINT rounds_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id)
 );
@@ -86,9 +90,24 @@ CREATE TABLE public.aggregate_votes (
     REFERENCES public.submissions(round_id, spotify_uri)
 );
 
+CREATE TABLE public.created_playlists (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  playlist_key text NOT NULL,
+  league_id text,
+  spotify_url text NOT NULL,
+  spotify_playlist_id text,
+  playlist_name text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  track_hash text,
+  CONSTRAINT created_playlists_pkey PRIMARY KEY (id)
+);
+
 -- ============================================================
 -- Indexes
 -- ============================================================
+CREATE UNIQUE INDEX competitors_auth_user_id_key ON public.competitors USING btree (auth_user_id);
+CREATE UNIQUE INDEX created_playlists_key_league ON public.created_playlists USING btree (playlist_key, league_id);
+CREATE UNIQUE INDEX created_playlists_key_league_unique ON public.created_playlists USING btree (playlist_key, league_id) NULLS NOT DISTINCT;
 CREATE INDEX idx_submissions_round_id ON public.submissions USING btree (round_id);
 CREATE INDEX idx_submissions_submitter_id ON public.submissions USING btree (submitter_id);
 CREATE INDEX idx_submissions_search_tsv ON public.submissions USING gin (search_tsv);
@@ -111,6 +130,7 @@ SELECT
   s.artists,
   s.submitter_id,
   c.name        AS submitted_by,
+  c.avatar_url  AS submitter_avatar_url,
   COALESCE(av.total_votes, 0)::bigint AS votes_achieved,
   s.created_at  AS submitted_at,
   s.visible_to_voters
@@ -159,6 +179,32 @@ BEGIN
   END IF;
 
   RETURN NULL;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.update_round_started_at()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE public.rounds
+  SET started_at = NEW.created_at
+  WHERE id = NEW.round_id
+    AND (started_at IS NULL OR NEW.created_at < started_at);
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.prevent_role_escalation()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF OLD.role IS DISTINCT FROM NEW.role THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM public.competitors
+      WHERE auth_user_id = auth.uid() AND role = 'admin'
+    ) THEN
+      RAISE EXCEPTION 'Only admins can change roles';
+    END IF;
+  END IF;
+  RETURN NEW;
 END;
 $$;
 
@@ -252,6 +298,16 @@ CREATE TRIGGER votes_aggregate_trigger
   ON public.votes
   FOR EACH ROW EXECUTE FUNCTION public.update_aggregate_votes();
 
+CREATE TRIGGER trg_update_round_started_at
+  AFTER INSERT ON public.submissions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_round_started_at();
+
+CREATE TRIGGER check_role_escalation
+  BEFORE UPDATE ON public.competitors
+  FOR EACH ROW
+  EXECUTE FUNCTION public.prevent_role_escalation();
+
 -- ============================================================
 -- Row Level Security
 -- ============================================================
@@ -260,10 +316,16 @@ ALTER TABLE public.competitors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.rounds ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.created_playlists ENABLE ROW LEVEL SECURITY;
 -- NOTE: aggregate_votes does NOT have RLS enabled
 
 CREATE POLICY "Allow anonymous read access" ON public.leagues FOR SELECT USING (true);
 CREATE POLICY "Allow public read access" ON public.competitors FOR SELECT USING (true);
+CREATE POLICY "Users can update their own competitor profile" ON public.competitors
+  FOR UPDATE USING (auth_user_id = auth.uid()) WITH CHECK (auth_user_id = auth.uid());
 CREATE POLICY "Allow public read access" ON public.rounds FOR SELECT USING (true);
 CREATE POLICY "Allow public read access" ON public.submissions FOR SELECT USING (true);
 CREATE POLICY "Allow public read access" ON public.votes FOR SELECT USING (true);
+CREATE POLICY "Allow public read" ON public.created_playlists FOR SELECT USING (true);
+CREATE POLICY "Allow public insert" ON public.created_playlists FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update" ON public.created_playlists FOR UPDATE USING (true) WITH CHECK (true);

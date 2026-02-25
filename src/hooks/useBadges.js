@@ -106,7 +106,7 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       if (playerMap[w.submitter_id]) playerMap[w.submitter_id].roundWins++
     })
 
-    // Rounds sorted chronologically by round_date (rounds.created_at)
+    // Rounds sorted chronologically by round_date (rounds.started_at)
     const roundDates = {}
     filteredVotes.forEach(v => {
       if (v.round_id && v.round_date && !roundDates[v.round_id]) {
