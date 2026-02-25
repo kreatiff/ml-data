@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -58,6 +58,45 @@ function AnalyticsPage() {
 
   const isMobile = useIsMobile()
   const [playerSort, setPlayerSort] = useState({ key: 'totalPoints', dir: 'desc' })
+  const [smoothLines, setSmoothLines] = useState(true)
+  const [highlightedPlayers, setHighlightedPlayers] = useState(new Set())
+
+  const togglePlayer = useCallback((name) => {
+    setHighlightedPlayers(prev => {
+      const next = new Set(prev)
+      if (next.has(name)) {
+        next.delete(name)
+      } else {
+        next.add(name)
+      }
+      return next
+    })
+  }, [])
+
+  const handleLegendClick = useCallback((entry) => {
+    togglePlayer(entry.dataKey || entry.value)
+  }, [togglePlayer])
+
+  const renderTrajectoryLegend = useCallback(({ payload }) => {
+    const hasHighlights = highlightedPlayers.size > 0
+    return (
+      <div className="trajectory-legend">
+        {payload.map((entry) => {
+          const isActive = !hasHighlights || highlightedPlayers.has(entry.dataKey || entry.value)
+          return (
+            <span
+              key={entry.value}
+              className={`trajectory-legend-item ${isActive ? '' : 'dimmed'}`}
+              onClick={() => togglePlayer(entry.dataKey || entry.value)}
+            >
+              <span className="legend-color" style={{ background: entry.color }} />
+              {entry.value}
+            </span>
+          )
+        })}
+      </div>
+    )
+  }, [highlightedPlayers, togglePlayer])
 
   const sortedPlayerStats = useMemo(() => {
     return [...playerStats].sort((a, b) => {
@@ -203,8 +242,18 @@ function AnalyticsPage() {
       {/* Section: Player Position Trajectory */}
       {playerTrajectory.data.length > 0 && (
         <section className="analytics-section">
-          <h2 className="section-title">Points Trajectory</h2>
-          <p className="section-desc">Cumulative points after each round</p>
+          <div className="section-header-row">
+            <div>
+              <h2 className="section-title">Points Trajectory</h2>
+              <p className="section-desc">Cumulative points after each round</p>
+            </div>
+            <label className="line-style-toggle">
+              <span className="toggle-label">{smoothLines ? 'Smooth' : 'Angled'}</span>
+              <div className={`toggle-switch ${smoothLines ? 'active' : ''}`} onClick={() => setSmoothLines(s => !s)}>
+                <div className="toggle-knob" />
+              </div>
+            </label>
+          </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={600}>
               <LineChart
@@ -237,18 +286,25 @@ function AnalyticsPage() {
                   }}
                   itemSorter={(item) => -item.value}
                 />
-                <Legend wrapperStyle={{ color: 'var(--spotify-gray)', fontSize: '0.75rem' }} />
-                {playerTrajectory.players.map((name, i) => (
-                  <Line
-                    key={name}
-                    type="monotone"
-                    dataKey={name}
-                    stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    name={name}
-                  />
-                ))}
+                <Legend content={renderTrajectoryLegend} onClick={handleLegendClick} />
+                {playerTrajectory.players.map((name, i) => {
+                  const hasHighlights = highlightedPlayers.size > 0
+                  const isHighlighted = !hasHighlights || highlightedPlayers.has(name)
+                  return (
+                    <Line
+                      key={name}
+                      type={smoothLines ? "monotone" : "linear"}
+                      dataKey={name}
+                      stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
+                      strokeWidth={isHighlighted ? 3 : 1.5}
+                      strokeOpacity={isHighlighted ? 1 : 0.15}
+                      dot={isHighlighted ? { r: 3 } : false}
+                      activeDot={isHighlighted ? { r: 5, cursor: 'pointer', onClick: () => togglePlayer(name) } : false}
+                      name={name}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )
+                })}
               </LineChart>
             </ResponsiveContainer>
           </div>
