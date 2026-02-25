@@ -63,6 +63,7 @@ function AnalyticsPage() {
     return stored !== null ? stored === 'true' : true
   })
   const [highlightedPlayers, setHighlightedPlayers] = useState(new Set())
+  const [trajectoryFullscreen, setTrajectoryFullscreen] = useState(false)
 
   const togglePlayer = useCallback((name) => {
     setHighlightedPlayers(prev => {
@@ -129,6 +130,68 @@ function AnalyticsPage() {
     const val = getComputedStyle(document.documentElement).getPropertyValue('--spotify-green').trim()
     return val || '#CCFF00'
   }, [])
+
+  // Close fullscreen on Escape key
+  useEffect(() => {
+    if (!trajectoryFullscreen) return
+    const handleKey = (e) => { if (e.key === 'Escape') setTrajectoryFullscreen(false) }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [trajectoryFullscreen])
+
+  const renderTrajectoryChart = (height) => (
+    <ResponsiveContainer width="100%" height={height}>
+      <LineChart
+        data={playerTrajectory.data}
+        margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+        <XAxis
+          dataKey="round_label"
+          stroke="rgba(255,255,255,0.3)"
+          tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
+          height={30}
+          interval={0}
+        />
+        <YAxis
+          stroke="rgba(255,255,255,0.3)"
+          tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
+          allowDecimals={false}
+          label={{ value: 'Total Points', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+        />
+        <Tooltip
+          contentStyle={{
+            background: 'var(--spotify-elevated)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '4px',
+            color: 'var(--spotify-white)',
+            fontSize: '0.85rem'
+          }}
+          labelFormatter={(label, payload) => payload?.[0]?.payload?.round_name || label}
+          itemSorter={(item) => -item.value}
+        />
+        <Legend content={renderTrajectoryLegend} onClick={handleLegendClick} />
+        {playerTrajectory.players.map((name, i) => {
+          const hasHighlights = highlightedPlayers.size > 0
+          const isHighlighted = !hasHighlights || highlightedPlayers.has(name)
+          return (
+            <Line
+              key={name}
+              type={smoothLines ? "monotone" : "linear"}
+              dataKey={name}
+              stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
+              strokeWidth={isHighlighted ? 3 : 1.5}
+              strokeOpacity={isHighlighted ? 1 : 0.15}
+              dot={isHighlighted ? { r: 3 } : false}
+              activeDot={isHighlighted ? { r: 5, cursor: 'pointer', onClick: () => togglePlayer(name) } : false}
+              name={name}
+              style={{ cursor: 'pointer' }}
+            />
+          )
+        })}
+      </LineChart>
+    </ResponsiveContainer>
+  )
 
   if (loading) {
     return <div className="analytics-loading">Loading analytics...</div>
@@ -250,67 +313,55 @@ function AnalyticsPage() {
               <h2 className="section-title">Points Trajectory</h2>
               <p className="section-desc">Cumulative points after each round</p>
             </div>
-            <label className="line-style-toggle">
-              <span className="toggle-label">{smoothLines ? 'Smooth' : 'Angled'}</span>
-              <div className={`toggle-switch ${smoothLines ? 'active' : ''}`} onClick={() => setSmoothLines(s => !s)}>
-                <div className="toggle-knob" />
-              </div>
-            </label>
+            <div className="trajectory-controls">
+              <label className="line-style-toggle">
+                <span className="toggle-label">{smoothLines ? 'Smooth' : 'Angled'}</span>
+                <div className={`toggle-switch ${smoothLines ? 'active' : ''}`} onClick={() => setSmoothLines(s => { const next = !s; localStorage.setItem('trajectory-smooth-lines', String(next)); return next })}>
+                  <div className="toggle-knob" />
+                </div>
+              </label>
+              <button className="expand-btn" onClick={() => setTrajectoryFullscreen(true)} title="View fullscreen">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="10,2 14,2 14,6" />
+                  <polyline points="6,14 2,14 2,10" />
+                  <line x1="14" y1="2" x2="9.5" y2="6.5" />
+                  <line x1="2" y1="14" x2="6.5" y2="9.5" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={600}>
-              <LineChart
-                data={playerTrajectory.data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis
-                  dataKey="round_label"
-                  stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
-                  height={30}
-                  interval={0}
-                />
-                <YAxis
-                  stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
-                  allowDecimals={false}
-                  label={{ value: 'Total Points', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: 'var(--spotify-elevated)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '4px',
-                    color: 'var(--spotify-white)',
-                    fontSize: '0.85rem'
-                  }}
-                  labelFormatter={(label, payload) => payload?.[0]?.payload?.round_name || label}
-                  itemSorter={(item) => -item.value}
-                />
-                <Legend content={renderTrajectoryLegend} onClick={handleLegendClick} />
-                {playerTrajectory.players.map((name, i) => {
-                  const hasHighlights = highlightedPlayers.size > 0
-                  const isHighlighted = !hasHighlights || highlightedPlayers.has(name)
-                  return (
-                    <Line
-                      key={name}
-                      type={smoothLines ? "monotone" : "linear"}
-                      dataKey={name}
-                      stroke={PLAYER_COLORS[i % PLAYER_COLORS.length]}
-                      strokeWidth={isHighlighted ? 3 : 1.5}
-                      strokeOpacity={isHighlighted ? 1 : 0.15}
-                      dot={isHighlighted ? { r: 3 } : false}
-                      activeDot={isHighlighted ? { r: 5, cursor: 'pointer', onClick: () => togglePlayer(name) } : false}
-                      name={name}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  )
-                })}
-              </LineChart>
-            </ResponsiveContainer>
+            {renderTrajectoryChart(600)}
           </div>
         </section>
+      )}
+
+      {/* Fullscreen Trajectory Modal */}
+      {trajectoryFullscreen && (
+        <div className="trajectory-modal-backdrop" onClick={() => setTrajectoryFullscreen(false)}>
+          <div className="trajectory-modal" onClick={e => e.stopPropagation()}>
+            <div className="trajectory-modal-header">
+              <h2 className="section-title">Points Trajectory</h2>
+              <div className="trajectory-controls">
+                <label className="line-style-toggle">
+                  <span className="toggle-label">{smoothLines ? 'Smooth' : 'Angled'}</span>
+                  <div className={`toggle-switch ${smoothLines ? 'active' : ''}`} onClick={() => setSmoothLines(s => { const next = !s; localStorage.setItem('trajectory-smooth-lines', String(next)); return next })}>
+                    <div className="toggle-knob" />
+                  </div>
+                </label>
+                <button className="expand-btn" onClick={() => setTrajectoryFullscreen(false)} title="Close fullscreen">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="4" y1="4" x2="12" y2="12" />
+                    <line x1="12" y1="4" x2="4" y2="12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="trajectory-modal-chart">
+              {renderTrajectoryChart('100%')}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Section 6: Vote Collection Leaderboard */}
