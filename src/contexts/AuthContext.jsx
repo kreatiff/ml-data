@@ -6,9 +6,17 @@ const AuthContext = createContext(null)
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+// Restore last-known avatar so the navbar renders instantly
+function getCachedProfile() {
+  try {
+    const cached = localStorage.getItem('cached_profile')
+    return cached ? JSON.parse(cached) : null
+  } catch { return null }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState(null)
+  const [profile, setProfile] = useState(getCachedProfile)
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -23,6 +31,14 @@ export function AuthProvider({ children }) {
       .eq('auth_user_id', userId)
       .single()
     setProfile(data)
+    // Cache for instant navbar avatar on next page load
+    if (data) {
+      localStorage.setItem('cached_profile', JSON.stringify({
+        name: data.name, avatar_url: data.avatar_url, role: data.role
+      }))
+    } else {
+      localStorage.removeItem('cached_profile')
+    }
   }, [])
 
   useEffect(() => {
@@ -89,6 +105,7 @@ export function AuthProvider({ children }) {
     // Clear legacy localStorage keys
     localStorage.removeItem('app_access_token')
     localStorage.removeItem('app_is_admin')
+    localStorage.removeItem('cached_profile')
 
     const { error } = await supabase.auth.signOut()
     return { error }
