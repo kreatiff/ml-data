@@ -1,4 +1,8 @@
 import { useMemo } from 'react'
+import {
+  computeSongScores, computeRoundWinners, computeRoundLastPlace,
+  buildSortedRounds, buildNameMap, buildStandingsHistory
+} from '../utils/analyticsHelpers'
 
 import crownJewelImg from '../assets/badges/crown_jewels.jpg'
 import consistentImg from '../assets/badges/consistent.jpg'
@@ -57,32 +61,12 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     }
 
     // ── Precompute shared structures ──
-
-    // Song scores: total points per (round_id, spotify_uri)
-    const songScores = {}
-    filteredVotes.forEach(v => {
-      const key = `${v.round_id}_${v.spotify_uri}`
-      if (!songScores[key]) {
-        songScores[key] = { round_id: v.round_id, spotify_uri: v.spotify_uri, submitter_id: v.submitter_id, submitter_name: v.submitter_name, song_name: v.song_name, artists: v.artists, total: 0, votes: [] }
-      }
-      songScores[key].total += v.points_assigned
-      songScores[key].votes.push(v.points_assigned)
-    })
-
-    // Round winners (highest scoring song per round)
-    const roundWinners = {} // round_id → { submitter_id, total }
-    const roundLastPlace = {} // round_id → min total score
-    Object.values(songScores).forEach(ss => {
-      if (!roundWinners[ss.round_id] || ss.total > roundWinners[ss.round_id].total) {
-        roundWinners[ss.round_id] = { submitter_id: ss.submitter_id, submitter_name: ss.submitter_name, total: ss.total, spotify_uri: ss.spotify_uri }
-      }
-      if (roundLastPlace[ss.round_id] === undefined || ss.total < roundLastPlace[ss.round_id]) {
-        roundLastPlace[ss.round_id] = ss.total
-      }
-    })
+    const songScores = computeSongScores(filteredVotes, { trackVotes: true })
+    const roundWinners = computeRoundWinners(songScores)
+    const roundLastPlace = computeRoundLastPlace(songScores)
 
     // Per-player stats
-    const playerMap = {} // id → { name, totalPoints, songCount, bestSongScore, bestSongAvg, roundWins, zeroSongs }
+    const playerMap = {} // id → { name, totalPoints, songCount, bestSongScore, roundWins, zeroSongs }
     filteredSubmissions.forEach(s => {
       if (!playerMap[s.submitter_id]) {
         playerMap[s.submitter_id] = { name: s.submitter_name, totalPoints: 0, songCount: 0, bestSongScore: 0, roundWins: 0, zeroSongs: 0 }
@@ -106,24 +90,15 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       if (playerMap[w.submitter_id]) playerMap[w.submitter_id].roundWins++
     })
 
-    // Rounds sorted chronologically by round_date (rounds.started_at)
-    const roundDates = {}
-    filteredVotes.forEach(v => {
-      if (v.round_id && v.round_date && !roundDates[v.round_id]) {
-        roundDates[v.round_id] = v.round_date
-      }
-    })
-    const sortedRoundIds = Object.keys(roundDates).sort((a, b) => {
-      return new Date(roundDates[a]) - new Date(roundDates[b])
-    })
-
-    // Name map for convenience
-    const nameMap = {}
+    // Sorted rounds + standings history via shared helpers
+    const { sortedRoundIds } = buildSortedRounds(filteredVotes)
+    const nameMap = buildNameMap(filteredSubmissions)
     Object.entries(playerMap).forEach(([id, p]) => { nameMap[id] = p.name })
+    const allPlayerIds = Object.keys(playerMap)
+    const standingsHistory = buildStandingsHistory({ sortedRoundIds, songScores, allPlayerIds })
 
     // ── Helper: pick players with max value ──
     function pickMax(entries, minVal = 1) {
-      // entries: [{ id, name, stat }]
       if (entries.length === 0) return []
       const max = Math.max(...entries.map(e => e.stat))
       if (max < minVal) return []
@@ -161,34 +136,6 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     badgeResults.cold_streak = Object.entries(playerMap)
       .filter(([, p]) => p.zeroSongs >= 5)
       .map(([id, p]) => ({ id, name: p.name, stat: `${p.zeroSongs} songs` }))
-
-    // ── Standings History ──
-    // Simulate cumulative standings after each round
-    const cumulativePoints = {} // playerId → running total
-    const allPlayerIds = Object.keys(playerMap)
-    allPlayerIds.forEach(id => { cumulativePoints[id] = 0 })
-
-    const standingsHistory = [] // [{ round_id, rankings: [{ id, total, rank }] }]
-
-    sortedRoundIds.forEach(roundId => {
-      // Add this round's song scores to cumulative
-      Object.values(songScores).forEach(ss => {
-        if (ss.round_id === roundId && cumulativePoints[ss.submitter_id] !== undefined) {
-          cumulativePoints[ss.submitter_id] += ss.total
-        }
-      })
-
-      // Rank players
-      const ranked = allPlayerIds
-        .map(id => ({ id, total: cumulativePoints[id] }))
-        .sort((a, b) => b.total - a.total)
-
-      ranked.forEach((r, i) => {
-        r.rank = (i === 0 || ranked[i - 1].total !== r.total) ? i + 1 : ranked[i - 1].rank
-      })
-
-      standingsHistory.push({ round_id: roundId, rankings: ranked })
-    })
 
     // 5. Reached the Summit — was ever #1
     const summitPlayers = new Set()

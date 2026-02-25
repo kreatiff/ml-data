@@ -463,6 +463,42 @@
   border-bottom: none;
 }
 
+/* Virtual table body (replaces <tbody> for virtualized rendering) */
+.virtual-table-body {
+  font-size: 0.875rem;
+}
+
+.virtual-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr 1fr 0.6fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+
+.virtual-table-row:hover {
+  background: var(--spotify-card);
+}
+
+.virtual-cell {
+  padding: 0.875rem 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Match the thead column widths — table uses auto layout, so we force the same grid */
+.songs-table thead tr {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr 1fr 0.6fr 1fr;
+}
+
+.songs-table thead th {
+  display: flex;
+  align-items: center;
+}
+
 .song-name {
   font-weight: 400;
   color: var(--spotify-white);

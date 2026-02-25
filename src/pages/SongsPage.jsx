@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { useSongs } from '../hooks/useSongs'
 import { useSpotifyAlbumArt } from '../hooks/useSpotifyAlbumArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
@@ -9,6 +10,158 @@ import BottomSheet from '../components/BottomSheet'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import InitialsAvatar from '../components/InitialsAvatar'
 import salmonImg from '../assets/salmon_mode.png'
+
+// ── Virtualized desktop table ──
+function VirtualizedTable({ songs, handleSort, getSortIcon, formatDate, salmonMode }) {
+  const parentRef = useRef(null)
+  const virtualizer = useVirtualizer({
+    count: songs.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 44,
+    overscan: 10,
+  })
+
+  return (
+    <div className="table-container">
+      <table className="songs-table">
+        <thead>
+          <tr>
+            <th onClick={() => handleSort('song_name')} className="sortable">
+              Song {getSortIcon('song_name')}
+            </th>
+            <th onClick={() => handleSort('artists')} className="sortable">
+              Artist {getSortIcon('artists')}
+            </th>
+            <th onClick={() => handleSort('album')} className="sortable">
+              Album {getSortIcon('album')}
+            </th>
+            <th onClick={() => handleSort('submitter_name')} className="sortable">
+              Submitter {getSortIcon('submitter_name')}
+            </th>
+            <th onClick={() => handleSort('round_name')} className="sortable">
+              Round {getSortIcon('round_name')}
+            </th>
+            <th onClick={() => handleSort('total_votes')} className="sortable">
+              Votes {getSortIcon('total_votes')}
+            </th>
+            <th onClick={() => handleSort('created_at')} className="sortable">
+              Submitted {getSortIcon('created_at')}
+            </th>
+          </tr>
+        </thead>
+      </table>
+
+      {songs.length === 0 ? (
+        <div className="no-results">No songs found matching your filters</div>
+      ) : (
+        <div
+          ref={parentRef}
+          className="virtual-table-body"
+          style={{ height: 'calc(100vh - 280px)', overflow: 'auto' }}
+        >
+          <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+            {virtualizer.getVirtualItems().map(virtualRow => {
+              const song = songs[virtualRow.index]
+              return (
+                <div
+                  key={`${song.round_id}_${song.spotify_uri}`}
+                  className="virtual-table-row"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <div className="virtual-cell song-name" title={song.song_name}>{song.song_name}</div>
+                  <div className="virtual-cell" title={song.artists}>{song.artists}</div>
+                  <div className="virtual-cell album" title={song.album}>{song.album}</div>
+                  <div className="virtual-cell" title={song.submitter_name}>
+                    <div className="table-submitter">
+                      {song.submitter_avatar_url ? (
+                        <img src={song.submitter_avatar_url} alt="Profile" className="table-avatar" />
+                      ) : (
+                        <InitialsAvatar name={song.submitter_name} size={24} />
+                      )}
+                      <span>{song.submitter_name}</span>
+                    </div>
+                  </div>
+                  <div className="virtual-cell" title={song.round_name}>{song.round_name}</div>
+                  <div className="virtual-cell votes" title={song.total_votes}>{song.total_votes}</div>
+                  <div className="virtual-cell date" title={formatDate(song.created_at)}>
+                    {formatDate(song.created_at)}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {!salmonMode && (
+        <div className="salmon-prophecy">
+          A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Virtualized mobile cards ──
+function VirtualizedCards({ songs, salmonMode }) {
+  const parentRef = useRef(null)
+  const virtualizer = useVirtualizer({
+    count: songs.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 160,
+    overscan: 5,
+  })
+
+  if (songs.length === 0) {
+    return (
+      <div className="cards-container">
+        <div className="no-results">No songs found matching your filters</div>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      ref={parentRef}
+      className="cards-container"
+      style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}
+    >
+      <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+        {virtualizer.getVirtualItems().map(virtualRow => {
+          const song = songs[virtualRow.index]
+          return (
+            <div
+              key={`${song.round_id}_${song.spotify_uri}`}
+              ref={virtualizer.measureElement}
+              data-index={virtualRow.index}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <SongCard song={song} />
+            </div>
+          )
+        })}
+      </div>
+      {!salmonMode && (
+        <div className="salmon-prophecy" style={{ position: 'relative' }}>
+          A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
+        </div>
+      )}
+    </div>
+  )
+}
 
 function SongsPage({ selectedTheme, setSelectedTheme }) {
   const { songs, loading, error } = useSongs()
@@ -313,89 +466,18 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
       )}
 
       {isMobile ? (
-        <div className="cards-container">
-          {filteredAndSortedSongs.length === 0 ? (
-            <div className="no-results">
-              No songs found matching your filters
-            </div>
-          ) : (
-            filteredAndSortedSongs.map((song) => (
-              <SongCard key={`${song.round_id}_${song.spotify_uri}`} song={song} />
-            ))
-          )}
-          {!salmonMode && (
-            <div className="salmon-prophecy">
-              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
-            </div>
-          )}
-        </div>
+        <VirtualizedCards
+          songs={filteredAndSortedSongs}
+          salmonMode={salmonMode}
+        />
       ) : (
-        <div className="table-container">
-          <table className="songs-table">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort('song_name')} className="sortable">
-                  Song {getSortIcon('song_name')}
-                </th>
-                <th onClick={() => handleSort('artists')} className="sortable">
-                  Artist {getSortIcon('artists')}
-                </th>
-                <th onClick={() => handleSort('album')} className="sortable">
-                  Album {getSortIcon('album')}
-                </th>
-                <th onClick={() => handleSort('submitter_name')} className="sortable">
-                  Submitter {getSortIcon('submitter_name')}
-                </th>
-                <th onClick={() => handleSort('round_name')} className="sortable">
-                  Round {getSortIcon('round_name')}
-                </th>
-                <th onClick={() => handleSort('total_votes')} className="sortable">
-                  Votes {getSortIcon('total_votes')}
-                </th>
-                <th onClick={() => handleSort('created_at')} className="sortable">
-                  Submitted {getSortIcon('created_at')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAndSortedSongs.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="no-results">
-                    No songs found matching your filters
-                  </td>
-                </tr>
-              ) : (
-                filteredAndSortedSongs.map((song) => (
-                  <tr key={`${song.round_id}_${song.spotify_uri}`}>
-                    <td className="song-name" title={song.song_name}>{song.song_name}</td>
-                    <td title={song.artists}>{song.artists}</td>
-                    <td className="album" title={song.album}>{song.album}</td>
-                    <td title={song.submitter_name}>
-                      <div className="table-submitter">
-                        {song.submitter_avatar_url ? (
-                          <img src={song.submitter_avatar_url} alt="Profile" className="table-avatar" />
-                        ) : (
-                          <InitialsAvatar name={song.submitter_name} size={24} />
-                        )}
-                        <span>{song.submitter_name}</span>
-                      </div>
-                    </td>
-                    <td title={song.round_name}>{song.round_name}</td>
-                    <td className="votes" title={song.total_votes}>{song.total_votes}</td>
-                    <td className="date" title={formatDate(song.created_at)}>
-                      {formatDate(song.created_at)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-          {!salmonMode && (
-            <div className="salmon-prophecy">
-              A prophecy speaks of a defiant upstream traveller, a tub-dweller, that turns all it touches to coral. If you seek it, ye shall witness The Transformation!
-            </div>
-          )}
-        </div>
+        <VirtualizedTable
+          songs={filteredAndSortedSongs}
+          handleSort={handleSort}
+          getSortIcon={getSortIcon}
+          formatDate={formatDate}
+          salmonMode={salmonMode}
+        />
       )}
 
       {salmonPopupText && (

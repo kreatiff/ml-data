@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { computeSongScores, computeRoundWinners } from '../utils/analyticsHelpers'
 
 const MAX_TRACKS = 50
 
@@ -18,32 +19,8 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
 
     const maxPts = getMaxPoints(filteredVotes)
 
-    // ── Shared structures ──
-
-    // Song scores: total points per unique (round_id, spotify_uri)
-    const songScores = {}
-    filteredVotes.forEach(v => {
-      const key = `${v.round_id}_${v.spotify_uri}`
-      if (!songScores[key]) {
-        songScores[key] = {
-          round_id: v.round_id,
-          spotify_uri: v.spotify_uri,
-          song_name: v.song_name,
-          artists: v.artists,
-          submitter_id: v.submitter_id,
-          submitter_name: v.submitter_name,
-          round_name: v.round_name,
-          round_date: v.round_date,
-          total: 0,
-          maxVoteCount: 0,
-          voterCount: 0,
-        }
-      }
-      songScores[key].total += v.points_assigned
-      if (v.points_assigned === maxPts) songScores[key].maxVoteCount++
-      songScores[key].voterCount++
-    })
-
+    // Use shared helpers for song scores and round winners
+    const songScores = computeSongScores(filteredVotes, { maxPts })
     const allSongs = Object.values(songScores)
 
     // ── 1. Hall of Fame — top songs by total points ──
@@ -63,12 +40,7 @@ export function usePlaylistDefinitions(filteredVotes, filteredSubmissions, playe
     const hallOfFameDeduped = dedup(hallOfFame).slice(0, 10)
 
     // ── 2. Round Winners — #1 song per round, chronological ──
-    const roundWinners = {}
-    allSongs.forEach(s => {
-      if (!roundWinners[s.round_id] || s.total > roundWinners[s.round_id].total) {
-        roundWinners[s.round_id] = s
-      }
-    })
+    const roundWinners = computeRoundWinners(songScores)
     const roundWinnersList = Object.values(roundWinners)
       .sort((a, b) => new Date(a.round_date) - new Date(b.round_date))
     const roundWinnersDeduped = dedup(roundWinnersList).slice(0, MAX_TRACKS)

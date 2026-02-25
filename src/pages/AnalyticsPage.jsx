@@ -5,6 +5,7 @@ import {
   Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { useAnalytics } from '../hooks/useAnalytics'
+import { useAnalyticsComputations } from '../hooks/useAnalyticsComputations'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
@@ -36,10 +37,14 @@ function AnalyticsPage() {
 
   const {
     loading, error, leagues, activeTeam, selectedLeague, setSelectedLeague,
-    playerStats, votingPatterns,
-    topArtists, underdogTriumphs, playerTrajectory, voteCollectionBoard,
+    filteredVotes, filteredSubmissions,
     totalVotes, totalSubmissions
   } = useAnalytics({ team: teamParam })
+
+  const {
+    playerStats, votingPatterns,
+    topArtists, underdogTriumphs, playerTrajectory, voteCollectionBoard
+  } = useAnalyticsComputations(filteredVotes, filteredSubmissions)
 
   const { getLeagueName } = useSalmonMode()
 

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import { useAnalytics } from '../hooks/useAnalytics'
+import { useAnalyticsComputations } from '../hooks/useAnalyticsComputations'
 import { useAuth } from '../contexts/AuthContext'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { useSalmonMode } from '../hooks/useSalmonMode'
@@ -125,8 +126,10 @@ function PlaylistsPage() {
 
   const {
     loading, error, leagues, selectedLeague, setSelectedLeague,
-    filteredVotes, filteredSubmissions, playerStats
+    filteredVotes, filteredSubmissions
   } = useAnalytics({ team: teamParam })
+
+  const { playerStats } = useAnalyticsComputations(filteredVotes, filteredSubmissions)
 
   const { getLeagueName, salmonMode } = useSalmonMode()
 
