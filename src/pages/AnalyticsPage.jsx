@@ -58,7 +58,10 @@ function AnalyticsPage() {
 
   const isMobile = useIsMobile()
   const [playerSort, setPlayerSort] = useState({ key: 'totalPoints', dir: 'desc' })
-  const [smoothLines, setSmoothLines] = useState(true)
+  const [smoothLines, setSmoothLines] = useState(() => {
+    const stored = localStorage.getItem('trajectory-smooth-lines')
+    return stored !== null ? stored === 'true' : true
+  })
   const [highlightedPlayers, setHighlightedPlayers] = useState(new Set())
 
   const togglePlayer = useCallback((name) => {
@@ -258,21 +261,19 @@ function AnalyticsPage() {
             <ResponsiveContainer width="100%" height={600}>
               <LineChart
                 data={playerTrajectory.data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 60 }}
+                margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                 <XAxis
-                  dataKey="round_name"
+                  dataKey="round_label"
                   stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
+                  height={30}
                   interval={0}
                 />
                 <YAxis
                   stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 13 }}
                   allowDecimals={false}
                   label={{ value: 'Total Points', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
                 />
@@ -284,6 +285,7 @@ function AnalyticsPage() {
                     color: 'var(--spotify-white)',
                     fontSize: '0.85rem'
                   }}
+                  labelFormatter={(label, payload) => payload?.[0]?.payload?.round_name || label}
                   itemSorter={(item) => -item.value}
                 />
                 <Legend content={renderTrajectoryLegend} onClick={handleLegendClick} />

@@ -27,6 +27,34 @@
   margin: 0;
 }
 
+.profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.role-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+
+.role-admin {
+  color: #FF6B00;
+  border-color: #FF6B00;
+  background: rgba(255, 107, 0, 0.1);
+}
+
+.role-user {
+  color: var(--spotify-green);
+  border-color: var(--spotify-green);
+  background: rgba(29, 185, 84, 0.1);
+}
+
 .status-banner {
   padding: 1rem;
   margin-bottom: 2rem;

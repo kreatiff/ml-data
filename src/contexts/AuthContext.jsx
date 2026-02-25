@@ -101,9 +101,12 @@ export function AuthProvider({ children }) {
     return { data, error }
   }, [])
 
+  const isAdmin = profile?.role === 'admin'
+
   const value = {
     user,
     profile,
+    isAdmin,
     session,
     loading,
     signUp,

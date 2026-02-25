@@ -413,12 +413,12 @@ export function useAnalytics({ team } = {}) {
     const cumulative = {}
     playerIds.forEach(id => { cumulative[id] = 0 })
 
-    const data = sortedRounds.map(round => {
+    const data = sortedRounds.map((round, idx) => {
       playerIds.forEach(id => {
         cumulative[id] += (pointsByRoundPlayer[round.id]?.[id] || 0)
       })
 
-      const entry = { round_name: round.name }
+      const entry = { round_name: round.name, round_label: `R${idx + 1}` }
       playerIds.forEach(id => {
         entry[playerNameMap[id]] = cumulative[id]
       })
@@ -426,6 +426,11 @@ export function useAnalytics({ team } = {}) {
     })
 
     const players = playerIds.map(id => playerNameMap[id]).sort()
+
+    // Prepend a "Start" entry where everyone has 0 points
+    const zeroEntry = { round_name: 'Start', round_label: '⚬' }
+    players.forEach(name => { zeroEntry[name] = 0 })
+    data.unshift(zeroEntry)
 
     return { data, players }
   }, [filteredVotes, filteredSubmissions])

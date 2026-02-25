@@ -5,7 +5,7 @@ import InitialsAvatar from '../components/InitialsAvatar'
 import './ProfilePage.css'
 
 function ProfilePage() {
-    const { user, profile, updatePassword, refreshProfile } = useAuth()
+    const { user, profile, isAdmin, updatePassword, refreshProfile } = useAuth()
 
     const [displayName, setDisplayName] = useState('')
     const [avatarFile, setAvatarFile] = useState(null)
@@ -167,7 +167,12 @@ function ProfilePage() {
         <div className="profile-page">
             <div className="profile-header">
                 <h1 className="glitch-text">USER_PROFILE</h1>
-                <p className="profile-id">ID: {user.id}</p>
+                <div className="profile-meta">
+                    <p className="profile-id">ID: {user.id}</p>
+                    <span className={`role-badge role-${profile?.role || 'user'}`}>
+                        {(profile?.role || 'user').toUpperCase()}
+                    </span>
+                </div>
             </div>
 
             {status.message && (
