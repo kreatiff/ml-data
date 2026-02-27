@@ -133,7 +133,7 @@ function RoundRecapPage() {
                 <BarChart
                   data={recapData.scoreDistribution}
                   layout="vertical"
-                  margin={{ top: 5, right: 30, left: 90, bottom: 5 }}
+                  margin={{ top: 5, right: isMobile ? 10 : 30, left: isMobile ? 65 : 100, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                   <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
@@ -142,7 +142,7 @@ function RoundRecapPage() {
                     dataKey="submitterName"
                     stroke="rgba(255,255,255,0.3)"
                     tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
-                    width={85}
+                    width={isMobile ? 65 : 85}
                   />
                   <Tooltip
                     contentStyle={TOOLTIP_STYLE}

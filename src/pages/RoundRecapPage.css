@@ -398,11 +398,14 @@
   font-weight: 700;
   color: var(--spotify-white);
   margin-bottom: 0.25rem;
+  line-height: 1.3;
   word-wrap: break-word;
 }
 .recap-song-artist {
   font-size: 0.9rem;
   color: var(--spotify-gray);
+  line-height: 1.3;
+  word-wrap: break-word;
 }
 
 .recap-song-submitter-block {
@@ -523,7 +526,6 @@
   }
   .recap-song-rank-badge {
     font-size: 1.1rem;
-    width: auto;
   }
   .recap-song-submitter-block {
     width: 100%;

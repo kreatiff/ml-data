@@ -305,7 +305,7 @@ function MyStatsPage() {
           <p className="section-desc">Your cumulative points vs. the field average</p>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={myTrajectoryData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+              <LineChart data={myTrajectoryData} margin={{ top: 10, right: isMobile ? 10 : 30, left: isMobile ? -20 : 0, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                 <XAxis
                   dataKey="round_label"
@@ -434,7 +434,7 @@ function MyStatsPage() {
               <div className="mystats-dna-chart">
                 <h3 className="mystats-dna-label">🎯 Points You Gave</h3>
                 <ResponsiveContainer width="100%" height={Math.max(180, votingDna.given.length * 36)}>
-                  <BarChart data={votingDna.given} layout="vertical" margin={{ top: 5, right: 30, left: isMobile ? 70 : 100, bottom: 5 }}>
+                  <BarChart data={votingDna.given} layout="vertical" margin={{ top: 5, right: isMobile ? 10 : 30, left: isMobile ? 65 : 100, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                     <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
                     <YAxis
@@ -456,7 +456,7 @@ function MyStatsPage() {
               <div className="mystats-dna-chart">
                 <h3 className="mystats-dna-label">❤️ Points You Received</h3>
                 <ResponsiveContainer width="100%" height={Math.max(180, votingDna.received.length * 36)}>
-                  <BarChart data={votingDna.received} layout="vertical" margin={{ top: 5, right: 30, left: isMobile ? 70 : 100, bottom: 5 }}>
+                  <BarChart data={votingDna.received} layout="vertical" margin={{ top: 5, right: isMobile ? 10 : 30, left: isMobile ? 65 : 100, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                     <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
                     <YAxis
@@ -591,7 +591,7 @@ function MyStatsPage() {
               <div className="mystats-h2h-chart">
                 <h3 className="mystats-dna-label">Points Per Round</h3>
                 <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={headToHead.roundComparison} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                  <BarChart data={headToHead.roundComparison} margin={{ top: 10, right: isMobile ? 10 : 10, left: isMobile ? -20 : 0, bottom: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                     <XAxis
                       dataKey="roundLabel"
