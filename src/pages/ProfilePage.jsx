@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../supabaseClient'
 import InitialsAvatar from '../components/InitialsAvatar'
+import { useIsMobile } from '../hooks/useMediaQuery'
+import MobilePageHeader from '../components/MobilePageHeader'
 import './ProfilePage.css'
 
 function ProfilePage() {
     const { user, profile, isAdmin, updatePassword, refreshProfile } = useAuth()
+    const isMobile = useIsMobile()
 
     const [displayName, setDisplayName] = useState('')
     const [avatarFile, setAvatarFile] = useState(null)
@@ -165,15 +168,24 @@ function ProfilePage() {
 
     return (
         <div className="profile-page">
-            <div className="profile-header">
-                <h1 className="glitch-text">USER_PROFILE</h1>
-                <div className="profile-meta">
-                    <p className="profile-id">ID: {user.id}</p>
+            {isMobile && <MobilePageHeader title="Profile" rightContent={
+                <div className="profile-meta" style={{ gap: '0.5rem', marginBottom: 0 }}>
                     <span className={`role-badge role-${profile?.role || 'user'}`}>
                         {(profile?.role || 'user').toUpperCase()}
                     </span>
                 </div>
-            </div>
+            } />}
+            {!isMobile && (
+                <div className="profile-header">
+                    <h1 className="glitch-text">USER_PROFILE</h1>
+                    <div className="profile-meta">
+                        <p className="profile-id">ID: {user.id}</p>
+                        <span className={`role-badge role-${profile?.role || 'user'}`}>
+                            {(profile?.role || 'user').toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+            )}
 
             {status.message && (
                 <div className={`status-banner status-${status.type}`}>

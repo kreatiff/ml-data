@@ -545,7 +545,7 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .playlists-page {
     padding: 1.25rem 1rem;
   }

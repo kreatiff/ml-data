@@ -1,0 +1,831 @@
+/* ── My Stats Page ── */
+.mystats-page {
+  max-width: 1400px;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.mystats-header {
+  margin-bottom: 2rem;
+}
+
+.mystats-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.mystats-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--spotify-white);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ── Gate (not logged in / no profile) ── */
+.mystats-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.mystats-gate-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.mystats-gate h2 {
+  color: var(--spotify-white);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.mystats-gate p {
+  color: var(--spotify-gray);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.mystats-link {
+  color: var(--spotify-green);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.mystats-link:hover {
+  text-decoration: underline;
+}
+
+.mystats-loading,
+.mystats-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--spotify-gray);
+  font-size: 1rem;
+}
+
+.mystats-error h2 {
+  color: #FF6B6B;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Hero Card ── */
+.mystats-hero {
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.mystats-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--spotify-green), transparent);
+}
+
+.mystats-hero-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.mystats-hero-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mystats-hero-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--spotify-green);
+  box-shadow: 0 0 20px rgba(var(--spotify-green-rgb, 204, 255, 0), 0.15);
+}
+
+.mystats-hero-rank-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--spotify-green);
+  color: var(--spotify-base);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  min-width: 1.6rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mystats-hero-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--spotify-white);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.mystats-hero-subtitle {
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  margin-top: 0.2rem;
+}
+
+.mystats-hero-subtitle strong {
+  color: var(--spotify-green);
+  font-weight: 700;
+}
+
+/* ── Stat Grid ── */
+.mystats-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+}
+
+.mystats-stat-tile {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.85rem 0.75rem;
+  text-align: center;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.mystats-stat-tile:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.mystats-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--spotify-green);
+  line-height: 1.2;
+}
+
+.mystats-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Personal Records ── */
+
+.mystats-records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.mystats-record-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.mystats-record-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.mystats-record-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.mystats-record-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.mystats-record-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--spotify-gray);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+}
+
+.mystats-record-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mystats-record-meta {
+  font-size: 0.75rem;
+  color: var(--spotify-gray);
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Round Breakdown Cards (mobile) ── */
+.mystats-rounds-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mystats-round-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--spotify-card);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: border-color 0.2s;
+}
+
+.mystats-round-card.round-win {
+  border-color: var(--spotify-green);
+  background: rgba(var(--spotify-green-rgb, 204, 255, 0), 0.05);
+}
+
+.mystats-round-card.round-top3 {
+  border-left: 3px solid var(--spotify-green);
+}
+
+.mystats-round-placement {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--spotify-gray);
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.round-win .mystats-round-placement {
+  color: var(--spotify-green);
+}
+
+.mystats-round-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mystats-round-name {
+  font-weight: 600;
+  color: var(--spotify-white);
+  font-size: 0.85rem;
+  margin-bottom: 0.15rem;
+}
+
+.mystats-round-song {
+  color: var(--spotify-light-gray);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mystats-round-artist {
+  color: var(--spotify-gray);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.1rem;
+}
+
+.mystats-round-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--spotify-gray);
+  margin-top: 0.2rem;
+}
+
+.mystats-round-meta strong {
+  color: var(--spotify-green);
+}
+
+/* ── Round table overrides ── */
+.mystats-page .analytics-table {
+  width: 100%;
+}
+.mystats-page .analytics-table thead th {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--spotify-white);
+  font-size: 0.78rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fixed layout so long cells truncate instead of stretching */
+.mystats-page .analytics-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Column width hints (# / Score / Placement are compact; Round, Song, Artist stretch) */
+.mystats-page .analytics-table col.col-art     { width: 3.5rem; }
+.mystats-page .analytics-table col.col-num     { width: 2.5rem; }
+.mystats-page .analytics-table col.col-round   { width: 18%; }
+.mystats-page .analytics-table col.col-song    { width: 26%; }
+.mystats-page .analytics-table col.col-artist  { width: 20%; }
+.mystats-page .analytics-table col.col-score   { width: 5rem; }
+.mystats-page .analytics-table col.col-place   { width: 8rem; }
+
+/* Art thumbnail cell */
+.mystats-art-cell {
+  padding: 0.4rem 0.5rem !important;
+  vertical-align: middle;
+}
+
+.mystats-art-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  display: block;
+  background: rgba(255, 255, 255, 0.06);
+  animation: mystats-fade-in 0.3s ease;
+}
+
+.mystats-art-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  display: block;
+}
+
+@keyframes mystats-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Mobile card art */
+.mystats-round-art {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.mystats-round-art-placeholder {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mystats-page .analytics-table tbody td {
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mystats-page .analytics-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.mystats-page .analytics-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.round-win-row td {
+  background: rgba(var(--spotify-green-rgb, 204, 255, 0), 0.07) !important;
+  border-left: 3px solid var(--spotify-green);
+}
+
+.round-top3-row td:first-child {
+  border-left: 3px solid rgba(var(--spotify-green-rgb, 204, 255, 0), 0.5);
+}
+
+.mystats-placement {
+  font-weight: 600;
+}
+
+.placement-win {
+  color: var(--spotify-green) !important;
+}
+
+.placement-top3 {
+  color: var(--spotify-green) !important;
+  opacity: 0.8;
+}
+
+.placement-total {
+  color: var(--spotify-gray);
+  font-weight: 400;
+  font-size: 0.78rem;
+}
+
+/* ── Voting DNA ── */
+.mystats-dna-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.mystats-dna-chart {
+  min-width: 0;
+}
+
+.mystats-dna-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--spotify-light-gray);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ── Badges ── */
+.mystats-badge-progress {
+  margin-bottom: 1.25rem;
+}
+
+.mystats-badge-progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--spotify-gray);
+  margin-bottom: 0.4rem;
+}
+
+.mystats-badge-progress-text strong {
+  color: var(--spotify-green);
+}
+
+.mystats-badge-pct {
+  font-weight: 700;
+  color: var(--spotify-green);
+}
+
+.mystats-badge-progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mystats-badge-progress-fill {
+  height: 100%;
+  background: var(--spotify-green);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+  opacity: 0.7;
+}
+
+.mystats-badge-progress-fill.complete {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--spotify-green), #00FF88);
+}
+
+.mystats-badge-section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--spotify-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 1rem 0 0.5rem;
+}
+
+.mystats-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.mystats-badge-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.mystats-badge-card:hover {
+  transform: translateY(-2px);
+}
+
+.mystats-badge-card.earned:hover {
+  border-color: var(--spotify-green);
+  box-shadow: 0 4px 16px rgba(var(--spotify-green-rgb, 204, 255, 0), 0.1);
+}
+
+.mystats-badge-card.locked {
+  opacity: 0.35;
+  filter: grayscale(0.7);
+}
+
+.mystats-badge-card.locked:hover {
+  opacity: 0.5;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.mystats-badge-img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 0.6rem;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  display: block;
+}
+
+.mystats-badge-card.earned .mystats-badge-img {
+  border-color: var(--spotify-green);
+  box-shadow: 0 0 12px rgba(var(--spotify-green-rgb, 204, 255, 0), 0.2);
+}
+
+.mystats-badge-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.25rem;
+}
+
+.mystats-badge-desc {
+  font-size: 0.72rem;
+  color: var(--spotify-gray);
+  line-height: 1.35;
+}
+
+/* ── Head-to-Head ── */
+.mystats-h2h-select {
+  margin-bottom: 1.25rem;
+}
+
+.mystats-h2h {
+  margin-top: 0.5rem;
+}
+
+.mystats-h2h-summary {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.mystats-h2h-record {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.h2h-wins {
+  color: var(--spotify-green);
+}
+
+.h2h-ties {
+  color: var(--spotify-gray);
+}
+
+.h2h-losses {
+  color: #FF6B6B;
+}
+
+.h2h-sep {
+  color: rgba(255, 255, 255, 0.15);
+  font-weight: 400;
+}
+
+.h2h-record-label {
+  font-size: 0.72rem;
+  color: var(--spotify-gray);
+  margin-top: 0.5rem;
+}
+
+.mystats-h2h-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.h2h-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.h2h-col-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.h2h-me .h2h-col-name {
+  text-align: left;
+  border-bottom-color: var(--spotify-green);
+}
+
+.h2h-them .h2h-col-name {
+  text-align: right;
+  border-bottom-color: #FF6B6B;
+}
+
+.h2h-stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.h2h-me .h2h-stat-row {
+  flex-direction: row;
+}
+
+.h2h-them .h2h-stat-row {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.h2h-label {
+  color: var(--spotify-gray);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.h2h-val {
+  font-weight: 700;
+  color: var(--spotify-light-gray);
+  font-size: 1rem;
+}
+
+.h2h-val.h2h-winning {
+  color: var(--spotify-green);
+}
+
+.h2h-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.1em;
+  padding-top: 2rem;
+}
+
+.mystats-h2h-chart {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .mystats-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .mystats-page {
+    padding: 1rem;
+  }
+
+  .mystats-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .mystats-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .mystats-hero {
+    padding: 1rem;
+  }
+
+  .mystats-hero-name {
+    font-size: 1.2rem;
+  }
+
+  .mystats-hero-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .mystats-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mystats-stat-value {
+    font-size: 1.2rem;
+  }
+
+  .mystats-records-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mystats-dna-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .mystats-badge-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .mystats-h2h-comparison {
+    gap: 0.25rem;
+    padding: 0.75rem;
+  }
+
+  .h2h-col-name {
+    font-size: 0.78rem;
+  }
+
+  .h2h-val {
+    font-size: 0.85rem;
+  }
+
+  .h2h-label {
+    font-size: 0.65rem;
+  }
+
+  .mystats-h2h-record {
+    font-size: 1.2rem;
+    padding: 0.4rem 1rem;
+  }
+}

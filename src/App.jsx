@@ -4,6 +4,7 @@ import { useAuth } from './contexts/AuthContext'
 import { useSalmonMode } from './hooks/useSalmonMode'
 import { themes } from './constants/themes'
 import NavBar from './components/NavBar'
+import MobileTabBar from './components/MobileTabBar'
 import SongsPage from './pages/SongsPage'
 import './App.css'
 import './CyberTheme.css'
@@ -11,7 +12,9 @@ import './CyberTheme.css'
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'))
 const BadgesPage = lazy(() => import('./pages/BadgesPage'))
 const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'))
+const RoundRecapPage = lazy(() => import('./pages/RoundRecapPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const MyStatsPage = lazy(() => import('./pages/MyStatsPage'))
 
 function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -50,10 +53,13 @@ function App() {
           <Route path="/" element={<SongsPage selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />} />
           <Route path="/analytics/:year?" element={<AnalyticsPage />} />
           <Route path="/badges/:year?" element={<BadgesPage />} />
+          <Route path="/rounds/:roundId?" element={<RoundRecapPage />} />
           <Route path="/playlists/:year?" element={<PlaylistsPage />} />
+          <Route path="/my-stats/:year?" element={<MyStatsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Suspense>
+      <MobileTabBar />
     </div>
   )
 }

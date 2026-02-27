@@ -26,12 +26,20 @@ function NavBar() {
         <NavLink to="/analytics" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Analytics
         </NavLink>
+        <NavLink to="/rounds" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          Rounds
+        </NavLink>
         <NavLink to="/badges" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Badges
         </NavLink>
         <NavLink to="/playlists" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           Playlists
         </NavLink>
+        {user && (
+          <NavLink to="/my-stats" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+            My Stats
+          </NavLink>
+        )}
         {user && (
           <NavLink to="/profile" className={({ isActive }) => `nav-link profile-link ${isActive ? 'active' : ''}`} title="Profile">
             {profile?.avatar_url ? (

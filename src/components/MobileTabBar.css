@@ -1,0 +1,97 @@
+.mobile-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--tab-bar-height, 64px);
+  padding-bottom: var(--safe-area-bottom, env(safe-area-inset-bottom, 0px));
+  background: rgba(18, 18, 18, 0.85); /* var(--spotify-bg) with opacity */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 990; /* Must be below bottom sheet */
+  justify-content: space-around;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .mobile-tab-bar {
+    display: flex;
+  }
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  padding: 0.25rem 0;
+  color: var(--spotify-gray);
+  text-decoration: none;
+  background: none;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-item:active {
+  transform: scale(0.92);
+}
+
+.tab-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tab-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tab-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.tab-item.active {
+  color: var(--spotify-white);
+}
+
+.tab-item.active .tab-icon {
+  color: var(--spotify-green);
+  transform: translateY(-2px);
+}
+
+/* More Menu Links inside bottom sheet */
+.more-menu-link {
+  display: block;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--spotify-white);
+  text-decoration: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.more-menu-link:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.98);
+}
+
+.more-menu-link.active {
+  background: rgba(29, 185, 84, 0.1);
+  color: var(--spotify-green);
+  border: 1px solid rgba(29, 185, 84, 0.2);
+}
