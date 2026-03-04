@@ -1,6 +1,6 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
--- Generated from live Supabase MusicLeagueData project on 2026-02-25.
+-- Generated from live Supabase MusicLeagueData project on 2026-03-04.
 
 -- ============================================================
 -- Custom Domains
@@ -102,6 +102,21 @@ CREATE TABLE public.created_playlists (
   CONSTRAINT created_playlists_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE public.song_metadata (
+  spotify_uri text NOT NULL,
+  tags text[] DEFAULT '{}',
+  tag_weights jsonb DEFAULT '{}',
+  tag_source text DEFAULT 'none',            -- 'track', 'artist', or 'none'
+  listeners bigint,
+  playcount bigint,
+  duration_ms integer,
+  lastfm_url text,
+  mbid text,
+  lastfm_found boolean DEFAULT false,
+  enriched_at timestamp with time zone,
+  CONSTRAINT song_metadata_pkey PRIMARY KEY (spotify_uri)
+);
+
 -- ============================================================
 -- Indexes
 -- ============================================================
@@ -116,6 +131,7 @@ CREATE INDEX idx_submissions_artists_trgm ON public.submissions USING gin (immut
 CREATE INDEX idx_submissions_album_trgm ON public.submissions USING gin (immutable_unaccent(album) gin_trgm_ops);
 CREATE INDEX idx_votes_round_id ON public.votes USING btree (round_id);
 CREATE INDEX idx_votes_voter_id ON public.votes USING btree (voter_id);
+CREATE INDEX idx_song_metadata_tags ON public.song_metadata USING gin (tags);
 
 -- ============================================================
 -- Views
@@ -317,6 +333,7 @@ ALTER TABLE public.rounds ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.votes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.created_playlists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.song_metadata ENABLE ROW LEVEL SECURITY;
 -- NOTE: aggregate_votes does NOT have RLS enabled
 
 CREATE POLICY "Allow anonymous read access" ON public.leagues FOR SELECT USING (true);
@@ -329,3 +346,22 @@ CREATE POLICY "Allow public read access" ON public.votes FOR SELECT USING (true)
 CREATE POLICY "Allow public read" ON public.created_playlists FOR SELECT USING (true);
 CREATE POLICY "Allow public insert" ON public.created_playlists FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public update" ON public.created_playlists FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public read" ON public.song_metadata FOR SELECT USING (true);
+
+-- ============================================================
+-- Edge Functions
+-- ============================================================
+-- enrich-songs (Last.fm):
+--   POST /functions/v1/enrich-songs
+--   Enriches submissions with Last.fm metadata (tags, listeners, playcount).
+--   Falls back to artist.getTopTags when track tags are unavailable.
+--   Stores results in song_metadata with tag_source indicating origin.
+--   Supports batched invocation via: { force_refresh, batch_limit, offset }
+--
+-- create-playlist:
+--   POST /functions/v1/create-playlist
+--   Creates Spotify playlists from selected rounds/leagues.
+--
+-- verify-password:
+--   POST /functions/v1/verify-password
+--   Validates the site-wide access password.
