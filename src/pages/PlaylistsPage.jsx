@@ -5,8 +5,11 @@ import { useAnalyticsComputations } from '../hooks/useAnalyticsComputations'
 import { useAuth } from '../contexts/AuthContext'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { useSalmonMode } from '../hooks/useSalmonMode'
+import { useIsMobile } from '../hooks/useMediaQuery'
 import { LEAGUE_YEARS, YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import { supabase } from '../supabaseClient'
+import MobilePageHeader from '../components/MobilePageHeader'
+import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 import './PlaylistsPage.css'
 
 function computeTrackHash(trackUris) {
@@ -132,6 +135,7 @@ function PlaylistsPage() {
   const { playerStats } = useAnalyticsComputations(filteredVotes, filteredSubmissions)
 
   const { getLeagueName, salmonMode } = useSalmonMode()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (urlYear?.toLowerCase() === 'all') {
@@ -244,7 +248,7 @@ function PlaylistsPage() {
   }
 
   if (loading) {
-    return <div className="playlists-loading">Loading playlists...</div>
+    return <PageLoadingSkeleton />
   }
 
   if (error) {
@@ -256,25 +260,47 @@ function PlaylistsPage() {
     )
   }
 
+  const leagueSelect = leagues.length >= 1 && (
+    <select
+      value={selectedLeague}
+      onChange={(e) => setSelectedLeague(e.target.value)}
+      className="theme-selector filter-select"
+    >
+      <option value="">All Leagues</option>
+      {leagues.map(l => (
+        <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
+      ))}
+    </select>
+  )
+
+  const leagueSelectMobile = leagues.length >= 1 && (
+    <select
+      value={selectedLeague}
+      onChange={(e) => setSelectedLeague(e.target.value)}
+      className="theme-selector filter-select"
+    >
+      <option value="">All</option>
+      {leagues.map(l => {
+        const fullName = getLeagueName(l.id, l.name || l.id)
+        let year = fullName.match(/\d{4}/)?.[0]
+        if (!year && fullName.toLowerCase().includes('fearless')) year = '2025'
+        year = year || fullName
+        return <option key={l.id} value={l.id}>{year}</option>
+      })}
+    </select>
+  )
+
   return (
     <div className="playlists-page">
-      <div className="playlists-header">
-        <div className="playlists-header-row">
-          <h1>Playlists</h1>
-          {leagues.length >= 1 && (
-            <select
-              value={selectedLeague}
-              onChange={(e) => setSelectedLeague(e.target.value)}
-              className="theme-selector"
-            >
-              <option value="">All Leagues</option>
-              {leagues.map(l => (
-                <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
-              ))}
-            </select>
-          )}
+      {isMobile && <MobilePageHeader title="Playlists" rightContent={leagueSelectMobile} />}
+      {!isMobile && (
+        <div className="playlists-header">
+          <div className="playlists-header-row">
+            <h1>Playlists</h1>
+            {leagueSelect}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="playlists-columns">
         <div className="playlists-col-featured">

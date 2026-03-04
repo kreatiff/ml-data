@@ -10,6 +10,8 @@ import { useIsMobile } from '../hooks/useMediaQuery'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import VoteHeatmap from '../components/VoteHeatmap'
+import MobilePageHeader from '../components/MobilePageHeader'
+import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 import './AnalyticsPage.css'
 
 const PLAYER_COLORS = [
@@ -202,7 +204,7 @@ function AnalyticsPage() {
   )
 
   if (loading) {
-    return <div className="analytics-loading">Loading analytics...</div>
+    return <PageLoadingSkeleton />
   }
 
   if (error) {
@@ -214,25 +216,46 @@ function AnalyticsPage() {
     )
   }
 
+  const leagueSelect = leagues.length >= 1 && (
+    <select
+      value={selectedLeague}
+      onChange={(e) => setSelectedLeague(e.target.value)}
+      className="theme-selector filter-select"
+    >
+      <option value="">All Leagues</option>
+      {leagues.map(l => (
+        <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
+      ))}
+    </select>
+  )
+
+  const leagueSelectMobile = leagues.length >= 1 && (
+    <select
+      value={selectedLeague}
+      onChange={(e) => setSelectedLeague(e.target.value)}
+      className="theme-selector filter-select"
+    >
+      <option value="">All</option>
+      {leagues.map(l => {
+        const fullName = getLeagueName(l.id, l.name || l.id)
+        let year = fullName.match(/\d{4}/)?.[0]
+        if (!year && fullName.toLowerCase().includes('fearless')) year = '2025'
+        year = year || fullName
+        return <option key={l.id} value={l.id}>{year}</option>
+      })}
+    </select>
+  )
+
   return (
     <div className="analytics-page">
-      <div className="analytics-header">
-        <div className="analytics-header-row">
-          <h1>Analytics</h1>
-          {leagues.length >= 1 && (
-            <select
-              value={selectedLeague}
-              onChange={(e) => setSelectedLeague(e.target.value)}
-              className="theme-selector"
-            >
-              <option value="">All Leagues</option>
-              {leagues.map(l => (
-                <option key={l.id} value={l.id}>{getLeagueName(l.id, l.name || l.id)}</option>
-              ))}
-            </select>
-          )}
-        </div>
-        <div className="analytics-summary">
+      {isMobile && <MobilePageHeader title="Analytics" rightContent={leagueSelectMobile} />}
+      {!isMobile && (
+        <div className="analytics-header">
+          <div className="analytics-header-row">
+            <h1>Analytics</h1>
+            {leagueSelect}
+          </div>
+          <div className="analytics-summary">
           <span className="summary-stat"><strong>{totalSubmissions}</strong> submissions</span>
           <span className="summary-divider">/</span>
           <span className="summary-stat"><strong>{totalVotes}</strong> votes</span>
@@ -244,8 +267,9 @@ function AnalyticsPage() {
               <span className="summary-stat team-badge">Team: <strong>{activeTeam}</strong></span>
             </>
           )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Section 1: Player Stats */}
       <section className="analytics-section">

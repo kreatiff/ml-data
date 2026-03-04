@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { useNavigate } from 'react-router-dom'
 import { useSongs } from '../hooks/useSongs'
 import { useSpotifyAlbumArt } from '../hooks/useSpotifyAlbumArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
@@ -10,9 +11,10 @@ import BottomSheet from '../components/BottomSheet'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import InitialsAvatar from '../components/InitialsAvatar'
 import salmonImg from '../assets/salmon_mode.png'
+import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 
 // ── Virtualized desktop table ──
-function VirtualizedTable({ songs, handleSort, getSortIcon, formatDate }) {
+function VirtualizedTable({ songs, handleSort, getSortIcon, formatDate, onRoundClick }) {
   const parentRef = useRef(null)
   const virtualizer = useVirtualizer({
     count: songs.length,
@@ -81,7 +83,11 @@ function VirtualizedTable({ songs, handleSort, getSortIcon, formatDate }) {
                         <span>{song.submitter_name}</span>
                       </div>
                     </td>
-                    <td title={song.round_name}>{song.round_name}</td>
+                    <td
+                      title={song.round_name}
+                      className="round-name-clickable"
+                      onClick={() => onRoundClick(song.round_id)}
+                    >{song.round_name}</td>
                     <td className="votes" title={song.total_votes}>{song.total_votes}</td>
                     <td className="date" title={formatDate(song.created_at)}>
                       {formatDate(song.created_at)}
@@ -99,7 +105,7 @@ function VirtualizedTable({ songs, handleSort, getSortIcon, formatDate }) {
 }
 
 // ── Virtualized mobile cards ──
-function VirtualizedCards({ songs, salmonMode }) {
+function VirtualizedCards({ songs, salmonMode, onRoundClick }) {
   const parentRef = useRef(null)
   const virtualizer = useVirtualizer({
     count: songs.length,
@@ -138,7 +144,7 @@ function VirtualizedCards({ songs, salmonMode }) {
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <SongCard song={song} />
+              <SongCard song={song} onRoundClick={onRoundClick} />
             </div>
           )
         })}
@@ -148,6 +154,7 @@ function VirtualizedCards({ songs, salmonMode }) {
 }
 
 function SongsPage({ selectedTheme, setSelectedTheme }) {
+  const navigate = useNavigate()
   const { songs, loading, error } = useSongs()
   const isMobile = useIsMobile()
   const { salmonMode, activateSalmonMode, deactivateSalmonMode, formatDate } = useSalmonMode()
@@ -260,9 +267,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
   }
 
   if (loading) {
-    return (
-      <div className="loading">Loading songs...</div>
-    )
+    return <PageLoadingSkeleton />
   }
 
   if (error) {
@@ -275,9 +280,13 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
     )
   }
 
+  // Navigation for clicking round name
+  const navigateToRound = (roundId) => navigate(`/rounds/${roundId}`)
+
   return (
     <div className="songs-page">
-      <header className="banner-header">
+      {!isMobile && (
+        <header className="banner-header">
         {albumArt && (
           <>
             <div
@@ -357,6 +366,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
           </div>}
         </div>
       </header>
+      )}
 
       {isMobile && (
         <>
@@ -453,6 +463,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
         <VirtualizedCards
           songs={filteredAndSortedSongs}
           salmonMode={salmonMode}
+          onRoundClick={navigateToRound}
         />
       ) : (
         <VirtualizedTable
@@ -460,6 +471,7 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
           handleSort={handleSort}
           getSortIcon={getSortIcon}
           formatDate={formatDate}
+          onRoundClick={navigateToRound}
         />
       )}
 

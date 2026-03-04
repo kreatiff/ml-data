@@ -502,6 +502,17 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Clickable round names (desktop table + mobile cards) */
+.round-name-clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.round-name-clickable:hover {
+  color: var(--spotify-green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .table-avatar-placeholder {
   font-size: 1.2rem;
   line-height: 1;
@@ -602,7 +613,7 @@
 
 .mobile-filter-button {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: calc(var(--tab-bar-height, 64px) + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)) + 1rem);
   right: 1.5rem;
   background: linear-gradient(135deg, var(--spotify-green) 0%, #1ED760 100%);
   color: var(--spotify-black);
@@ -732,6 +743,7 @@
 @media (max-width: 768px) {
   .app {
     padding: 0;
+    padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom));
   }
 
   .banner-header {

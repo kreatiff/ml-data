@@ -96,3 +96,9 @@
     font-size: 0.78rem;
   }
 }
+
+@media (max-width: 768px) {
+  .nav-bar {
+    display: none;
+  }
+}

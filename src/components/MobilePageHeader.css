@@ -1,0 +1,47 @@
+.mobile-page-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: 56px;
+  padding: 0 1.25rem;
+  background: rgba(18, 18, 18, 0.85); /* var(--spotify-bg) with opacity */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .mobile-page-header {
+    display: flex;
+  }
+}
+
+.mobile-page-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  letter-spacing: -0.01em;
+}
+
+.mobile-page-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Fixes for elements inside mobile header */
+.mobile-page-header .filter-select,
+.mobile-page-header .theme-selector {
+  padding: 0.35rem 2rem 0.35rem 0.75rem !important;
+  font-size: 0.85rem !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  height: 36px !important;
+  border-radius: 6px !important;
+}

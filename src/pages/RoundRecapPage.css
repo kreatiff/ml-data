@@ -1,0 +1,541 @@
+/* ═══════════════════════════════════════════════════
+   Round Recap Dedicated Page
+   ═══════════════════════════════════════════════════ */
+
+.recap-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Desktop Two-Column Layout ── */
+@media (min-width: 1024px) {
+  .recap-page-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .recap-stats-column {
+    flex: 0 0 38%;
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-right: 1.5rem;
+  }
+  .recap-stats-column::-webkit-scrollbar {
+    width: 6px;
+  }
+  .recap-stats-column::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+  .recap-songs-column {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.recap-page-loading,
+.recap-page-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+/* ── Left Column: Stats & Summary ── */
+
+.recap-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.recap-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin: 0;
+  flex: 1;
+}
+
+/* Reused sections from the modal design */
+.recap-page-section {
+  margin-bottom: 2rem;
+}
+.recap-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--spotify-white);
+  margin: 0 0 1rem;
+}
+.recap-section-desc {
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  margin: -0.75rem 0 1rem;
+}
+
+/* Winner Card */
+.recap-winner-card {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(255, 215, 0, 0.08) 0%,
+    rgba(255, 215, 0, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  align-items: center;
+}
+.recap-winner-art {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.recap-winner-info {
+  flex: 1;
+  min-width: 0;
+}
+.recap-winner-trophy {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+.recap-winner-song {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.2rem;
+  word-wrap: break-word;
+}
+.recap-winner-artist {
+  font-size: 0.95rem;
+  color: var(--spotify-gray);
+}
+.recap-winner-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.1);
+}
+.recap-winner-submitter {
+  color: var(--spotify-gray);
+}
+.recap-winner-score {
+  color: var(--spotify-green);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Stats Grid */
+.recap-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+.recap-stat-tile {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  border-radius: 10px;
+  background: var(--spotify-card, #181818);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.recap-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+}
+.recap-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--spotify-gray);
+  margin-top: 0.3rem;
+}
+
+/* Chart Container */
+.recap-chart-container {
+  background: var(--spotify-card, #181818);
+  border-radius: 10px;
+  padding: 1rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Movers */
+.recap-movers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.recap-mover-card {
+  text-align: center;
+  padding: 1.25rem 1rem;
+  border-radius: 10px;
+  background: var(--spotify-card, #181818);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.recap-mover-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.recap-mover-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--spotify-gray);
+  margin-bottom: 0.5rem;
+}
+.recap-mover-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+}
+.recap-mover-change {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+.recap-mover-up .recap-mover-change { color: #4ade80; }
+.recap-mover-down .recap-mover-change { color: #f87171; }
+.recap-mover-positions {
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  margin-top: 0.3rem;
+}
+
+/* Controversial Pick */
+.recap-controversy-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  background: var(--spotify-card, #181818);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.recap-controversy-song {
+  color: var(--spotify-white);
+  font-size: 1.05rem;
+}
+.recap-controversy-song span {
+  color: var(--spotify-gray);
+}
+.recap-controversy-submitter {
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  margin-top: 0.5rem;
+}
+.recap-controversy-votes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.recap-vote-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--spotify-dark-bg, #121212);
+}
+.recap-controversy-variance {
+  font-size: 0.8rem;
+  color: var(--spotify-gray);
+  margin-top: 0.75rem;
+  opacity: 0.7;
+}
+
+/* Prediction Accuracy */
+.recap-prediction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--spotify-card, #181818);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.recap-prediction-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+}
+.recap-prediction-rank {
+  width: 30px;
+  text-align: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.recap-prediction-name {
+  width: 100px;
+  font-size: 0.9rem;
+  color: var(--spotify-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+.recap-prediction-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.recap-prediction-bar-fill {
+  height: 100%;
+  background: var(--spotify-green);
+  border-radius: 4px;
+}
+.recap-prediction-score {
+  width: 40px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Right Column: Songs & Comments ── */
+
+.recap-songs-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin: 0 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recap-songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.recap-song-row {
+  background: var(--spotify-elevated, #282828);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.recap-song-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Row Header */
+.recap-song-details {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.recap-song-rank-badge {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--spotify-gray);
+  background-color: rgba(255, 255, 255, 0.05);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.recap-song-rank-badge.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+  color: #121212;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+  transform: scale(1.1);
+  font-size: 1.4rem;
+}
+
+.recap-song-rank-badge.rank-2 {
+  background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%);
+  color: #121212;
+  box-shadow: 0 4px 16px rgba(224, 224, 224, 0.2);
+  transform: scale(1.05);
+}
+
+.recap-song-rank-badge.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+  color: #121212;
+  box-shadow: 0 4px 16px rgba(205, 127, 50, 0.2);
+}
+
+.recap-song-info-core {
+  flex: 1;
+  min-width: 0;
+}
+.recap-song-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+.recap-song-artist {
+  font-size: 0.9rem;
+  color: var(--spotify-gray);
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.recap-song-submitter-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+.recap-song-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.recap-song-submitter-name {
+  font-size: 0.8rem;
+  color: var(--spotify-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.15rem;
+}
+.recap-song-total-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+}
+
+/* Embedded Comments */
+.recap-song-comments {
+  padding: 1rem 1.5rem 1.5rem 5.5rem; /* Indent past the rank badge */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recap-song-comment {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+}
+.recap-song-comment::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: -20px;
+  width: 15px;
+  height: 2px;
+  background: var(--spotify-green);
+  opacity: 0.5;
+}
+
+.recap-comment-bubble {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px 8px 8px 0;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--spotify-white);
+  line-height: 1.4;
+  max-width: 600px;
+  border-left: 3px solid var(--spotify-green);
+}
+
+.recap-comment-meta {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--spotify-gray);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding-left: 0.5rem;
+}
+.recap-comment-author {
+  font-weight: 600;
+  color: #a3a3a3;
+}
+.recap-comment-pts {
+  opacity: 0.7;
+}
+
+/* ── Mobile Tweaks ── */
+@media (max-width: 768px) {
+  .recap-page-container {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .recap-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .recap-winner-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .recap-winner-meta {
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .recap-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .recap-movers-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .recap-song-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .recap-song-rank-badge {
+    font-size: 1.1rem;
+  }
+  .recap-song-submitter-block {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .recap-song-comments {
+    padding: 1rem;
+  }
+  .recap-song-comment::before {
+    display: none;
+  }
+}

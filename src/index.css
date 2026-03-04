@@ -18,6 +18,9 @@
   --spotify-gray: #B3B3B3;
   --spotify-light-gray: #E0E0E0;
   
+  --tab-bar-height: 64px;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  
   color: var(--spotify-white);
   background: var(--spotify-bg);
 
@@ -48,17 +51,27 @@ a {
   font-weight: 500;
   color: var(--spotify-green);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-a:hover {
-  color: var(--spotify-green-hover);
+@media (hover: hover) {
+  a:hover {
+    color: var(--spotify-green-hover);
+  }
 }
 
 button {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 button:focus-visible {
@@ -88,4 +101,29 @@ button:focus-visible {
 
 *::-webkit-scrollbar-thumb:hover {
   background: #404040;
+}
+
+/* Mobile Touch Targets */
+@media (max-width: 768px) {
+  button, 
+  select, 
+  input[type="text"], 
+  input[type="password"],
+  input[type="email"],
+  a.cyber-button,
+  .playlist-open-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Reset alignment for inputs so text isn't centered incorrectly */
+  input[type="text"], 
+  input[type="password"],
+  input[type="email"],
+  select {
+    justify-content: flex-start;
+    display: block; /* let the browser handle standard input rendering */
+  }
 }

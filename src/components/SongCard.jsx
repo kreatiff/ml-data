@@ -2,7 +2,7 @@ import { memo } from 'react'
 import InitialsAvatar from './InitialsAvatar'
 import './SongCard.css'
 
-function SongCard({ song }) {
+function SongCard({ song, onRoundClick }) {
   return (
     <div className="song-card">
       <div className="song-card-header">
@@ -26,7 +26,13 @@ function SongCard({ song }) {
             )}
             <span>{song.submitter_name}</span>
           </div>
-          <div className="song-card-label">
+          <div
+            className="song-card-label round-name-clickable"
+            onClick={(e) => { e.stopPropagation(); onRoundClick?.(song.round_id) }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') onRoundClick?.(song.round_id) }}
+          >
             <span className="song-card-icon">🎯</span>
             <span title={song.round_name}>{song.round_name}</span>
           </div>
