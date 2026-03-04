@@ -18,6 +18,7 @@ function ProfilePage() {
 
     const [status, setStatus] = useState({ type: '', message: '' })
     const [loading, setLoading] = useState(false)
+    const [enrichLoading, setEnrichLoading] = useState(false)
 
     // Initialize fields when profile is loaded
     useEffect(() => {
@@ -162,6 +163,23 @@ function ProfilePage() {
         }
     }
 
+    const handleEnrichSongs = async () => {
+        setEnrichLoading(true)
+        setStatus({ type: '', message: '' })
+        try {
+            const { data, error } = await supabase.functions.invoke('enrich-songs', {
+                body: { force_refresh: true, batch_limit: 500 }
+            })
+            if (error) throw error
+            setStatus({ type: 'success', message: 'Songs enriched successfully.' })
+        } catch (err) {
+            console.error(err)
+            setStatus({ type: 'error', message: err.message || 'Error enriching songs' })
+        } finally {
+            setEnrichLoading(false)
+        }
+    }
+
     if (!user) {
         return <div className="profile-page"><p className="profile-error">You must be logged in to view this page.</p></div>
     }
@@ -271,6 +289,25 @@ function ProfilePage() {
                         </button>
                     </form>
                 </div>
+                {/* ADMIN TOOLS CARD */}
+                {isAdmin && (
+                    <div className="profile-card admin-card">
+                        <h2>[ ADMIN_TOOLS ]</h2>
+                        <div className="profile-form">
+                            <p style={{ marginBottom: '1rem', opacity: 0.8, fontSize: '0.9rem' }}>
+                                Forcibly enrich up to 500 songs via background worker.
+                            </p>
+                            <button 
+                                type="button" 
+                                onClick={handleEnrichSongs} 
+                                disabled={enrichLoading} 
+                                className="cyber-button submit-btn"
+                            >
+                                {enrichLoading ? 'PROCESSING...' : 'TRIGGER_ENRICH_SONGS'}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )
