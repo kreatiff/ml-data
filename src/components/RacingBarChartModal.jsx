@@ -13,16 +13,23 @@ function RacingBarChartModal({
   getLeagueName
 }) {
   const maxRounds = playerTrajectory.data.length - 1
-  const [currentRoundIndex, setCurrentRoundIndex] = useState(maxRounds)
+  const [currentRoundIndex, setCurrentRoundIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [speedMultiplier, setSpeedMultiplier] = useState(1)
+  const [hasPlayed, setHasPlayed] = useState(false)
+  const [speedMultiplier, setSpeedMultiplier] = useState(() => {
+    return playerTrajectory.data.length < 20 ? 0.5 : 1
+  })
   const BASE_SPEED = 1000 // ms per round at 1x
 
   // Reset progress when data changes (e.g., league switch)
   useEffect(() => {
-    const newMax = playerTrajectory.data.length - 1
-    setCurrentRoundIndex(newMax)
+    setCurrentRoundIndex(0)
     setIsPlaying(false)
+    setHasPlayed(false)
+    
+    // Auto-adjust speed for the new data
+    const rounds = playerTrajectory.data.length
+    setSpeedMultiplier(rounds < 20 ? 0.5 : 1)
   }, [playerTrajectory])
 
   // Block body scroll when open
@@ -62,6 +69,7 @@ function RacingBarChartModal({
       }
       return !prev
     })
+    setHasPlayed(true)
   }, [currentRoundIndex, maxRounds])
 
   const currentLeaderboard = useMemo(() => {
@@ -131,7 +139,7 @@ function RacingBarChartModal({
 
         <div className="racing-playback-controls">
           <button 
-            className="racing-play-btn"
+            className={`racing-play-btn ${!isPlaying && !hasPlayed ? 'pulsating' : ''}`}
             onClick={togglePlayback}
           >
             {isPlaying ? (
