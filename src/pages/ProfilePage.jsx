@@ -18,6 +18,8 @@ function ProfilePage() {
 
     const [status, setStatus] = useState({ type: '', message: '' })
     const [loading, setLoading] = useState(false)
+    const [enrichLoading, setEnrichLoading] = useState(false)
+    const [enrichProgress, setEnrichProgress] = useState('')
 
     // Initialize fields when profile is loaded
     useEffect(() => {
@@ -162,6 +164,65 @@ function ProfilePage() {
         }
     }
 
+    const handleEnrichSongs = async () => {
+        setEnrichLoading(true)
+        setStatus({ type: '', message: '' })
+        setEnrichProgress('Starting...')
+
+        const BATCH_SIZE = 100
+        let totalEnriched = 0
+        let totalNotFound = 0
+        let totalErrors = 0
+        let batchNum = 0
+        let offset = 0
+
+        try {
+            while (true) {
+                batchNum++
+                setEnrichProgress(`Batch ${batchNum}: processing songs ${offset + 1}–${offset + BATCH_SIZE}...`)
+
+                const { data, error } = await supabase.functions.invoke('enrich-songs', {
+                    body: { force_refresh: true, batch_limit: BATCH_SIZE, offset }
+                })
+
+                if (error) throw error
+
+                const result = typeof data === 'string' ? JSON.parse(data) : data
+                const processed = result.total_processed || 0
+                totalEnriched += result.enriched || 0
+                totalNotFound += result.not_found || 0
+                totalErrors += result.errors || 0
+
+                setEnrichProgress(
+                    `Batch ${batchNum} done (${offset + processed}/${result.total}). ${totalEnriched} enriched, ${totalNotFound} not found, ${totalErrors} errors.`
+                )
+
+                // Stop if nothing was processed (we've gone past the end)
+                if (processed === 0) break
+
+                offset += BATCH_SIZE
+
+                // Also stop if we've reached the total
+                if (offset >= result.total) break
+
+                // Small delay between batches to be kind to the runtime
+                await new Promise(r => setTimeout(r, 1000))
+            }
+
+            setStatus({
+                type: 'success',
+                message: `Enrichment complete! ${totalEnriched} enriched, ${totalNotFound} not found, ${totalErrors} errors across ${batchNum} batches.`
+            })
+            setEnrichProgress('')
+        } catch (err) {
+            console.error(err)
+            setStatus({ type: 'error', message: err.message || 'Error enriching songs' })
+            setEnrichProgress('')
+        } finally {
+            setEnrichLoading(false)
+        }
+    }
+
     if (!user) {
         return <div className="profile-page"><p className="profile-error">You must be logged in to view this page.</p></div>
     }
@@ -271,6 +332,30 @@ function ProfilePage() {
                         </button>
                     </form>
                 </div>
+                {/* ADMIN TOOLS CARD */}
+                {isAdmin && (
+                    <div className="profile-card admin-card">
+                        <h2>[ ADMIN_TOOLS ]</h2>
+                        <div className="profile-form">
+                            <p style={{ marginBottom: '1rem', opacity: 0.8, fontSize: '0.9rem' }}>
+                                Enrich all unenriched songs via Last.fm (runs in batches of 100).
+                            </p>
+                            {enrichProgress && (
+                                <p style={{ marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--color-accent)', fontFamily: 'monospace' }}>
+                                    {enrichProgress}
+                                </p>
+                            )}
+                            <button 
+                                type="button" 
+                                onClick={handleEnrichSongs} 
+                                disabled={enrichLoading} 
+                                className="cyber-button submit-btn"
+                            >
+                                {enrichLoading ? 'PROCESSING...' : 'ENRICH_ALL_SONGS'}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )
