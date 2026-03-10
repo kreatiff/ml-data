@@ -65,7 +65,14 @@ function AnalyticsPage() {
   })
   const [highlightedPlayers, setHighlightedPlayers] = useState(new Set())
   const [trajectoryFullscreen, setTrajectoryFullscreen] = useState(false)
-  const [isRacingOpen, setIsRacingOpen] = useState(false)
+  const [isRacingOpen, setIsRacingOpen] = useState(searchParams.get('racingMode') === 'true')
+
+  // Support direct link to racing mode
+  useEffect(() => {
+    if (searchParams.get('racingMode') === 'true' && !isRacingOpen) {
+      setIsRacingOpen(true)
+    }
+  }, [searchParams])
 
   const togglePlayer = useCallback((name) => {
     setHighlightedPlayers(prev => {
