@@ -155,6 +155,7 @@ function RacingBarChartModal({
                 title={`${multiplier}x Speed`}
               >
                 {multiplier === 0.5 ? (
+                  /* Turtle Icon (Slow) */
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="18" width="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14.881 18h0.869c1.1935 0 2.3381 -0.4741 3.182 -1.318 0.8439 -0.8439 1.318 -1.9885 1.318 -3.182V9h1.5c0.3978 0 0.7794 -0.15804 1.0607 -0.43934S23.25 7.89782 23.25 7.5v-3c0 -0.79565 -0.3161 -1.55871 -0.8787 -2.12132C21.8087 1.81607 21.0457 1.5 20.25 1.5H16.5c-0.6501 0.18758 -1.2214 0.58188 -1.6274 1.12319 -0.406 0.54131 -0.6245 1.20017 -0.6226 1.87681V6"></path>
                     <path d="M12.945 9.15101c-1.3302 -1.07096 -2.98726 -1.65367 -4.695 -1.651 -4.142 0 -6 3.35799 -6 7.49999v1.5"></path>
@@ -164,22 +165,23 @@ function RacingBarChartModal({
                     <path d="m3.13599 10.636 5.863 5.863"></path>
                     <path d="M6.74998 19.5V21c0 0.3978 -0.15804 0.7794 -0.43934 1.0607 -0.28131 0.2813 -0.66284 0.4393 -1.06066 0.4393h-2.362c-0.15546 0 -0.30706 -0.0483 -0.43385 -0.1383 -0.12679 -0.0899 -0.2225 -0.217 -0.2739 -0.3637 -0.05139 -0.1468 -0.05592 -0.3058 -0.01297 -0.4552 0.04294 -0.1494 0.13126 -0.2818 0.25272 -0.3788l2.08 -1.664h2.25Z"></path>
                     <path d="M11.25 19.5V21c0 0.3978 0.158 0.7793 0.4393 1.0606 0.2813 0.2814 0.6629 0.4394 1.0607 0.4394h2.362c0.1555 0 0.3071 -0.0483 0.4338 -0.1383 0.1268 -0.0899 0.2225 -0.217 0.2739 -0.3638 0.0514 -0.1467 0.056 -0.3057 0.013 -0.4551 -0.0429 -0.1494 -0.1312 -0.2818 -0.2527 -0.3788L13.253 19.3"></path>
+                    <circle cx="18.75" cy="4.5" r="0.375" fill="currentColor" />
                   </svg>
                 ) : multiplier === 1 ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 7 12 12H9c-2.15 0-4.18-1.04-5.5-2.8a2 2 0 0 0 .03 2.15C4.83 13.14 6.87 14 9 14h3l4 5 1-1V8l-1-1Z" />
-                    <path d="m11.5 14-.5 4h3l-2.5-4" />
-                    <path d="M14.5 9.5a1 1 0 1 0 2 0 1 1 0 1 0-2 0Z" />
+                  /* Duck/Chick Icon (Normal) */
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="18" width="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 6.01A5.245 5.245 0 0 0 15.943 0.754a5.252 5.252 0 0 0 -5.43 4.871 5.244 5.244 0 0 0 2.198 4.65A18.56 18.56 0 0 1 9 11.257a16.96 16.96 0 0 1 -8.25 -0.75v2.999a9.741 9.741 0 0 0 2.856 6.89 9.753 9.753 0 0 0 16.644 -6.89 5.457 5.457 0 0 0 -1.059 -3.562A5.212 5.212 0 0 0 21 6.01Z" />
+                    <path d="M23.25 4.51 21 6.01l2.25 1.5" />
+                    <path d="M8.25 15.76s1.5 3 4.5 2.25a3.958 3.958 0 0 0 3 -3.75" />
+                    <circle cx="16.125" cy="5.635" r="0.375" fill="currentColor" />
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M13 14h.01" />
-                    <path d="M18 10c0-1.657-1.343-3-3-3s-3 1.343-3 3v6h3a3 3 0 1 0 3-1.414V10z" />
-                    <path d="M2 18h12" />
-                    <path d="M4.5 10c0-1.657-1.343-3-3-3s-3 1.343-3 3v6h3a3 3 0 1 0 3-1.414V10z" />
-                    <path d="M2 14v4" />
-                    <path d="M16 14v4" />
-                    <path d="M8 7c0-1.657 1.343-3 3-3s3 1.343 3 3v6" />
+                  /* Rabbit Icon (Fast) */
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="18" width="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.238 23.25c3.307 0 5.245 -2.69 5.245 -6a5.704 5.704 0 0 0 -0.23 -1.55 4.474 4.474 0 0 0 3.997 -4.45c0 -3.75 -2.248 -4.5 -7.493 -7.5C10.51 0.75 8.243 0 7.494 1.5c-0.75 1.5 0.75 3 3.747 4.5l4.256 2.13a4.48 4.48 0 0 0 -1.249 3.2 4.768 4.768 0 0 0 -0.76 -0.08H6.746c-1.59 0 -3.115 0.632 -4.24 1.757a6.003 6.003 0 0 0 4.24 10.243h3.746" />
+                    <path d="M5.25 17.25c3 0 4.5 3 3 6" />
+                    <path d="M14.25 23.25h4.5" />
+                    <circle cx="19.87" cy="10.88" r="0.375" fill="currentColor" />
                   </svg>
                 )}
               </button>
@@ -204,9 +206,7 @@ function RacingBarChartModal({
             />
           </div>
           
-          <div className="racing-round-info">
-            Round {Math.floor(currentRoundIndex)}
-          </div>
+
         </div>
 
         <div className="racing-list-container">
