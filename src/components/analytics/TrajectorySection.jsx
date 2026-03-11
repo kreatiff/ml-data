@@ -5,9 +5,6 @@ import { PLAYER_COLORS } from '../../constants/ui';
 const TrajectorySection = ({
   playerTrajectory,
   smoothLines,
-  setSmoothLines,
-  setTrajectoryFullscreen,
-  setIsRacingOpen,
   highlightedPlayers,
   togglePlayer,
   handleLegendClick,

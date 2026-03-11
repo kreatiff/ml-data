@@ -52,9 +52,6 @@ const TrajectoryModal = ({
           <TrajectorySection
             playerTrajectory={playerTrajectory}
             smoothLines={smoothLines}
-            setSmoothLines={setSmoothLines}
-            setTrajectoryFullscreen={onClose}
-            setIsRacingOpen={setIsRacingOpen}
             highlightedPlayers={highlightedPlayers}
             togglePlayer={togglePlayer}
             handleLegendClick={handleLegendClick}

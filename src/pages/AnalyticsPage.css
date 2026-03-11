@@ -445,6 +445,16 @@
   transform: translateX(16px);
 }
 
+.trajectory-chart-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.trajectory-chart-header {
+  display: none;
+}
+
 /* Trajectory Legend */
 .trajectory-legend {
   display: flex;
@@ -569,6 +579,8 @@
   flex: 1;
   padding: 1rem 1.5rem 1.5rem;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes fadeIn {

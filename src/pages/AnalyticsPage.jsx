@@ -229,9 +229,6 @@ function AnalyticsPage() {
             <TrajectorySection
               playerTrajectory={playerTrajectory}
               smoothLines={smoothLines}
-              setSmoothLines={setSmoothLines}
-              setTrajectoryFullscreen={setTrajectoryFullscreen}
-              setIsRacingOpen={setIsRacingOpen}
               highlightedPlayers={highlightedPlayers}
               togglePlayer={togglePlayer}
               handleLegendClick={handleLegendClick}
