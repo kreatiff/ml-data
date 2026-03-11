@@ -45,7 +45,7 @@ export function AnalyticsDataProvider({ children }) {
                 const [votesData, submissionsData, competitorsData, roundsData] = await Promise.all([
                     fetchAll('votes', 'round_id, spotify_uri, voter_id, points_assigned, comment, imported_at, created_at'),
                     fetchAll('submissions', 'round_id, spotify_uri, song_name, artists, album, created_at, submitter_id'),
-                    fetchAll('competitors', 'id, name, team'),
+                    fetchAll('competitors', 'id, name, team, avatar_url'),
                     fetchAll('rounds', 'id, name, started_at, league_id')
                 ])
 
@@ -62,9 +62,11 @@ export function AnalyticsDataProvider({ children }) {
                 // Build lookup maps
                 const competitorMap = {}
                 const competitorTeamMap = {}
+                const competitorAvatarMap = {}
                 competitorsData.forEach(c => {
                     competitorMap[c.id] = c.name
                     competitorTeamMap[c.id] = c.team || ''
+                    competitorAvatarMap[c.id] = c.avatar_url || ''
                 })
 
                 const roundMap = {}
@@ -85,6 +87,7 @@ export function AnalyticsDataProvider({ children }) {
                         voter_id: v.voter_id,
                         voter_name: competitorMap[v.voter_id] || 'Unknown',
                         voter_team: competitorTeamMap[v.voter_id] || '',
+                        voter_avatar: competitorAvatarMap[v.voter_id] || '',
                         points_assigned: v.points_assigned,
                         comment: v.comment || '',
                         song_name: sub?.song_name || 'Unknown',
@@ -93,6 +96,7 @@ export function AnalyticsDataProvider({ children }) {
                         submitter_id: sub?.submitter_id || '',
                         submitter_name: sub ? (competitorMap[sub.submitter_id] || 'Unknown') : 'Unknown',
                         submitter_team: sub ? (competitorTeamMap[sub.submitter_id] || '') : '',
+                        submitter_avatar: sub ? (competitorAvatarMap[sub.submitter_id] || '') : '',
                         round_name: round?.name || 'Unknown',
                         round_date: round?.started_at || '',
                         league_id: round?.league_id || '',
@@ -111,6 +115,7 @@ export function AnalyticsDataProvider({ children }) {
                     submitter_id: s.submitter_id,
                     submitter_name: competitorMap[s.submitter_id] || 'Unknown',
                     submitter_team: competitorTeamMap[s.submitter_id] || '',
+                    submitter_avatar: competitorAvatarMap[s.submitter_id] || '',
                     round_name: roundMap[s.round_id]?.name || 'Unknown',
                     round_date: roundMap[s.round_id]?.started_at || '',
                     league_id: roundMap[s.round_id]?.league_id || ''

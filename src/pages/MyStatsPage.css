@@ -554,9 +554,14 @@
   transform: translateY(-2px);
 }
 
+.mystats-badge-card.earned {
+  cursor: pointer;
+}
+
 .mystats-badge-card.earned:hover {
   border-color: var(--spotify-green);
   box-shadow: 0 4px 16px rgba(var(--spotify-green-rgb, 204, 255, 0), 0.1);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .mystats-badge-card.locked {

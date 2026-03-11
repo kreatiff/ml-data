@@ -1,0 +1,176 @@
+.export-card-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+  padding: 1rem;
+}
+
+.export-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 100%;
+}
+
+.badge-export-card {
+  width: 400px;
+  max-width: 100%;
+  aspect-ratio: 4 / 5;
+  background: radial-gradient(circle at 50% 30%, rgba(29, 185, 84, 0.2) 0%, transparent 70%),
+              linear-gradient(135deg, #181818 0%, #000000 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.card-decoration {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--spotify-green);
+  opacity: 0.5;
+  letter-spacing: 2px;
+}
+
+.card-avatar-wrapper {
+  margin: 0 auto 1.5rem auto;
+  position: relative;
+  z-index: 99;
+}
+
+.card-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid var(--spotify-green);
+  object-fit: cover;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.card-badge-image {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  object-fit: contain;
+  /* html2canvas doesn't support drop-shadow filters, we'll use a subtle opacity pulse or just keep as is */
+  filter: drop-shadow(0 0 15px rgba(29, 185, 84, 0.4));
+  position: relative;
+  z-index: 2;
+  margin-top: -64px;
+}
+
+.card-info {
+  margin-top: auto;
+  text-align: center;
+  z-index: 2;
+}
+
+.card-player-name {
+  font-family: 'Stalinist One', cursive, sans-serif;
+  font-size: 1.5rem;
+  color: var(--spotify-white);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-badge-name {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+
+.card-stats {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--spotify-gray);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--spotify-gray);
+  opacity: 0.5;
+}
+
+.export-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.export-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--spotify-green);
+  color: var(--spotify-black);
+}
+
+.btn-primary:hover {
+  background: var(--spotify-green-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--spotify-white);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .badge-export-card {
+    width: 320px;
+    padding: 1.5rem;
+  }
+  
+  .card-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .card-badge-image {
+    width: 100px;
+    height: 100px;
+  }
+}

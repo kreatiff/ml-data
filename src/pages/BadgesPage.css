@@ -390,6 +390,39 @@
   opacity: 1;
 }
 
+.badge-name-achieved {
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--spotify-green), #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity 0.2s;
+}
+
+.badge-name-achieved:hover {
+  opacity: 0.8;
+}
+
+.badge-player-name-admin {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 3px;
+}
+
+.badge-player-name-admin:hover {
+  color: var(--spotify-white);
+}
+
+.badge-player-name-clickable {
+  cursor: pointer;
+}
+
+.badge-player-name-clickable:hover {
+  text-decoration: underline;
+  color: var(--spotify-white);
+}
+
 @media (max-width: 600px) {
   .badges-page {
     padding: 1.25rem 1rem;

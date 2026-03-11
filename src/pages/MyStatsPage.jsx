@@ -16,6 +16,7 @@ import InitialsAvatar from '../components/InitialsAvatar'
 import { useItunesArt } from '../hooks/useItunesArt'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
+import ExportableBadgeCard from '../components/analytics/ExportableBadgeCard'
 import './MyStatsPage.css'
 
 const TOOLTIP_STYLE = {
@@ -55,6 +56,8 @@ function MyStatsPage() {
   const myId = profile?.id || null
 
   const [compareId, setCompareId] = useState('')
+  const [exportBadge, setExportBadge] = useState(null)
+  const [exportPlayer, setExportPlayer] = useState(null)
 
   const {
     myName, myRank, myPlayerStats,
@@ -499,7 +502,17 @@ function MyStatsPage() {
             <h3 className="mystats-badge-section-label">Earned</h3>
             <div className="mystats-badge-grid">
               {myBadges.earned.map(b => (
-                <div key={b.id} className="mystats-badge-card earned">
+                <div 
+                  key={b.id} 
+                  className="mystats-badge-card earned"
+                  onClick={() => {
+                    const me = b.players.find(p => p.id === myId)
+                    if (me) {
+                      setExportBadge(b)
+                      setExportPlayer(me)
+                    }
+                  }}
+                >
                   <img src={b.image} alt={b.name} className="mystats-badge-img" />
                   <div className="mystats-badge-name">{b.name}</div>
                   <div className="mystats-badge-desc">{b.description}</div>
@@ -618,6 +631,17 @@ function MyStatsPage() {
           </div>
         )}
       </section>
+      
+      {exportBadge && exportPlayer && (
+        <ExportableBadgeCard
+          badge={exportBadge}
+          player={exportPlayer}
+          onClose={() => {
+            setExportBadge(null)
+            setExportPlayer(null)
+          }}
+        />
+      )}
     </div>
   )
 }

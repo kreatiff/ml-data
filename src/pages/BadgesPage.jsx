@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { useBadges } from '../hooks/useBadges'
 import { useSalmonMode } from '../hooks/useSalmonMode'
@@ -7,6 +8,7 @@ import { useIsMobile } from '../hooks/useMediaQuery'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
+import ExportableBadgeCard from '../components/analytics/ExportableBadgeCard'
 import './BadgesPage.css'
 
 const CATEGORIES = ['Performance', 'Standings', 'Voting', 'Social', 'Meta']
@@ -20,6 +22,10 @@ function BadgesPage() {
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''
   const [modalBadge, setModalBadge] = useState(null)
+  const [exportPlayer, setExportPlayer] = useState(null)
+  const [exportBadge, setExportBadge] = useState(null)
+
+  const { isAdmin } = useAuth()
 
   const {
     loading, error, leagues, activeTeam, selectedLeague, setSelectedLeague,
@@ -114,7 +120,17 @@ function BadgesPage() {
             <div className="badge-modal-players">
               {modalBadge.players.map((p, i) => (
                 <div key={`${p.id}-${i}`} className="badge-modal-player">
-                  <span className="badge-player-name">{p.name}</span>
+                  <span 
+                    className={`badge-player-name ${isAdmin ? 'badge-player-name-admin' : ''}`}
+                    onClick={() => {
+                      if (isAdmin) {
+                        setExportBadge(modalBadge)
+                        setExportPlayer(p)
+                      }
+                    }}
+                  >
+                    {p.name}
+                  </span>
                   {p.stat != null ? (
                     <span className="badge-player-stat">{p.stat}</span>
                   ) : null}
@@ -139,13 +155,32 @@ function BadgesPage() {
                 >
                   <img className={`badge-image badge-image-gauntlet ${badge.achieved ? '' : 'badge-image-locked'}`} src={badge.image} alt={badge.name} />
                   <div className="badge-info">
-                    <div className="badge-name">{badge.name}</div>
+                    <div 
+                      className={`badge-name ${badge.achieved && activeTeam ? 'badge-name-achieved' : ''}`}
+                      onClick={() => {
+                        if (badge.achieved && activeTeam && badge.players.length > 0) {
+                          setExportBadge(badge)
+                          setExportPlayer(badge.players[0])
+                        }
+                      }}
+                    >
+                      {badge.name}
+                    </div>
                     <div className="badge-desc">{badge.description}</div>
                     {badge.achieved ? (
                       <div className="badge-players">
                         {badge.players.map((p, i) => (
                           <div key={`${p.id}-${i}`} className="badge-player">
-                            <span className="badge-player-name">{p.name}</span>
+                            <span 
+                              className="badge-player-name badge-player-name-clickable"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExportBadge(badge)
+                                setExportPlayer(p)
+                              }}
+                            >
+                              {p.name}
+                            </span>
                             {p.stat != null ? (
                               <span className="badge-player-stat">{p.stat}</span>
                             ) : null}
@@ -188,13 +223,32 @@ function BadgesPage() {
                 >
                   <img className="badge-image" src={badge.image} alt={badge.name} />
                   <div className="badge-info">
-                    <div className="badge-name">{badge.name}</div>
+                    <div 
+                      className={`badge-name ${badge.achieved && activeTeam ? 'badge-name-achieved' : ''}`}
+                      onClick={() => {
+                        if (badge.achieved && activeTeam && badge.players.length > 0) {
+                          setExportBadge(badge)
+                          setExportPlayer(badge.players[0])
+                        }
+                      }}
+                    >
+                      {badge.name}
+                    </div>
                     <div className="badge-desc">{badge.description}</div>
                     {badge.achieved ? (
                       <div className="badge-players">
                         {badge.players.slice(0, MAX_VISIBLE).map((p, i) => (
                           <div key={`${p.id}-${i}`} className="badge-player">
-                            <span className="badge-player-name">{p.name}</span>
+                            <span 
+                              className="badge-player-name badge-player-name-clickable"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExportBadge(badge)
+                                setExportPlayer(p)
+                              }}
+                            >
+                              {p.name}
+                            </span>
                             {p.stat != null ? (
                               <span className="badge-player-stat">{p.stat}</span>
                             ) : null}
@@ -219,6 +273,16 @@ function BadgesPage() {
           </section>
         )
       })}
+      {exportPlayer && exportBadge && (
+        <ExportableBadgeCard 
+          player={exportPlayer} 
+          badge={exportBadge} 
+          onClose={() => {
+            setExportPlayer(null)
+            setExportBadge(null)
+          }} 
+        />
+      )}
     </div>
   )
 }
