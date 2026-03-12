@@ -28,7 +28,6 @@
   background: radial-gradient(circle at 50% 30%, rgba(29, 185, 84, 0.2) 0%, transparent 70%),
               linear-gradient(135deg, #181818 0%, #000000 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -83,7 +82,7 @@
 
 .card-player-name {
   font-family: 'Stalinist One', cursive, sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: var(--spotify-white);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -92,16 +91,25 @@
 
 .card-badge-name {
   font-family: 'Syncopate', sans-serif;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--spotify-green);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   letter-spacing: 2px;
+}
+
+.card-description {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--spotify-gray);
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+  font-weight: 400;
 }
 
 .card-stats {
   font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--spotify-gray);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 1rem;
@@ -113,7 +121,7 @@
   justify-content: space-between;
   align-items: flex-end;
   font-family: 'Space Mono', monospace;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--spotify-gray);
   opacity: 0.5;
 }
@@ -174,3 +182,580 @@
     height: 100px;
   }
 }
+
+/* --- Carousel & Cover Flow --- */
+
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  min-height: 540px;
+}
+
+.carousel-viewport {
+  position: relative;
+  width: 400px;
+  height: 500px;
+}
+
+.carousel-item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(calc(var(--offset) * 110%));
+  z-index: calc(10 - var(--abs-offset));
+  opacity: calc(1 - (var(--abs-offset) * 0.8));
+  pointer-events: none;
+}
+
+.carousel-item.active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.carousel-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev { left: -60px; }
+.carousel-nav.next { right: -60px; }
+
+.theme-name-display {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* --- Theme Specific Styles (Placeholders) --- */
+
+.badge-export-card.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  color: var(--spotify-gray);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  background: #121212;
+}
+
+@media (max-width: 600px) {
+  .carousel-wrapper {
+    min-height: 440px;
+  }
+  .carousel-viewport {
+    width: 300px;
+    height: 375px;
+  }
+  .carousel-nav.prev { left: -20px; }
+  .carousel-nav.next { right: -20px; }
+  .carousel-item {
+    transform: translateX(calc(var(--offset) * 110%));
+  }
+}
+
+/* --- Trading Theme --- */
+
+.badge-export-card.trading-theme {
+  background: #1a1a1a;
+  border: 12px solid #333;
+  border-image: linear-gradient(135deg, #ffd700, #c0c0c0, #cd7f32, #ffd700) 1;
+  padding: 1.5rem;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.card-holographic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.05) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 200%;
+  animation: shine 3s infinite linear;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes shine {
+  0% { background-position: -200% -200%; }
+  100% { background-position: 200% 200%; }
+}
+
+.trading-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+
+.trading-card-window {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: #000;
+  border: 3px solid #444;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trading-badge-img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px var(--badge-color));
+}
+
+.trading-avatar-frame {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #ffd700;
+  overflow: hidden;
+  background: #222;
+}
+
+.trading-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trading-info-block {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.trading-player-name {
+  font-family: 'Stalinist One', cursive, sans-serif;
+  font-size: 1.25rem;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.trading-badge-name {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--badge-color);
+  margin-bottom: 0.5rem;
+}
+
+.trading-description {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.trading-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.trading-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: #666;
+}
+
+.stat-value {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}
+
+.trading-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: #444;
+}
+
+/* --- Vinyl Theme --- */
+
+.badge-export-card.vinyl-theme {
+  background: #111;
+  padding: 0;
+  border: none;
+  aspect-ratio: 1 / 1; /* Square for vinyl */
+  width: 400px;
+  height: 400px;
+}
+
+.vinyl-grooves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.03) 0,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.vinyl-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.vinyl-cover {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 1.5rem auto;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.vinyl-badge-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.vinyl-sticker-avatar {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transform: rotate(5deg);
+}
+
+.vinyl-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+}
+
+.vinyl-info {
+  text-align: left;
+}
+
+.vinyl-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #666;
+  letter-spacing: 2px;
+  margin-bottom: 0.25rem;
+}
+
+.vinyl-player-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.vinyl-badge-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: white;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.vinyl-description {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.4;
+  max-width: 80%;
+}
+
+.vinyl-stats-row {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.vinyl-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.vinyl-stat span {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.vinyl-stat strong {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: white;
+}
+
+.vinyl-footer {
+  margin-top: auto;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+/* --- Cyberpunk Theme --- */
+
+.badge-export-card.cyberpunk-theme {
+  background: #0a0a0a;
+  padding: 1.5rem;
+  border: 1px solid #00f3ff;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
+  color: #00f3ff;
+}
+
+.cyber-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.cyber-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(0, 243, 255, 0.2);
+  animation: scanline 4s linear infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.cyber-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.cyber-glitch-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  position: relative;
+  letter-spacing: 2px;
+}
+
+.cyber-id-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+.cyber-body {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cyber-avatar-section {
+  flex-shrink: 0;
+}
+
+.cyber-avatar-frame {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: #111;
+  border: 1px solid rgba(0, 243, 255, 0.5);
+  padding: 4px;
+}
+
+.cyber-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(1) hue-rotate(140deg) brightness(0.8) contrast(1.2);
+}
+
+.cyber-corner-detail {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #00f3ff;
+}
+
+.top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.cyber-barcode {
+  margin-top: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  opacity: 0.5;
+}
+
+.cyber-info-section {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.cyber-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #3df56b;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+.cyber-value {
+  font-family: 'Space Grotesk', sans-serif;
+  color: white;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cyber-value.player-name { font-size: 1.5rem; font-weight: 700; }
+.cyber-value.badge-name { font-size: 1.1rem; color: #00f3ff; margin-bottom: 0.5rem; }
+
+.cyber-description {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  border-left: 2px solid #00f3ff;
+  padding-left: 0.5rem;
+}
+
+.cyber-stats-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cyber-stat-item {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.stat-code { color: #3df56b; margin-right: 0.5rem; }
+
+.cyber-badge-overlay {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.cyber-badge-img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: hue-rotate(180deg) brightness(1.5) drop-shadow(0 0 15px rgba(0, 243, 255, 0.5));
+  opacity: 0.8;
+}
+
+.cyber-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #3df56b;
+  opacity: 0.6;
+}
+
+
+
+

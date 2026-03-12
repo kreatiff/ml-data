@@ -193,12 +193,14 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     const roundLastPlace = computeRoundLastPlace(songScores);
 
     // Per-player stats
-    const playerMap = {}; // id → { name, totalPoints, songCount, bestSongScore, roundWins, zeroSongs }
+    const playerMap = {}; // id → { name, totalPoints, totalPointsGiven, commentCount, songCount, bestSongScore, roundWins, zeroSongs }
     filteredSubmissions.forEach((s) => {
       if (!playerMap[s.submitter_id]) {
         playerMap[s.submitter_id] = {
           name: s.submitter_name,
           totalPoints: 0,
+          totalPointsGiven: 0,
+          commentCount: 0,
           songCount: 0,
           bestSongScore: 0,
           roundWins: 0,
@@ -216,6 +218,15 @@ export function useBadges(filteredVotes, filteredSubmissions) {
         }
         if (ss.total === 0) {
           playerMap[ss.submitter_id].zeroSongs++;
+        }
+      }
+    });
+
+    filteredVotes.forEach((v) => {
+      if (playerMap[v.voter_id]) {
+        playerMap[v.voter_id].totalPointsGiven += v.points_assigned;
+        if (v.comment && v.comment.trim()) {
+          playerMap[v.voter_id].commentCount++;
         }
       }
     });
@@ -761,7 +772,42 @@ export function useBadges(filteredVotes, filteredSubmissions) {
     return BADGE_DEFS.map((def) => {
       const result = {
         ...def,
-        players: badgeResults[def.id] || [],
+        players: (badgeResults[def.id] || []).map(p => {
+          const global = playerMap[p.id] || {};
+          let stats = [];
+
+          if (def.category === 'Performance' || def.category === 'Standings') {
+            stats = [
+              { label: 'PTS', value: global.totalPoints || 0 },
+              { label: 'AVG', value: global.songCount > 0 ? (global.totalPoints / global.songCount).toFixed(1) : '0.0' },
+              { label: 'WINS', value: global.roundWins || 0 }
+            ];
+          } else if (def.category === 'Voting') {
+            const syncCount = kingmakerRounds[p.id]?.size || 0;
+            stats = [
+              { label: 'GIVEN', value: global.totalPointsGiven || 0 },
+              { label: 'CMTS', value: global.commentCount || 0 },
+              { label: 'SYNC', value: syncCount }
+            ];
+          } else if (def.category === 'Social') {
+            const maxVotes = fourPtReceived[p.id] || 0;
+            const uniqueArtists = uniqueArtistCount[p.id] || 0;
+            stats = [
+              { label: 'FAVS', value: maxVotes },
+              { label: 'UNQ', value: uniqueArtists },
+              { label: 'FLOP', value: global.zeroSongs || 0 }
+            ];
+          } else if (def.category === 'Meta') {
+            const badgeCount = playerBadgeSet[p.id]?.size || 0;
+            stats = [
+              { label: 'BDGS', value: badgeCount },
+              { label: 'PTS', value: global.totalPoints || 0 },
+              { label: 'WINS', value: global.roundWins || 0 }
+            ];
+          }
+
+          return { ...p, stats };
+        }),
         achieved: (badgeResults[def.id] || []).length > 0,
       };
       if (def.id === "infinity_gauntlet") {
