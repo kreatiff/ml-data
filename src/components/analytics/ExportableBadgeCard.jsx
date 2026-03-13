@@ -17,83 +17,76 @@ function ExportableBadgeCard({ player, badge, onClose }) {
     { id: 'cyberpunk', name: 'Cyberpunk ID', Component: CyberpunkBadgeCard },
   ], [])
 
+  const getCanvasOptions = (themeId) => ({
+    scale: 3,
+    backgroundColor: null,
+    logging: false,
+    useCORS: true,
+    onclone: (clonedDoc) => {
+      const clonedCard = clonedDoc.querySelector('.badge-export-card')
+      if (clonedCard) {
+        // Strip the 3D carousel transformations so the export is perfectly flat.
+        clonedCard.style.transform = 'none'
+        clonedCard.style.margin = '0'
+        clonedCard.style.maxWidth = 'none'
+        
+        // Enforce EXACT pixel boundaries to prevent flex/carousel distortions
+        if (themeId === 'classic') {
+          clonedCard.style.width = '360px'
+          clonedCard.style.height = '540px'
+        } else if (themeId === 'vinyl') {
+          clonedCard.style.width = '400px'
+          clonedCard.style.height = '400px'
+        } else {
+          // Trading/Cyberpunk
+          clonedCard.style.width = '400px'
+          clonedCard.style.height = '500px'
+        }
+      }
+    }
+  })
+
   const handleDownload = async () => {
     if (!cardRef.current) return
 
     try {
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 3,
-        backgroundColor: null,
-        logging: false,
-        useCORS: true,
-        onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.querySelector('.badge-export-card')
-          if (clonedCard) {
-            clonedCard.style.width = '400px'
-            clonedCard.style.maxWidth = 'none'
-            clonedCard.style.height = '500px'
-            clonedCard.style.display = 'flex'
-            clonedCard.style.flexDirection = 'column'
-            clonedCard.style.padding = '2.5rem'
-            clonedCard.style.transform = 'none'
-            
-            // Special handling for vinyl square aspect
-            if (clonedCard.classList.contains('vinyl-theme')) {
-              clonedCard.style.height = '400px'
-            }
-          }
-        }
-      })
-
+      const themeId = themes[activeThemeIndex].id
+      const canvas = await html2canvas(cardRef.current, getCanvasOptions(themeId))
       const image = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = image
-      link.download = `${player.name.replace(/\s+/g, '_')}_${badge.name.replace(/\s+/g, '_')}_${themes[activeThemeIndex].id}.png`
+      link.download = `${player.name.replace(/\s+/g, '_')}_${badge.name.replace(/\s+/g, '_')}_${themeId}.png`
       link.click()
     } catch (err) {
       console.error('Error generating badge image:', err)
+      alert('Failed to generate image. Please try again.')
     }
   }
 
   const handleCopy = async () => {
     if (!cardRef.current) return
 
+    if (!navigator?.clipboard?.write) {
+      alert('Your browser does not support direct image copying (or you are not in a secure context). Please use the Save Image button instead.')
+      return
+    }
+
     try {
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 3,
-        backgroundColor: null,
-        useCORS: true,
-        onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.querySelector('.badge-export-card')
-          if (clonedCard) {
-            clonedCard.style.width = '400px'
-            clonedCard.style.maxWidth = 'none'
-            clonedCard.style.height = '500px'
-            clonedCard.style.display = 'flex'
-            clonedCard.style.flexDirection = 'column'
-            clonedCard.style.padding = '2.5rem'
-            clonedCard.style.transform = 'none'
+      const themeId = themes[activeThemeIndex].id
+      const canvas = await html2canvas(cardRef.current, getCanvasOptions(themeId))
+      
+      // Use a Promise to await the blob generation so we don't lose the 'transient user activation' 
+      // required by some browsers for navigator.clipboard.write
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
+      if (!blob) throw new Error('Image blob generation failed')
 
-            if (clonedCard.classList.contains('vinyl-theme')) {
-              clonedCard.style.height = '400px'
-            }
-          }
-        }
-      })
-
-      canvas.toBlob(async (blob) => {
-        try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob })
-          ])
-          alert('Image copied to clipboard!')
-        } catch (copyErr) {
-          console.error('Clipboard error:', copyErr)
-          alert('Failed to copy. Try downloading instead.')
-        }
-      })
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ])
+      alert('Image copied to clipboard!')
     } catch (err) {
       console.error('Error copying badge image:', err)
+      alert('Failed to copy to clipboard. Please try downloading instead.')
     }
   }
 

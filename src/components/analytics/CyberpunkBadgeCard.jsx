@@ -17,7 +17,7 @@ function CyberpunkBadgeCard({ player, badge, cardRef }) {
             {player.avatar_url ? (
               <img src={player.avatar_url} alt={player.name} className="cyber-avatar" />
             ) : (
-              <InitialsAvatar name={player.name} size={100} className="cyber-avatar" borderRadius="0" />
+              <InitialsAvatar name={player.name} size={100} className="cyber-avatar" borderRadius="0" variant="geometric" />
             )}
             <div className="cyber-corner-detail top-left" />
             <div className="cyber-corner-detail bottom-right" />

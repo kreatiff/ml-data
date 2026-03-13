@@ -773,37 +773,189 @@ export function useBadges(filteredVotes, filteredSubmissions) {
       const result = {
         ...def,
         players: (badgeResults[def.id] || []).map(p => {
-          const global = playerMap[p.id] || {};
+        const global = playerMap[p.id] || {};
           let stats = [];
 
-          if (def.category === 'Performance' || def.category === 'Standings') {
-            stats = [
-              { label: 'PTS', value: global.totalPoints || 0 },
-              { label: 'AVG', value: global.songCount > 0 ? (global.totalPoints / global.songCount).toFixed(1) : '0.0' },
-              { label: 'WINS', value: global.roundWins || 0 }
-            ];
-          } else if (def.category === 'Voting') {
-            const syncCount = kingmakerRounds[p.id]?.size || 0;
-            stats = [
-              { label: 'GIVEN', value: global.totalPointsGiven || 0 },
-              { label: 'CMTS', value: global.commentCount || 0 },
-              { label: 'SYNC', value: syncCount }
-            ];
-          } else if (def.category === 'Social') {
-            const maxVotes = fourPtReceived[p.id] || 0;
-            const uniqueArtists = uniqueArtistCount[p.id] || 0;
-            stats = [
-              { label: 'FAVS', value: maxVotes },
-              { label: 'UNQ', value: uniqueArtists },
-              { label: 'FLOP', value: global.zeroSongs || 0 }
-            ];
-          } else if (def.category === 'Meta') {
-            const badgeCount = playerBadgeSet[p.id]?.size || 0;
-            stats = [
-              { label: 'BDGS', value: badgeCount },
-              { label: 'PTS', value: global.totalPoints || 0 },
-              { label: 'WINS', value: global.roundWins || 0 }
-            ];
+          const winCount = global.roundWins || 0;
+          const totalPts = global.totalPoints || 0;
+          const songCount = global.songCount || 0;
+          const winPct = songCount > 0 ? ((winCount / songCount) * 100).toFixed(1) + '%' : '0%';
+          const globalAvg = songCount > 0 ? (totalPts / songCount).toFixed(1) : '0.0';
+
+          switch (def.id) {
+            case 'crown_jewel':
+              stats = [
+                { label: 'WINS', value: winCount },
+                { label: 'WIN%', value: winPct },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'consistent':
+              stats = [
+                { label: 'AVG', value: p.stat }, // stat here is the rounded average
+                { label: 'PEAK', value: global.bestSongScore },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'one_hit_wonder':
+              // stat is a string like "Best: X (avg Y)", parse it or use globals
+              const mult = globalAvg > 0 ? (global.bestSongScore / globalAvg).toFixed(1) + '×' : 'N/A';
+              stats = [
+                { label: 'PEAK', value: global.bestSongScore },
+                { label: 'AVG', value: globalAvg },
+                { label: 'MULT', value: mult }
+              ];
+              break;
+            case 'cold_streak':
+              const zeroPct = songCount > 0 ? ((global.zeroSongs / songCount) * 100).toFixed(1) + '%' : '0%';
+              stats = [
+                { label: 'ZEROS', value: global.zeroSongs },
+                { label: 'SONGS', value: songCount },
+                { label: 'ZERO%', value: zeroPct }
+              ];
+              break;
+            case 'summit':
+              stats = [
+                { label: 'PEAK', value: '#1' },
+                { label: 'PTS', value: totalPts },
+                { label: 'WINS', value: winCount }
+              ];
+              break;
+            case 'reign':
+              stats = [
+                { label: 'STREAK', value: p.stat }, // stat is the streak count
+                { label: 'WINS', value: winCount },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'podium':
+              stats = [
+                { label: 'STREAK', value: p.stat },
+                { label: 'WINS', value: winCount },
+                { label: 'PTS', value: totalPts }
+              ];
+              break;
+            case 'hot_streak':
+              stats = [
+                { label: 'STREAK', value: p.stat },
+                { label: 'WIN%', value: winPct },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'dark_horse':
+              stats = [
+                { label: 'WINS', value: winCount },
+                { label: 'WIN%', value: winPct },
+                { label: 'PTS', value: totalPts }
+              ];
+              break;
+            case 'kingmaker':
+              // stat is the raw rounds matched
+              const syncCount = p.stat || kingmakerRounds[p.id]?.size || 0;
+              const roundCount = sortedRoundIds ? sortedRoundIds.length : 1; 
+              const syncPct = ((syncCount / roundCount) * 100).toFixed(1) + '%';
+              stats = [
+                { label: 'SYNC', value: syncCount },
+                { label: 'ROUNDS', value: roundCount },
+                { label: 'SYNC%', value: syncPct }
+              ];
+              break;
+            case 'stalker':
+              // The string is "X pts -> TargetName"
+              const match = String(p.stat).match(/(\d+) pts → (.+)/);
+              const given = match ? match[1] : 0;
+              let targetName = match ? match[2] : 'Someone';
+              // Truncate name if too long for card UI
+              if (targetName.indexOf(' ') > -1) {
+                targetName = targetName.split(' ')[0];
+              }
+              stats = [
+                { label: 'GIVEN', value: given },
+                { label: 'TARGET', value: targetName.substring(0, 8).toUpperCase() },
+                { label: 'CMTS', value: global.commentCount || 0 }
+              ];
+              break;
+            case 'nonconformist':
+              // stat is "X rounds"
+              const val = String(p.stat).replace(/[^0-9]/g, '');
+              stats = [
+                { label: 'RNDS', value: val },
+                { label: 'CMTS', value: global.commentCount || 0 },
+                { label: 'GIVEN', value: global.totalPointsGiven || 0 }
+              ];
+              break;
+            case 'gotta_catch_em_all':
+              stats = [
+                { label: 'FANS', value: totalOthers },
+                { label: 'PTS', value: totalPts },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'commentator':
+              stats = [
+                { label: 'CMTS', value: global.commentCount || 0 },
+                { label: 'GIVEN', value: global.totalPointsGiven || 0 },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'keyboard_warrior':
+              stats = [
+                { label: 'CMTS', value: global.commentCount || 0 },
+                { label: 'RATIO', value: p.stat }, // The stat string has the %
+                { label: 'GIVEN', value: global.totalPointsGiven || 0 }
+              ];
+              break;
+            case 'crowd_pleaser':
+              const favs = p.stat || fourPtReceived[p.id] || 0;
+              const favPct = songCount > 0 ? ((favs / songCount) * 100).toFixed(1) + '%' : '0%';
+              stats = [
+                { label: 'FAVS', value: favs },
+                { label: 'SONGS', value: songCount },
+                { label: 'FAV%', value: favPct }
+              ];
+              break;
+            case 'controversial':
+              // stat: "Song Name (var: X.XX)"
+              const vMatch = String(p.stat).match(/\(var: ([\d.]+)\)/);
+              const variance = vMatch ? vMatch[1] : '0';
+              stats = [
+                { label: 'VAR', value: variance },
+                { label: 'PEAK', value: global.bestSongScore },
+                { label: 'SONGS', value: songCount }
+              ];
+              break;
+            case 'hipster':
+              const unq = p.stat || uniqueArtistCount[p.id] || 0;
+              const unqPct = songCount > 0 ? ((unq / songCount) * 100).toFixed(1) + '%' : '0%';
+              stats = [
+                { label: 'UNQ', value: unq },
+                { label: 'SONGS', value: songCount },
+                { label: 'UNQ%', value: unqPct }
+              ];
+              break;
+            case 'procrastinator_general':
+              // stat is "X rounds"
+              const lVal = String(p.stat).replace(/[^0-9]/g, '');
+              stats = [
+                { label: 'LATE', value: lVal },
+                { label: 'GIVEN', value: global.totalPointsGiven || 0 },
+                { label: 'CMTS', value: global.commentCount || 0 }
+              ];
+              break;
+            case 'infinity_gauntlet':
+              const bCount = playerBadgeSet[p.id]?.size || 0;
+              stats = [
+                { label: 'BDGS', value: bCount },
+                { label: 'WINS', value: winCount },
+                { label: 'PTS', value: totalPts }
+              ];
+              break;
+            default:
+              stats = [
+                { label: 'PTS', value: totalPts },
+                { label: 'AVG', value: globalAvg },
+                { label: 'WINS', value: winCount }
+              ];
           }
 
           return { ...p, stats };

@@ -16,7 +16,7 @@ function TradingBadgeCard({ player, badge, cardRef }) {
           {player.avatar_url ? (
             <img src={player.avatar_url} alt={player.name} className="trading-avatar" />
           ) : (
-            <InitialsAvatar name={player.name} size={40} className="trading-avatar" borderRadius="0" />
+            <InitialsAvatar name={player.name} size={40} className="trading-avatar" borderRadius="0" variant="mesh" />
           )}
         </div>
       </div>
