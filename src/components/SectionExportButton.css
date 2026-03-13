@@ -1,0 +1,90 @@
+.section-export-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--spotify-gray, #b3b3b3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-left: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.section-export-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--spotify-white, #ffffff);
+  transform: translateY(-1px);
+}
+
+.section-export-btn:active {
+  transform: translateY(0);
+}
+
+.section-export-btn.is-copied {
+  background: rgba(29, 185, 84, 0.2);
+  border-color: var(--spotify-green, #1db954);
+  color: var(--spotify-green, #1db954);
+}
+
+.section-export-btn .export-icon {
+  font-size: 0.95rem;
+  display: block;
+}
+
+.section-export-btn.is-exporting {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.export-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--spotify-green, #1db954);
+  color: black;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: tooltip-fade 0.2s ease-out;
+}
+
+.export-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--spotify-green, #1db954);
+}
+
+@keyframes tooltip-fade {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+}
+
+/* Ensure section titles flex nicely with buttons */
+.analytics-section .section-title,
+.analytics-section .mystats-hero-name,
+.analytics-section h2 {
+  display: flex !important;
+  align-items: center !important;
+}
+
+@media (max-width: 768px) {
+  .section-export-btn {
+    padding: 4px;
+    margin-left: 8px;
+  }
+}

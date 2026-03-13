@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -18,6 +18,7 @@ import { useItunesArt } from '../hooks/useItunesArt'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 import ExportableBadgeCard from '../components/analytics/ExportableBadgeCard'
+import SectionExportButton from '../components/SectionExportButton'
 import './MyStatsPage.css'
 
 const TOOLTIP_STYLE = {
@@ -65,6 +66,15 @@ function MyStatsPage() {
     myName, myRank, myPlayerStats,
     roundBreakdown, votingDna, personalRecords, headToHead
   } = useMyStats(filteredVotes, filteredSubmissions, myId, votingPatterns, playerStats, compareId)
+
+  // ── Refs for section export ──
+  const heroRef = useRef(null)
+  const recordsRef = useRef(null)
+  const trajectoryRef = useRef(null)
+  const breakdownRef = useRef(null)
+  const dnaRef = useRef(null)
+  const badgesRef = useRef(null)
+  const h2hRef = useRef(null)
 
   // Year-to-league URL syncing (same pattern as AnalyticsPage)
   useEffect(() => {
@@ -215,7 +225,7 @@ function MyStatsPage() {
       )}
 
       {/* 1. Hero Card */}
-      <section className="mystats-hero">
+      <section className="mystats-hero" ref={heroRef}>
         <div className="mystats-hero-identity">
           <div className="mystats-hero-avatar-wrap">
             {profile?.avatar_url ? (
@@ -226,7 +236,10 @@ function MyStatsPage() {
             <div className="mystats-hero-rank-badge">#{myRank}</div>
           </div>
           <div>
-            <h2 className="mystats-hero-name">{myName}</h2>
+            <h2 className="mystats-hero-name">
+              {myName}
+              <SectionExportButton targetRef={heroRef} filename={`${myName}_Hero_Stats`} />
+            </h2>
             <div className="mystats-hero-subtitle">
               Ranked <strong>#{myRank}</strong> of {playerStats.length} players
             </div>
@@ -264,8 +277,11 @@ function MyStatsPage() {
 
       {/* 1b. Personal Records */}
       {personalRecords && (
-        <section className="analytics-section mystats-records">
-          <h2 className="section-title">Personal Records</h2>
+        <section className="analytics-section mystats-records" ref={recordsRef}>
+          <h2 className="section-title">
+            Personal Records
+            <SectionExportButton targetRef={recordsRef} filename={`${myName}_Personal_Records`} />
+          </h2>
           <div className="mystats-records-grid">
             <div className="mystats-record-card">
               <div className="mystats-record-icon">🏆</div>
@@ -305,8 +321,11 @@ function MyStatsPage() {
 
       {/* 2. Points Trajectory */}
       {myTrajectoryData.length > 0 && (
-        <section className="analytics-section">
-          <h2 className="section-title">Your Points Trajectory</h2>
+        <section className="analytics-section" ref={trajectoryRef}>
+          <h2 className="section-title">
+            Your Points Trajectory
+            <SectionExportButton targetRef={trajectoryRef} filename={`${myName}_Trajectory`} />
+          </h2>
           <p className="section-desc">Your cumulative points vs. the field average</p>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
@@ -356,8 +375,11 @@ function MyStatsPage() {
 
       {/* 3. Round-by-Round Breakdown */}
       {roundBreakdown.length > 0 && (
-        <section className="analytics-section">
-          <h2 className="section-title">Round-by-Round</h2>
+        <section className="analytics-section" ref={breakdownRef}>
+          <h2 className="section-title">
+            Round-by-Round
+            <SectionExportButton targetRef={breakdownRef} filename={`${myName}_Round_Breakdown`} />
+          </h2>
           <p className="section-desc">Your submission and placement in each round</p>
           {isMobile ? (
             <div className="mystats-rounds-cards">
@@ -431,8 +453,11 @@ function MyStatsPage() {
 
       {/* 4. Voting DNA */}
       {(votingDna.given.length > 0 || votingDna.received.length > 0) && (
-        <section className="analytics-section">
-          <h2 className="section-title">Voting DNA</h2>
+        <section className="analytics-section" ref={dnaRef}>
+          <h2 className="section-title">
+            Voting DNA
+            <SectionExportButton targetRef={dnaRef} filename={`${myName}_Voting_DNA`} />
+          </h2>
           <p className="section-desc">Your voting relationships — who you support and who supports you</p>
           <div className="mystats-dna-row">
             {votingDna.given.length > 0 && (
@@ -485,8 +510,11 @@ function MyStatsPage() {
       )}
 
       {/* 5. Your Badges */}
-      <section className="analytics-section">
-        <h2 className="section-title">Your Badges</h2>
+      <section className="analytics-section" ref={badgesRef}>
+        <h2 className="section-title">
+          Your Badges
+          <SectionExportButton targetRef={badgesRef} filename={`${myName}_Badges`} />
+        </h2>
         <div className="mystats-badge-progress">
           <div className="mystats-badge-progress-text">
             <span><strong>{myBadges.earned.length}</strong> of <strong>{myBadges.total}</strong> badges earned</span>
@@ -540,8 +568,11 @@ function MyStatsPage() {
       </section>
 
       {/* 6. Head-to-Head */}
-      <section className="analytics-section">
-        <h2 className="section-title">Head-to-Head</h2>
+      <section className="analytics-section" ref={h2hRef}>
+        <h2 className="section-title">
+          Head-to-Head
+          {compareId && <SectionExportButton targetRef={h2hRef} filename={`${myName}_vs_${headToHead?.compareName || 'Player'}_H2H`} />}
+        </h2>
         <p className="section-desc">Compare your stats with another player</p>
         <select
           className="theme-selector mystats-h2h-select"
