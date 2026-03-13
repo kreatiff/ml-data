@@ -4,6 +4,7 @@ import ClassicBadgeCard from './ClassicBadgeCard'
 import TradingBadgeCard from './TradingBadgeCard'
 import VinylBadgeCard from './VinylBadgeCard'
 import CyberpunkBadgeCard from './CyberpunkBadgeCard'
+import { getCategoryPalette } from '../../utils/themeHelpers'
 import './ExportableBadgeCard.css'
 
 function ExportableBadgeCard({ player, badge, onClose }) {
@@ -115,6 +116,7 @@ function ExportableBadgeCard({ player, badge, onClose }) {
               if (diff < -1) position = diff + themes.length
 
               const isCenter = index === activeThemeIndex
+              const palette = getCategoryPalette(badge.category)
               
               return (
                 <div 
@@ -123,7 +125,7 @@ function ExportableBadgeCard({ player, badge, onClose }) {
                   style={{
                     '--offset': position,
                     '--abs-offset': Math.abs(position),
-                    '--badge-color': badge.color || 'var(--spotify-green)'
+                    ...palette
                   }}
                 >
                   <theme.Component 
@@ -137,10 +139,6 @@ function ExportableBadgeCard({ player, badge, onClose }) {
           </div>
 
           <button className="carousel-nav next" onClick={handleNext}>›</button>
-        </div>
-
-        <div className="theme-name-display">
-          STYLE: {themes[activeThemeIndex].name.toUpperCase()}
         </div>
 
         <div className="export-actions">

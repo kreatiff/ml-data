@@ -26,7 +26,7 @@
   height: 540px;
   padding: 0;
   border: none;
-  background: linear-gradient(135deg, #1a0010 0%, #0d0020 100%);
+  background: linear-gradient(135deg, var(--theme-dark) 0%, #000 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -80,7 +80,7 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.55rem;
   letter-spacing: 4px;
-  color: #ff0080; /* Hot Pink */
+  color: var(--theme-primary);
   font-weight: 700;
   margin-bottom: 4px;
 }
@@ -103,7 +103,8 @@
 .classic-date-label {
   font-size: 0.5rem;
   font-weight: 800;
-  color: #ffe600; /* Acid Yellow */
+  color: var(--theme-primary);
+  filter: brightness(1.2);
   letter-spacing: 2px;
 }
 
@@ -143,9 +144,9 @@
   right: 15px;
   padding: 4px;
   background: #000;
-  border: 1px solid #ff0080;
+  border: 1px solid var(--theme-primary);
   transform: rotate(3deg);
-  box-shadow: 4px 4px 0 #ffe600;
+  box-shadow: 4px 4px 0 var(--theme-glow);
 }
 
 .classic-avatar {
@@ -170,7 +171,7 @@
   margin-bottom: 12px;
   letter-spacing: -1px;
   font-style: italic;
-  text-shadow: 3px 3px 0 #ff0080;
+  text-shadow: 3px 3px 0 var(--theme-primary);
 }
 
 .classic-badge-subhead-row {
@@ -187,7 +188,8 @@
 .classic-badge-name-box span {
   font-size: 0.55rem;
   font-weight: 800;
-  color: #ffe600;
+  color: var(--theme-primary);
+  filter: brightness(1.2);
   letter-spacing: 1.5px;
 }
 
@@ -245,7 +247,8 @@
 .pill-label {
   font-size: 0.45rem;
   font-weight: 800;
-  color: #ffe600;
+  color: var(--theme-primary);
+  filter: brightness(1.2);
   text-transform: uppercase;
 }
 
@@ -298,7 +301,7 @@
 }
 
 .classic-legal {
-  color: #ff0080 !important;
+  color: var(--theme-primary) !important;
   font-weight: 700;
   margin-top: 2px;
 }
@@ -369,7 +372,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  min-height: 540px;
+  min-height: 630px;
 }
 
 .carousel-viewport {
@@ -447,7 +450,7 @@
 
 @media (max-width: 600px) {
   .carousel-wrapper {
-    min-height: 440px;
+    min-height: 540px;
   }
   .carousel-viewport {
     width: 300px;
@@ -463,11 +466,11 @@
 /* --- Trading Theme --- */
 
 .badge-export-card.trading-theme {
-  background: #1a1a1a;
+  background: var(--theme-dark);
   border: 12px solid #333;
-  border-image: linear-gradient(135deg, #ffd700, #c0c0c0, #cd7f32, #ffd700) 1;
+  border-image: linear-gradient(135deg, var(--theme-gradient-start), #fff, var(--theme-gradient-end), var(--theme-gradient-start)) 1;
   padding: 1.5rem;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 30px var(--theme-glow);
 }
 
 .card-holographic-overlay {
@@ -502,7 +505,7 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.6rem;
   font-weight: 700;
-  color: #ffd700;
+  color: var(--theme-primary);
   letter-spacing: 1px;
 }
 
@@ -523,7 +526,7 @@
   width: 160px;
   height: 160px;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px var(--badge-color));
+  filter: drop-shadow(0 0 10px var(--theme-primary));
 }
 
 .trading-avatar-frame {
@@ -533,7 +536,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 2px solid #ffd700;
+  border: 2px solid var(--theme-primary);
   overflow: hidden;
   background: #222;
 }
@@ -560,7 +563,7 @@
   font-family: 'Syncopate', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--badge-color);
+  color: var(--theme-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -682,7 +685,7 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d4af37, #8b7330, #d4af37);
+  background: var(--theme-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -789,7 +792,8 @@
 .vinyl-sleeve-player-name {
   font-size: 1.9rem;
   font-weight: 900;
-  color: #111;
+  color: var(--theme-primary);
+  filter: brightness(0.2); /* Darken for contrast on cream */
   line-height: 0.95;
   letter-spacing: -1px;
   text-transform: uppercase;
@@ -883,11 +887,11 @@
 /* --- Cyberpunk Theme --- */
 
 .badge-export-card.cyberpunk-theme {
-  background: #0a0a0a;
+  background: var(--theme-dark);
   padding: 1.5rem;
-  border: 1px solid #00f3ff;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
-  color: #00f3ff;
+  border: 1px solid var(--theme-primary);
+  box-shadow: 0 0 20px var(--theme-glow), inset 0 0 10px var(--theme-glow-tight);
+  color: var(--theme-primary);
 }
 
 .cyber-grid {
@@ -909,7 +913,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: rgba(0, 243, 255, 0.2);
+  background: var(--theme-glow-tight);
   animation: scanline 4s linear infinite;
   z-index: 10;
   pointer-events: none;
@@ -973,7 +977,7 @@
   position: absolute;
   width: 10px;
   height: 10px;
-  border: 2px solid #00f3ff;
+  border: 2px solid var(--theme-primary);
 }
 
 .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
@@ -995,7 +999,8 @@
 .cyber-label {
   font-family: 'Space Mono', monospace;
   font-size: 0.65rem;
-  color: #3df56b;
+  color: var(--theme-primary);
+  filter: brightness(0.8);
   margin-bottom: 0.25rem;
   opacity: 0.8;
 }
@@ -1017,7 +1022,7 @@
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.4;
   margin-bottom: 1rem;
-  border-left: 2px solid #00f3ff;
+  border-left: 2px solid var(--theme-primary);
   padding-left: 0.5rem;
 }
 
@@ -1032,7 +1037,7 @@
   font-size: 0.85rem;
 }
 
-.stat-code { color: #3df56b; margin-right: 0.5rem; }
+.stat-code { color: var(--theme-primary); margin-right: 0.5rem; }
 
 .cyber-badge-overlay {
   margin: 1rem 0;
@@ -1044,8 +1049,8 @@
   width: 140px;
   height: 140px;
   object-fit: contain;
-  filter: hue-rotate(180deg) brightness(1.5) drop-shadow(0 0 15px rgba(0, 243, 255, 0.5));
-  opacity: 0.8;
+  filter: drop-shadow(0 0 15px var(--theme-glow));
+  opacity: 1;
 }
 
 .cyber-footer {
@@ -1054,7 +1059,7 @@
   justify-content: space-between;
   font-family: 'Space Mono', monospace;
   font-size: 0.65rem;
-  color: #3df56b;
+  color: #fff;
   opacity: 0.6;
 }
 
