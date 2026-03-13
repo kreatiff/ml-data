@@ -1,15 +1,18 @@
 import { useState, useRef, useMemo } from 'react'
-import html2canvas from 'html2canvas'
+import { Download, Copy, X, Check, Loader2 } from 'lucide-react'
 import ClassicBadgeCard from './ClassicBadgeCard'
 import TradingBadgeCard from './TradingBadgeCard'
 import VinylBadgeCard from './VinylBadgeCard'
 import CyberpunkBadgeCard from './CyberpunkBadgeCard'
 import { getCategoryPalette } from '../../utils/themeHelpers'
+import { useImageExport } from '../../hooks/useImageExport'
 import './ExportableBadgeCard.css'
 
 function ExportableBadgeCard({ player, badge, onClose }) {
   const [activeThemeIndex, setActiveThemeIndex] = useState(0)
+  const [copied, setCopied] = useState(false)
   const cardRef = useRef(null)
+  const { isExporting, copyImage, downloadImage } = useImageExport()
 
   const themes = useMemo(() => [
     { id: 'classic', name: 'Classic', Component: ClassicBadgeCard },
@@ -21,8 +24,6 @@ function ExportableBadgeCard({ player, badge, onClose }) {
   const getCanvasOptions = (themeId) => ({
     scale: 3,
     backgroundColor: null,
-    logging: false,
-    useCORS: true,
     onclone: (clonedDoc) => {
       const clonedCard = clonedDoc.querySelector('.badge-export-card')
       if (clonedCard) {
@@ -48,46 +49,22 @@ function ExportableBadgeCard({ player, badge, onClose }) {
   })
 
   const handleDownload = async () => {
-    if (!cardRef.current) return
+    if (!cardRef.current || isExporting) return
 
-    try {
-      const themeId = themes[activeThemeIndex].id
-      const canvas = await html2canvas(cardRef.current, getCanvasOptions(themeId))
-      const image = canvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = image
-      link.download = `${player.name.replace(/\s+/g, '_')}_${badge.name.replace(/\s+/g, '_')}_${themeId}.png`
-      link.click()
-    } catch (err) {
-      console.error('Error generating badge image:', err)
-      alert('Failed to generate image. Please try again.')
-    }
+    const themeId = themes[activeThemeIndex].id
+    const filename = `${player.name.replace(/\s+/g, '_')}_${badge.name.replace(/\s+/g, '_')}_${themeId}`
+    await downloadImage(cardRef, filename, getCanvasOptions(themeId))
   }
 
   const handleCopy = async () => {
-    if (!cardRef.current) return
+    if (!cardRef.current || isExporting) return
 
-    if (!navigator?.clipboard?.write) {
-      alert('Your browser does not support direct image copying (or you are not in a secure context). Please use the Save Image button instead.')
-      return
-    }
-
-    try {
-      const themeId = themes[activeThemeIndex].id
-      const canvas = await html2canvas(cardRef.current, getCanvasOptions(themeId))
-      
-      // Use a Promise to await the blob generation so we don't lose the 'transient user activation' 
-      // required by some browsers for navigator.clipboard.write
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
-      if (!blob) throw new Error('Image blob generation failed')
-
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob })
-      ])
-      alert('Image copied to clipboard!')
-    } catch (err) {
-      console.error('Error copying badge image:', err)
-      alert('Failed to copy to clipboard. Please try downloading instead.')
+    const themeId = themes[activeThemeIndex].id
+    const success = await copyImage(cardRef, 'badge_copy', getCanvasOptions(themeId))
+    
+    if (success) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     }
   }
 
@@ -142,14 +119,26 @@ function ExportableBadgeCard({ player, badge, onClose }) {
         </div>
 
         <div className="export-actions">
-          <button className="export-button btn-primary" onClick={handleDownload}>
-            <span>💾</span> SAVE_IMAGE
+          <button 
+            className={`export-button btn-primary ${isExporting ? 'loading' : ''}`} 
+            onClick={handleDownload}
+            disabled={isExporting}
+          >
+            {isExporting ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />}
+            <span>SAVE_IMAGE</span>
           </button>
-          <button className="export-button btn-secondary" onClick={handleCopy}>
-            <span>📋</span> COPY_IMAGE
+          <button 
+            className={`export-button btn-secondary ${copied ? 'success' : ''} ${isExporting ? 'loading' : ''}`} 
+            onClick={handleCopy}
+            disabled={isExporting}
+          >
+            {isExporting ? <Loader2 className="animate-spin" size={18} /> : 
+             copied ? <Check size={18} /> : <Copy size={18} />}
+            <span>{copied ? 'COPIED!' : 'COPY_IMAGE'}</span>
           </button>
           <button className="export-button btn-secondary" onClick={onClose}>
-            CLOSE
+            <X size={18} />
+            <span>CLOSE</span>
           </button>
         </div>
       </div>

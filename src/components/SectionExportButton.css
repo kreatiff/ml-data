@@ -33,8 +33,9 @@
 }
 
 .section-export-btn .export-icon {
-  font-size: 0.95rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .section-export-btn.is-exporting {

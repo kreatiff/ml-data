@@ -345,6 +345,25 @@
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
+.export-button.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.export-button.success {
+  background: var(--spotify-green) !important;
+  color: var(--spotify-black) !important;
+  border-color: var(--spotify-green) !important;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
 @media (max-width: 480px) {
   .badge-export-card {
