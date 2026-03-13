@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { useAnalyticsData } from '../contexts/AnalyticsDataContext'
 import { useRoundRecap } from '../hooks/useRoundRecap'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useItunesArt } from '../hooks/useItunesArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import InitialsAvatar from '../components/InitialsAvatar'
@@ -22,6 +23,7 @@ const TOOLTIP_STYLE = {
 }
 
 function RoundRecapPage() {
+  useDocumentTitle('Who Ruined the Vibe this Week? | Dupleighcates')
   const { roundId } = useParams()
   const navigate = useNavigate()
   const { data, loading } = useAnalyticsData()
@@ -131,7 +133,7 @@ function RoundRecapPage() {
             <div className="recap-chart-container">
               <ResponsiveContainer width="100%" height={Math.max(200, recapData.scoreDistribution.length * 32)}>
                 <BarChart
-                  data={recapData.scoreDistribution}
+                   data={recapData.scoreDistribution}
                   layout="vertical"
                   margin={{ top: 5, right: 20, left: 70, bottom: 5 }}
                 >

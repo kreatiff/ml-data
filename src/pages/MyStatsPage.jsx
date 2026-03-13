@@ -10,6 +10,7 @@ import { useAnalyticsComputations } from '../hooks/useAnalyticsComputations'
 import { useBadges } from '../hooks/useBadges'
 import { useMyStats } from '../hooks/useMyStats'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import InitialsAvatar from '../components/InitialsAvatar'
@@ -37,6 +38,7 @@ function ordSuffix(n) {
 }
 
 function MyStatsPage() {
+  useDocumentTitle("Look at Me, I'm the Captain Now | Dupleighcates")
   const { year: urlYear } = useParams()
   const { user, profile, loading: authLoading } = useAuth()
   const isMobile = useIsMobile()

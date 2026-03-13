@@ -4,6 +4,7 @@ import { useAnalytics } from '../hooks/useAnalytics'
 import { useAnalyticsComputations } from '../hooks/useAnalyticsComputations'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import { useSalmonMode } from '../hooks/useSalmonMode'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import { PLAYER_COLORS } from '../constants/ui'
 
@@ -29,6 +30,7 @@ const CHART_CONFIG = {
 }
 
 function AnalyticsPage() {
+  useDocumentTitle('Number Crunching & Emotional Damage | Dupleighcates')
   const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useNavigate } from 'react-router-dom'
 import { useSongs } from '../hooks/useSongs'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useSpotifyAlbumArt } from '../hooks/useSpotifyAlbumArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import { useDebounce } from '../hooks/useDebounce'
@@ -154,6 +155,7 @@ function VirtualizedCards({ songs, salmonMode, onRoundClick }) {
 }
 
 function SongsPage({ selectedTheme, setSelectedTheme }) {
+  useDocumentTitle('The Search for the Perfect 12-Pointer | Dupleighcates')
   const navigate = useNavigate()
   const { songs, loading, error } = useSongs()
   const isMobile = useIsMobile()

@@ -5,6 +5,7 @@ import { useAnalytics } from '../hooks/useAnalytics'
 import { useBadges } from '../hooks/useBadges'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
@@ -18,6 +19,7 @@ const MAX_VISIBLE = 3
 
 
 function BadgesPage() {
+  useDocumentTitle('Shiny Pixels for Good Taste | Dupleighcates')
   const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
   const teamParam = searchParams.get('team') || ''

@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { usePlaylistDefinitions } from '../hooks/usePlaylistDefinitions'
 import { useSalmonMode } from '../hooks/useSalmonMode'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { LEAGUE_YEARS, YEAR_TO_LEAGUE, SALMON_YEAR_MAP } from '../constants/leagues'
 import { supabase } from '../supabaseClient'
 import MobilePageHeader from '../components/MobilePageHeader'
@@ -122,6 +123,7 @@ function PlaylistCard({ playlist, prefix, onCreate, creating, result, onShowTrac
 
 
 function PlaylistsPage() {
+  useDocumentTitle('A Million Songs You Won\'t Listen To | Dupleighcates')
   const { isAdmin } = useAuth()
   const { year: urlYear } = useParams()
   const [searchParams] = useSearchParams()
