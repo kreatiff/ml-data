@@ -9,7 +9,7 @@ export function useImageExport() {
 
   const getCanvasOptions = (options = {}) => ({
     scale: 2, // 2x for good quality without massive files
-    backgroundColor: 'var(--spotify-black, #121212)', // Default to app background
+    backgroundColor: '#121212', // Solid hex to avoid html2canvas "var()" parsing issue
     logging: false,
     useCORS: true,
     ...options,
