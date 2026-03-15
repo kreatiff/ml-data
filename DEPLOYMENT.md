@@ -34,11 +34,11 @@ In the **Environment Variables** section, add the following:
 ```
 VITE_SUPABASE_URL=https://lvgcgqzhwbpjwmhgdcpa.supabase.co
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id
-VITE_SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 ```
 
 **Important:** These must be set as **build-time environment variables** since Vite bakes them into the build at compile time.
+
+Note: Spotify credentials (`SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`) should be configured as backend secrets in your Supabase project using the Supabase CLI or dashboard.
 
 ### 4. Configure Domain (Optional)
 
