@@ -35,8 +35,6 @@ services:
       args:
         - VITE_SUPABASE_URL=https://lvgcgqzhwbpjwmhgdcpa.supabase.co
         - VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-        - VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id
-        - VITE_SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
     ports:
       - "3000:80"
     restart: unless-stopped
@@ -77,8 +75,6 @@ cd d:\dev\musicLeagueData\app\music-league-search
 docker build \
   --build-arg VITE_SUPABASE_URL=https://lvgcgqzhwbpjwmhgdcpa.supabase.co \
   --build-arg VITE_SUPABASE_ANON_KEY=your_key \
-  --build-arg VITE_SPOTIFY_CLIENT_ID=your_id \
-  --build-arg VITE_SPOTIFY_CLIENT_SECRET=your_secret \
   -t yourusername/music-league-search:latest .
 
 # Push to Docker Hub
@@ -93,14 +89,10 @@ Add these lines at the top of your Dockerfile after `FROM node:18-alpine AS buil
 # Accept build arguments
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
-ARG VITE_SPOTIFY_CLIENT_ID
-ARG VITE_SPOTIFY_CLIENT_SECRET
 
 # Set as environment variables for the build
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
-ENV VITE_SPOTIFY_CLIENT_ID=$VITE_SPOTIFY_CLIENT_ID
-ENV VITE_SPOTIFY_CLIENT_SECRET=$VITE_SPOTIFY_CLIENT_SECRET
 ```
 
 #### 3. Deploy in Portainer
@@ -133,8 +125,6 @@ In the **Env** section, add:
 ```
 VITE_SUPABASE_URL=https://lvgcgqzhwbpjwmhgdcpa.supabase.co
 VITE_SUPABASE_ANON_KEY=your_key
-VITE_SPOTIFY_CLIENT_ID=your_id
-VITE_SPOTIFY_CLIENT_SECRET=your_secret
 ```
 
 #### 3. Port Mapping
@@ -223,8 +213,6 @@ services:
       args:
         - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-        - VITE_SPOTIFY_CLIENT_ID=${VITE_SPOTIFY_CLIENT_ID}
-        - VITE_SPOTIFY_CLIENT_SECRET=${VITE_SPOTIFY_CLIENT_SECRET}
     ports:
       - "3000:80"
     restart: unless-stopped

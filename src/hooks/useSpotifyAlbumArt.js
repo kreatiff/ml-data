@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '../supabaseClient'
 
 export function useSpotifyAlbumArt(spotifyUri) {
   const [albumArt, setAlbumArt] = useState(null)
@@ -14,36 +15,16 @@ export function useSpotifyAlbumArt(spotifyUri) {
       try {
         const trackId = spotifyUri.split(':')[2]
         
-        const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-        const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
+        const { data, error } = await supabase.functions.invoke('spotify-album-art', {
+          body: { trackId }
+        })
 
-        if (!clientId || !clientSecret) {
-          console.warn('Spotify credentials not configured')
-          setLoading(false)
-          return
+        if (error) {
+          throw error
         }
-
-        const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
-          },
-          body: 'grant_type=client_credentials'
-        })
-
-        const { access_token } = await tokenResponse.json()
-
-        const trackResponse = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-          headers: {
-            'Authorization': `Bearer ${access_token}`
-          }
-        })
-
-        const trackData = await trackResponse.json()
         
-        if (trackData.album?.images?.[0]?.url) {
-          setAlbumArt(trackData.album.images[0].url)
+        if (data?.success && data?.albumArt) {
+          setAlbumArt(data.albumArt)
         }
       } catch (error) {
         console.error('Error fetching album art:', error)

@@ -1,0 +1,4 @@
+## 2023-10-24 - [Exposed Spotify API Secret in Client Bundle]
+**Vulnerability:** The Spotify Client Secret (`VITE_SPOTIFY_CLIENT_SECRET`) was exposed in the Vite client-side bundle via the prefix `VITE_`.
+**Learning:** Vite automatically replaces any environment variable prefixed with `VITE_` statically at build time. When this happens, API secrets are bundled into the client's public JavaScript code, leading to token compromise.
+**Prevention:** Never prefix backend secrets with `VITE_`. Ensure all API interactions requiring secrets are routed through backend functions (like Supabase Edge Functions) which securely access environment variables (e.g., using `Deno.env.get`) away from the browser context.
