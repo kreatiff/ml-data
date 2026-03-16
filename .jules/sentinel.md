@@ -1,0 +1,4 @@
+## 2024-05-18 - Exposed Spotify Secrets in Client Bundle
+**Vulnerability:** Spotify Client ID and Client Secret were hardcoded in environment variables prefixed with `VITE_` (`VITE_SPOTIFY_CLIENT_ID` and `VITE_SPOTIFY_CLIENT_SECRET`). Vite automatically exposes any environment variable prefixed with `VITE_` to the client-side JavaScript bundle. This allowed anyone inspecting the frontend bundle to extract the application's Spotify API secrets.
+**Learning:** `VITE_` prefixed environment variables are meant *only* for non-sensitive public configuration (e.g. public API URLs, feature flags). Sensitive backend API keys and secrets must never be prefixed with `VITE_` or used in client-side code directly.
+**Prevention:** Always handle authentication and API calls involving secrets on the server-side (e.g. Supabase Edge Functions). Pass the necessary data back to the client via secure API calls instead of storing the secrets directly in the client application.
