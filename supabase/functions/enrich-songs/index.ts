@@ -380,7 +380,6 @@ async function processWithConcurrency<T, R>(
 
 serve(async (req: Request) => {
   // Handle CORS preflight requests
-  // This is required when invoking the function from a browser-based frontend
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -392,20 +391,41 @@ serve(async (req: Request) => {
   const startTime = Date.now();
 
   try {
+    // Check for authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return jsonResponse({ error: 'No authorization header' }, 401)
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Initialize Supabase client with the user's JWT to verify identity
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify the JWT and get the user
+    const { data: { user }, error: userError } = await userClient.auth.getUser();
+    if (userError || !user) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
+
+    // Now use service role client to check the user's role in competitors table
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: competitor, error: compError } = await adminClient
+      .from('competitors')
+      .select('role')
+      .eq('auth_user_id', user.id)
+      .single();
+
+    if (compError || !competitor || competitor.role !== 'admin') {
+      return jsonResponse({ error: 'Forbidden: Admin access required' }, 403);
+    }
+
     const body: { force_refresh?: boolean; batch_limit?: number; offset?: number } =
       await req.json().catch(() => ({}));
-
-    const forceRefresh = body.force_refresh === true;
-    const batchLimit   = Math.min(body.batch_limit ?? DEFAULT_BATCH_LIMIT, 500);
-    const offset       = Math.max(body.offset ?? 0, 0);
-
-    const apiKey = Deno.env.get("LASTFM_API_KEY");
-    if (!apiKey) throw new Error("LASTFM_API_KEY secret is not set.");
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
 
     // --------------------------------------------------------
     // 1. Get unique (spotify_uri, song_name, artists) combos.

@@ -3,7 +3,7 @@ import { useAuth } from './contexts/AuthContext'
 import './PasswordGate.css'
 
 function PasswordGate({ children }) {
-  const { user, loading, signIn, signUp } = useAuth()
+  const { user, loading, signIn, signUp, resetPassword } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -54,6 +54,30 @@ function PasswordGate({ children }) {
 
     if (signInError) {
       setError(signInError.message)
+    }
+
+    setIsSubmitting(false)
+  }
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError('')
+    setSuccessMessage('')
+
+    if (!email) {
+      setError('Please enter your email')
+      setIsSubmitting(false)
+      return
+    }
+
+    const { error: resetError } = await resetPassword(email)
+
+    if (resetError) {
+      setError(resetError.message)
+    } else {
+      setSuccessMessage('Password reset link sent! Check your email.')
+      setEmail('')
     }
 
     setIsSubmitting(false)
@@ -124,30 +148,41 @@ function PasswordGate({ children }) {
         )}
 
         {activeTab === 'login' ? (
-          <form onSubmit={handleLogin} className="password-gate-form">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="password-gate-input"
-              autoFocus
-              disabled={isSubmitting}
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="password-gate-input"
-              disabled={isSubmitting}
-            />
-            {error && <div className="password-gate-error">{error}</div>}
-            <button type="submit" className="password-gate-button" disabled={isSubmitting}>
-              {isSubmitting ? 'Logging in...' : 'Login'}
-            </button>
-          </form>
-        ) : (
+          <>
+            <form onSubmit={handleLogin} className="password-gate-form">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="password-gate-input"
+                autoFocus
+                disabled={isSubmitting}
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="password-gate-input"
+                disabled={isSubmitting}
+              />
+              {error && <div className="password-gate-error">{error}</div>}
+              <button type="submit" className="password-gate-button" disabled={isSubmitting}>
+                {isSubmitting ? 'Logging in...' : 'Login'}
+              </button>
+            </form>
+            <div className="auth-footer">
+              <button 
+                type="button" 
+                className="forgot-password-link"
+                onClick={() => handleTabSwitch('forgot')}
+              >
+                Forgot Password?
+              </button>
+            </div>
+          </>
+        ) : activeTab === 'register' ? (
           <form onSubmit={handleRegister} className="password-gate-form">
             <input
               type="email"
@@ -187,6 +222,34 @@ function PasswordGate({ children }) {
               {isSubmitting ? 'Registering...' : 'Register'}
             </button>
           </form>
+        ) : (
+          <div className="forgot-password-container">
+            <p className="forgot-password-text">Enter your email and we'll send you a link to reset your password.</p>
+            <form onSubmit={handleResetPassword} className="password-gate-form">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="password-gate-input"
+                autoFocus
+                disabled={isSubmitting}
+              />
+              {error && <div className="password-gate-error">{error}</div>}
+              <button type="submit" className="password-gate-button" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending link...' : 'Send Reset Link'}
+              </button>
+            </form>
+            <div className="auth-footer">
+              <button 
+                type="button" 
+                className="forgot-password-link"
+                onClick={() => handleTabSwitch('login')}
+              >
+                Back to Login
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

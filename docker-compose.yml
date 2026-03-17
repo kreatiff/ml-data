@@ -7,7 +7,6 @@ services:
         - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
         - VITE_SPOTIFY_CLIENT_ID=${VITE_SPOTIFY_CLIENT_ID}
-        - VITE_SPOTIFY_CLIENT_SECRET=${VITE_SPOTIFY_CLIENT_SECRET}
     ports:
       - "${PORT}:80"
     restart: unless-stopped

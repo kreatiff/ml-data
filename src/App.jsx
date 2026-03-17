@@ -15,6 +15,7 @@ const BadgesPage = lazy(() => import('./pages/BadgesPage'))
 const RoundRecapPage = lazy(() => import('./pages/RoundRecapPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const MyStatsPage = lazy(() => import('./pages/MyStatsPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 
 function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -57,6 +58,7 @@ function App() {
           {/* <Route path="/playlists/:year?" element={<PlaylistsPage />} /> */}
           <Route path="/my-stats/:year?" element={<MyStatsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </Suspense>
       <MobileTabBar />
