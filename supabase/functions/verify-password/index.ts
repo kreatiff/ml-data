@@ -67,8 +67,9 @@ serve(async (req) => {
       )
     }
   } catch (error) {
+    console.error('Authentication error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'Authentication request failed' }),
       { 
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
