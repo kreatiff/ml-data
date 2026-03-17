@@ -11,10 +11,11 @@ import './CyberTheme.css'
 
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'))
 const BadgesPage = lazy(() => import('./pages/BadgesPage'))
-const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'))
+// const PlaylistsPage = lazy(() => import('./pages/PlaylistsPage'))
 const RoundRecapPage = lazy(() => import('./pages/RoundRecapPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const MyStatsPage = lazy(() => import('./pages/MyStatsPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 
 function App() {
   const [selectedTheme, setSelectedTheme] = useState(() => {
@@ -54,9 +55,10 @@ function App() {
           <Route path="/analytics/:year?" element={<AnalyticsPage />} />
           <Route path="/badges/:year?" element={<BadgesPage />} />
           <Route path="/rounds/:roundId?" element={<RoundRecapPage />} />
-          <Route path="/playlists/:year?" element={<PlaylistsPage />} />
+          {/* <Route path="/playlists/:year?" element={<PlaylistsPage />} /> */}
           <Route path="/my-stats/:year?" element={<MyStatsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </Suspense>
       <MobileTabBar />

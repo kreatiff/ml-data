@@ -3,7 +3,6 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useNavigate } from 'react-router-dom'
 import { useSongs } from '../hooks/useSongs'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-import { useSpotifyAlbumArt } from '../hooks/useSpotifyAlbumArt'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import { useDebounce } from '../hooks/useDebounce'
 import { themes } from '../constants/themes'
@@ -198,8 +197,6 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
     return songs[stableIndex]
   }, [songs])
 
-  const { albumArt } = useSpotifyAlbumArt(randomSong?.spotify_uri)
-
   const uniqueSubmitters = useMemo(() => {
     const submitters = [...new Set(songs.map(song => song.submitter_name))]
     return submitters.sort()
@@ -289,15 +286,6 @@ function SongsPage({ selectedTheme, setSelectedTheme }) {
     <div className="songs-page">
       {!isMobile && (
         <header className="banner-header">
-        {albumArt && (
-          <>
-            <div
-              className="banner-background"
-              style={{ backgroundImage: `url(${albumArt})` }}
-            />
-            <div className="banner-overlay" />
-          </>
-        )}
         <div className="theme-selector-container">
           <select
             value={selectedTheme}

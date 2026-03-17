@@ -94,16 +94,6 @@ function MobileTabBar() {
           
           <div className="bottom-sheet-section">
             <NavLink 
-              to="/playlists" 
-              className={({ isActive }) => `more-menu-link ${isActive ? 'active' : ''}`}
-              onClick={() => setIsMoreMenuOpen(false)}
-            >
-              Playlists
-            </NavLink>
-          </div>
-          
-          <div className="bottom-sheet-section">
-            <NavLink 
               to="/my-stats" 
               className={({ isActive }) => `more-menu-link ${isActive ? 'active' : ''}`}
               onClick={() => setIsMoreMenuOpen(false)}

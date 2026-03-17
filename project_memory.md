@@ -42,7 +42,9 @@ The application uses a robust relational model in PostgreSQL, accessed directly 
   - `/` -> `SongsPage`
   - `/analytics/:year?` -> `AnalyticsPage`
   - `/badges/:year?` -> `BadgesPage`
-  - `/playlists/:year?` -> `PlaylistsPage`
+  - `/rounds/:roundId?` -> `RoundRecapPage`
+  - `/playlists/:year?` -> `PlaylistsPage` (HIDDEN - Spotify API changes)
+  - `/my-stats/:year?` -> `MyStatsPage`
 - **Data Fetching Strategy (`useSongs`, `useIndexedDB`)**:
   - The app aggressively caches data using IndexedDB (`useIndexedDB.js`).
   - On mount, `useSongs.js` immediately loads from the local DB for instant render, and quietly fetches fresh data from `submissions` and `aggregate_votes` in the background, updating the UI and cache once complete.

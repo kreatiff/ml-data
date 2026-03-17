@@ -334,19 +334,35 @@ ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.votes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.created_playlists ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.song_metadata ENABLE ROW LEVEL SECURITY;
--- NOTE: aggregate_votes does NOT have RLS enabled
+ALTER TABLE public.aggregate_votes ENABLE ROW LEVEL SECURITY;
 
+-- LEAGUES: Public read
 CREATE POLICY "Allow anonymous read access" ON public.leagues FOR SELECT USING (true);
+
+-- COMPETITORS: Public read profile, user update own
 CREATE POLICY "Allow public read access" ON public.competitors FOR SELECT USING (true);
 CREATE POLICY "Users can update their own competitor profile" ON public.competitors
   FOR UPDATE USING (auth_user_id = auth.uid()) WITH CHECK (auth_user_id = auth.uid());
+
+-- ROUNDS: Public read
 CREATE POLICY "Allow public read access" ON public.rounds FOR SELECT USING (true);
+
+-- SUBMISSIONS: Public read
 CREATE POLICY "Allow public read access" ON public.submissions FOR SELECT USING (true);
-CREATE POLICY "Allow public read access" ON public.votes FOR SELECT USING (true);
+
+-- VOTES: Only authenticated users can see votes (protects privacy)
+CREATE POLICY "Allow authenticated read access" ON public.votes FOR SELECT USING (auth.uid() IS NOT NULL);
+
+-- AGGREGATE_VOTES: Public read (totals are less sensitive than individual votes)
+CREATE POLICY "Allow public read access" ON public.aggregate_votes FOR SELECT USING (true);
+
+-- CREATED_PLAYLISTS: Public read, but only authenticated users can create/update
 CREATE POLICY "Allow public read" ON public.created_playlists FOR SELECT USING (true);
-CREATE POLICY "Allow public insert" ON public.created_playlists FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update" ON public.created_playlists FOR UPDATE USING (true) WITH CHECK (true);
-CREATE POLICY "Allow public read" ON public.song_metadata FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated insert" ON public.created_playlists FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Allow authenticated update" ON public.created_playlists FOR UPDATE USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+-- SONG_METADATA: Only authenticated users can read (prevents mass scraping of enriched data)
+CREATE POLICY "Allow authenticated read" ON public.song_metadata FOR SELECT USING (auth.uid() IS NOT NULL);
 
 -- ============================================================
 -- Edge Functions

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Camera, Check } from 'lucide-react'
 import { useImageExport } from '../hooks/useImageExport'
 import './SectionExportButton.css'
 
@@ -26,7 +27,7 @@ export default function SectionExportButton({ targetRef, filename = 'stats_scree
       data-html2canvas-ignore="true"
     >
       <span className="export-icon">
-        {copied ? '✅' : '📷'}
+        {copied ? <Check size={16} /> : <Camera size={16} />}
       </span>
       {copied && <span className="export-tooltip">Copied!</span>}
     </button>

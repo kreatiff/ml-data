@@ -28,11 +28,6 @@
   border-bottom: 4px solid #333333;
 }
 
-.theme-cyber .banner-background,
-.theme-cyber .banner-overlay {
-  display: none;
-}
-
 .theme-cyber .banner-content {
   background: #111111;
   backdrop-filter: none;

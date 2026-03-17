@@ -9,13 +9,13 @@ export function useImageExport() {
 
   const getCanvasOptions = (options = {}) => ({
     scale: 2, // 2x for good quality without massive files
-    backgroundColor: 'var(--spotify-black, #121212)', // Default to app background
+    backgroundColor: '#121212', // Solid hex to avoid html2canvas "var()" parsing issue
     logging: false,
     useCORS: true,
     ...options,
   })
 
-  const copyImage = async (ref, filename = 'screenshot') => {
+  const copyImage = async (ref, filename = 'screenshot', customOptions = {}) => {
     if (!ref.current) return false
 
     if (!navigator?.clipboard?.write) {
@@ -25,7 +25,7 @@ export function useImageExport() {
 
     setIsExporting(true)
     try {
-      const canvas = await html2canvas(ref.current, getCanvasOptions())
+      const canvas = await html2canvas(ref.current, getCanvasOptions(customOptions))
       
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
       if (!blob) throw new Error('Failed to generate image blob')
@@ -43,12 +43,12 @@ export function useImageExport() {
     }
   }
 
-  const downloadImage = async (ref, filename = 'screenshot') => {
+  const downloadImage = async (ref, filename = 'screenshot', customOptions = {}) => {
     if (!ref.current) return false
 
     setIsExporting(true)
     try {
-      const canvas = await html2canvas(ref.current, getCanvasOptions())
+      const canvas = await html2canvas(ref.current, getCanvasOptions(customOptions))
       const image = canvas.toDataURL('image/png', 1.0)
       
       const link = document.createElement('a')
