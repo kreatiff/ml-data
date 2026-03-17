@@ -66,7 +66,11 @@ function ProfilePage() {
         <div className="profile-page fade-in">
             {isMobile && <MobilePageHeader title="Profile Settings" />}
             <div className="profile-content">
-                {!isMobile && <h1 className="profile-title">Profile Settings</h1>}
+                {!isMobile && (
+                    <h1 className="profile-title" data-text="Profile Settings">
+                        Profile Settings
+                    </h1>
+                )}
 
                 <div className="profile-grid">
                     {/* Avatar Section */}
