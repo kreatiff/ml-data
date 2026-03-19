@@ -12,6 +12,7 @@ import { useIsMobile } from '../hooks/useMediaQuery'
 import InitialsAvatar from '../components/InitialsAvatar'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
+import DynamicImage from '../components/DynamicImage'
 import './RoundRecapPage.css'
 
 const TOOLTIP_STYLE = {
@@ -47,10 +48,10 @@ function RoundRecapPage() {
   // Album art for the winning song
   const winnerArtSongs = useMemo(() => {
     if (!recapData?.winner) return []
-    return [{ key: 'page-winner', songName: recapData.winner.songName, artists: recapData.winner.artists }]
+    return [{ key: recapData.winner.spotifyUri || 'page-winner', songName: recapData.winner.songName, artists: recapData.winner.artists }]
   }, [recapData])
   const artMap = useItunesArt(winnerArtSongs)
-  const winnerArt = artMap.get('page-winner')
+  const winnerArt = artMap.get(recapData?.winner?.spotifyUri || 'page-winner')
 
   // Theme green for charts
   const themeGreen = useMemo(() => {
@@ -110,9 +111,13 @@ function RoundRecapPage() {
         {recapData.winner && (
           <section className="recap-page-section recap-winner-section">
             <div className="recap-winner-card">
-              {winnerArt && (
-                <img src={winnerArt} alt="" className="recap-winner-art" />
-              )}
+              <DynamicImage 
+                src={winnerArt} 
+                alt={recapData.winner.songName}
+                className="recap-winner-art"
+                placeholderName={recapData.winner.songName}
+                size={100}
+              />
               <div className="recap-winner-info">
                 <div className="recap-winner-trophy">🏆 Winner</div>
                 <div className="recap-winner-song">{recapData.winner.songName}</div>

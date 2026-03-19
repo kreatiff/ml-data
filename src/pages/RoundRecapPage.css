@@ -95,11 +95,6 @@
   align-items: center;
 }
 .recap-winner-art {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 .recap-winner-info {
