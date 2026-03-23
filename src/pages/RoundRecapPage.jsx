@@ -138,13 +138,18 @@ function RoundRecapPage() {
           <section className="recap-page-section">
             <div className="recap-race-banner" onClick={() => setIsRaceOpen(true)}>
               <div className="recap-race-banner-content">
-                <div className="recap-race-banner-icon">🏁</div>
+                <div className="recap-race-banner-icon">
+                  <svg id="Racing-Helmet--Streamline-Atlas" viewBox="-0.5 -0.5 16 16" height="32" width="32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M0.9375 8.45v-0.5874999999999999a7.08125 7.08125 0 0 1 1.1937499999999999 -3.9437499999999996L0.9375 2.725v-0.625C1.875 1.60625 4.543749999999999 0.9375 7.5 0.9375c4.175 0 6.5625 2.3874999999999997 6.5625 5.36875v4.65a3.125 3.125 0 0 1 -3.125 3.125 3.125 3.125 0 0 1 -0.925 -0.14375000000000002L3.4499999999999997 11.875a3.5749999999999997 3.5749999999999997 0 0 1 -2.5124999999999997 -3.4250000000000003Z" strokeMiterlimit="10" strokeWidth="1"></path>
+                    <path d="M14.0625 11.675a9.375 9.375 0 0 1 -5.4125 -1.73125l-1.0125000000000002 -0.725a1.75625 1.75625 0 0 1 -0.73125 -1.43125 1.7625 1.7625 0 0 1 2.04375 -1.7374999999999998l5.1125 0.8562500000000001" strokeMiterlimit="10" strokeWidth="1"></path>
+                    <path d="m9.8875 6.30625 -1.1937499999999999 3.5812500000000003" strokeMiterlimit="10" strokeWidth="1"></path>
+                  </svg>
+                </div>
                 <div className="recap-race-banner-text">
                   <div className="recap-race-banner-title">Vote Race Replay</div>
                   <div className="recap-race-banner-desc">See the plot twists as the votes came in!</div>
                 </div>
               </div>
-              <button className="recap-race-banner-btn">Watch Race</button>
             </div>
           </section>
         )}
