@@ -202,7 +202,55 @@ export function useRoundRecap(allVotes, allSubmissions, roundId) {
       }
     })
 
-    // 7. Assemble the Songs List (with comments attached) for the right column
+    // 7. Vote Progression (Cumulative scores over time)
+    // We group votes by voter and sort them by timestamp.
+    const votesByVoter = {}
+    roundVotes.forEach(v => {
+      if (!votesByVoter[v.voter_id]) {
+        votesByVoter[v.voter_id] = {
+          voterId: v.voter_id,
+          voterName: v.voter_name,
+          createdAt: v.vote_created_at,
+          votes: {}
+        }
+      }
+      // Sum points if multiple entries for same song from same voter (shouldn't happen but safe)
+      votesByVoter[v.voter_id].votes[v.spotify_uri] = (votesByVoter[v.voter_id].votes[v.spotify_uri] || 0) + v.points_assigned
+      // Use the earliest timestamp if multiple
+      if (v.vote_created_at && (!votesByVoter[v.voter_id].createdAt || v.vote_created_at < votesByVoter[v.voter_id].createdAt)) {
+        votesByVoter[v.voter_id].createdAt = v.vote_created_at
+      }
+    })
+
+    const sortedVoters = Object.values(votesByVoter).sort((a, b) => {
+      if (!a.createdAt) return 1
+      if (!b.createdAt) return -1
+      return new Date(a.createdAt) - new Date(b.createdAt)
+    })
+
+    const voteProgression = []
+    const runningScores = {}
+    // Initialize all songs with 0
+    songsList.forEach(s => { runningScores[s.spotify_uri] = 0 })
+
+    // Entry 0: Baseline (Start of round)
+    voteProgression.push({
+      voterName: 'Start',
+      ...runningScores
+    })
+
+    // Sequential entries for each voter
+    sortedVoters.forEach(voter => {
+      Object.entries(voter.votes).forEach(([uri, pts]) => {
+        runningScores[uri] = (runningScores[uri] || 0) + pts
+      })
+      voteProgression.push({
+        voterName: voter.voterName,
+        ...runningScores
+      })
+    })
+
+    // 8. Assemble the Songs List (with comments attached) for the right column
     const roundSongs = songsList.map((ss, index) => ({
       rank: index + 1,
       songName: ss.song_name,
@@ -237,6 +285,7 @@ export function useRoundRecap(allVotes, allSubmissions, roundId) {
       controversialPick,
       predictionAccuracy,
       roundSongs,
+      voteProgression,
       stats,
     }
   }, [roundId, allVotes, allSubmissions, standingsHistory, allPlayerIds, nameMap, rounds, allSongScores])

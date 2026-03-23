@@ -13,6 +13,7 @@ import InitialsAvatar from '../components/InitialsAvatar'
 import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 import DynamicImage from '../components/DynamicImage'
+import VoteProgressionModal from '../components/analytics/VoteProgressionModal'
 import './RoundRecapPage.css'
 
 const TOOLTIP_STYLE = {
@@ -29,6 +30,7 @@ function RoundRecapPage() {
   const navigate = useNavigate()
   const { data, loading } = useAnalyticsData()
   const isMobile = useIsMobile()
+  const [isRaceOpen, setIsRaceOpen] = useState(false)
 
   const votes = data?.votes || []
   const submissions = data?.submissions || []
@@ -131,6 +133,22 @@ function RoundRecapPage() {
           </section>
         )}
 
+        {/* 2. Race Replay Banner/CTA */}
+        {recapData.voteProgression && recapData.voteProgression.length > 1 && (
+          <section className="recap-page-section">
+            <div className="recap-race-banner" onClick={() => setIsRaceOpen(true)}>
+              <div className="recap-race-banner-content">
+                <div className="recap-race-banner-icon">🏁</div>
+                <div className="recap-race-banner-text">
+                  <div className="recap-race-banner-title">Vote Race Replay</div>
+                  <div className="recap-race-banner-desc">See the plot twists as the votes came in!</div>
+                </div>
+              </div>
+              <button className="recap-race-banner-btn">Watch Race</button>
+            </div>
+          </section>
+        )}
+
         {/* 3. Score Distribution */}
         {recapData.scoreDistribution.length > 0 && (
           <section className="recap-page-section">
@@ -151,7 +169,7 @@ function RoundRecapPage() {
                     tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
                     width={65}
                   />
-                  <Tooltip
+                   <Tooltip
                     contentStyle={TOOLTIP_STYLE}
                     itemStyle={{ color: 'var(--spotify-white)' }}
                     labelStyle={{ display: 'none' }}
@@ -317,6 +335,13 @@ function RoundRecapPage() {
           ))}
         </div>
       </div>
+
+      <VoteProgressionModal
+        isOpen={isRaceOpen}
+        onClose={() => setIsRaceOpen(false)}
+        data={recapData.voteProgression}
+        roundSongs={recapData.roundSongs}
+      />
     </div>
   )
 }
