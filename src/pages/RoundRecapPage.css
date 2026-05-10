@@ -95,11 +95,6 @@
   align-items: center;
 }
 .recap-winner-art {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 .recap-winner-info {
@@ -537,5 +532,164 @@
   }
   .recap-song-comment::before {
     display: none;
+  }
+}
+
+/* ── Race Replay Banner ── */
+.recap-race-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0.05) 100%);
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.recap-race-banner:hover {
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.2) 0%, rgba(29, 185, 84, 0.1) 100%);
+  border-color: var(--spotify-green);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(29, 185, 84, 0.15);
+}
+
+.recap-race-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.recap-race-banner-icon {
+  font-size: 1.8rem;
+}
+
+.recap-race-banner-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--spotify-white);
+}
+
+.recap-race-banner-desc {
+  font-size: 0.85rem;
+  color: var(--spotify-gray);
+  margin-top: 0.15rem;
+}
+
+.recap-race-banner-btn {
+  background: var(--spotify-green);
+  color: var(--spotify-black);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.recap-race-banner:hover .recap-race-banner-btn {
+  transform: scale(1.05);
+}
+
+/* ── Shared Modal Styles (Sync with AnalyticsPage.css) ── */
+.trajectory-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.trajectory-modal {
+  width: 95vw;
+  height: 80vh;
+  background: var(--spotify-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.25s ease;
+}
+
+.trajectory-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.trajectory-modal-chart {
+  flex: 1;
+  padding: 1.5rem 2rem 2rem;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.trajectory-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.expand-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: var(--spotify-gray);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.expand-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--spotify-white);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .recap-race-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  .recap-race-banner-content {
+    flex-direction: column;
+  }
+  .trajectory-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  .trajectory-modal-header {
+    padding: 1rem;
+  }
+  .trajectory-modal-chart {
+    padding: 0.5rem;
   }
 }
