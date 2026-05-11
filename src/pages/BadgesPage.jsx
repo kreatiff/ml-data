@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useAnalytics } from '../hooks/useAnalytics'
@@ -26,8 +26,23 @@ function BadgesPage() {
   const [modalBadge, setModalBadge] = useState(null)
   const [exportPlayer, setExportPlayer] = useState(null)
   const [exportBadge, setExportBadge] = useState(null)
+  const modalRef = useRef(null)
 
   const { isAdmin } = useAuth()
+
+  // Focus modal close button when modal opens; restore focus on close
+  useEffect(() => {
+    if (modalBadge && modalRef.current) {
+      const closeBtn = modalRef.current.querySelector('.badge-modal-close')
+      if (closeBtn) closeBtn.focus()
+    }
+  }, [modalBadge])
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setModalBadge(null)
+    }
+  }
 
   const {
     loading, error, leagues, activeTeam, selectedLeague, setSelectedLeague,
@@ -109,12 +124,19 @@ function BadgesPage() {
       )}
 
       {modalBadge && (
-        <div className="badge-modal-overlay" onClick={() => setModalBadge(null)}>
-          <div className="badge-modal" onClick={e => e.stopPropagation()}>
+        <div
+          className="badge-modal-overlay"
+          onClick={() => setModalBadge(null)}
+          onKeyDown={handleKeyDown}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="badge-modal-title"
+        >
+          <div className="badge-modal" ref={modalRef} onClick={e => e.stopPropagation()}>
             <div className="badge-modal-header">
-              <img className="badge-modal-image" src={modalBadge.image} alt={modalBadge.name} />
+              <img className="badge-modal-image" src={modalBadge.image} alt={`${modalBadge.name} badge`} />
               <div>
-                <div className="badge-modal-name">{modalBadge.name}</div>
+                <div className="badge-modal-name" id="badge-modal-title">{modalBadge.name}</div>
                 <div className="badge-modal-desc">{modalBadge.description}</div>
               </div>
               <button className="badge-modal-close" onClick={() => setModalBadge(null)}>&times;</button>
@@ -122,7 +144,8 @@ function BadgesPage() {
             <div className="badge-modal-players">
               {modalBadge.players.map((p, i) => (
                 <div key={`${p.id}-${i}`} className="badge-modal-player">
-                  <span 
+                  <button
+                    type="button"
                     className={`badge-player-name ${isAdmin ? 'badge-player-name-admin' : ''}`}
                     onClick={() => {
                       if (isAdmin) {
@@ -130,9 +153,11 @@ function BadgesPage() {
                         setExportPlayer(p)
                       }
                     }}
+                    disabled={!isAdmin}
+                    aria-disabled={!isAdmin}
                   >
                     {p.name}
-                  </span>
+                  </button>
                   {p.stat != null ? (
                     <span className="badge-player-stat">{p.stat}</span>
                   ) : null}
@@ -157,7 +182,8 @@ function BadgesPage() {
                 >
                   <img className={`badge-image badge-image-gauntlet ${badge.achieved ? '' : 'badge-image-locked'}`} src={badge.image} alt={badge.name} />
                   <div className="badge-info">
-                    <div 
+                    <button
+                      type="button"
                       className={`badge-name ${badge.achieved && activeTeam ? 'badge-name-achieved' : ''}`}
                       onClick={() => {
                         if (badge.achieved && activeTeam && badge.players.length > 0) {
@@ -165,15 +191,18 @@ function BadgesPage() {
                           setExportPlayer(badge.players[0])
                         }
                       }}
+                      disabled={!(badge.achieved && activeTeam)}
+                      aria-disabled={!(badge.achieved && activeTeam)}
                     >
                       {badge.name}
-                    </div>
+                    </button>
                     <div className="badge-desc">{badge.description}</div>
                     {badge.achieved ? (
                       <div className="badge-players">
                         {badge.players.map((p, i) => (
                           <div key={`${p.id}-${i}`} className="badge-player">
-                            <span 
+                            <button
+                              type="button"
                               className="badge-player-name badge-player-name-clickable"
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -182,7 +211,7 @@ function BadgesPage() {
                               }}
                             >
                               {p.name}
-                            </span>
+                            </button>
                             {p.stat != null ? (
                               <span className="badge-player-stat">{p.stat}</span>
                             ) : null}
@@ -225,7 +254,8 @@ function BadgesPage() {
                 >
                   <img className="badge-image" src={badge.image} alt={badge.name} />
                   <div className="badge-info">
-                    <div 
+                    <button
+                      type="button"
                       className={`badge-name ${badge.achieved && activeTeam ? 'badge-name-achieved' : ''}`}
                       onClick={() => {
                         if (badge.achieved && activeTeam && badge.players.length > 0) {
@@ -233,15 +263,18 @@ function BadgesPage() {
                           setExportPlayer(badge.players[0])
                         }
                       }}
+                      disabled={!(badge.achieved && activeTeam)}
+                      aria-disabled={!(badge.achieved && activeTeam)}
                     >
                       {badge.name}
-                    </div>
+                    </button>
                     <div className="badge-desc">{badge.description}</div>
                     {badge.achieved ? (
                       <div className="badge-players">
                         {badge.players.slice(0, MAX_VISIBLE).map((p, i) => (
                           <div key={`${p.id}-${i}`} className="badge-player">
-                            <span 
+                            <button
+                              type="button"
                               className="badge-player-name badge-player-name-clickable"
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -250,7 +283,7 @@ function BadgesPage() {
                               }}
                             >
                               {p.name}
-                            </span>
+                            </button>
                             {p.stat != null ? (
                               <span className="badge-player-stat">{p.stat}</span>
                             ) : null}

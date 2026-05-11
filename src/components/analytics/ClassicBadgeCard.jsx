@@ -1,14 +1,16 @@
-import InitialsAvatar from '../InitialsAvatar'
+import BadgeAvatar from './BadgeAvatar'
+import BadgeStatsList from './BadgeStatsList'
 
 function ClassicBadgeCard({ player, badge, cardRef }) {
   const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  
+
+  const fallbackStats = [{ label: 'STATUS', value: 'VERIFIED' }]
+
   return (
     <div className="badge-export-card classic-theme" ref={cardRef}>
       <div className="classic-scanlines" />
       <div className="classic-torn-edge" />
-      
-      {/* Ticket Header */}
+
       <div className="classic-ticket-header">
         <div className="classic-header-left">
           <div className="classic-overline">EVENT / LEAGUE PRESENTS</div>
@@ -22,19 +24,13 @@ function ClassicBadgeCard({ player, badge, cardRef }) {
         </div>
       </div>
 
-      {/* Main Artwork Area */}
       <div className="classic-main-art">
         <img src={badge.image} alt={badge.name} className="classic-badge-image" />
         <div className="classic-avatar-cluster">
-          {player.avatar_url ? (
-            <img src={player.avatar_url} alt={player.name} className="classic-avatar" />
-          ) : (
-            <InitialsAvatar name={player.name} size={64} className="classic-avatar" variant="mesh" />
-          )}
+          <BadgeAvatar player={player} size={64} className="classic-avatar" />
         </div>
       </div>
 
-      {/* Headline Info */}
       <div className="classic-headline-section">
         <div className="classic-player-headline">{player.name}</div>
         <div className="classic-badge-subhead-row">
@@ -48,27 +44,19 @@ function ClassicBadgeCard({ player, badge, cardRef }) {
 
       <div className="classic-divider" />
 
-      {/* Description & Stats */}
       <div className="classic-detail-section">
         <div className="classic-description">{badge.description}</div>
-        
-        <div className="classic-stats-footer">
-          {(player.stats || []).map((s, i) => (
-            <div key={i} className="classic-stat-pill">
-              <span className="pill-label">{s.label}</span>
-              <span className="pill-val">{s.value}</span>
-            </div>
-          ))}
-          {(!player.stats || player.stats.length === 0) && (
-            <div className="classic-stat-pill">
-              <span className="pill-label">STATUS</span>
-              <span className="pill-val">VERIFIED</span>
-            </div>
-          )}
-        </div>
+
+        <BadgeStatsList
+          stats={player.stats}
+          fallback={fallbackStats}
+          className="classic-stats-footer"
+          itemClassName="classic-stat-pill"
+          labelClassName="pill-label"
+          valueClassName="pill-val"
+        />
       </div>
 
-      {/* Ticket Stub Footer */}
       <div className="classic-ticket-footer">
         <div className="classic-barcode-area">
           <div className="barcode-strip" />

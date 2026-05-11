@@ -80,13 +80,13 @@ function ExportableBadgeCard({ player, badge, onClose }) {
     <div className="export-card-overlay" onClick={onClose}>
       <div className="export-card-container" onClick={e => e.stopPropagation()}>
         
-        <div className="carousel-wrapper">
-          <button className="carousel-nav prev" onClick={handlePrev}>‹</button>
-          
-          <div className="carousel-viewport">
+        <div className="carousel-wrapper" aria-roledescription="carousel">
+          <button className="carousel-nav prev" onClick={handlePrev} aria-label="Previous theme">‹</button>
+
+          <div className="carousel-viewport" aria-live="polite" aria-atomic="true">
             {themes.map((theme, index) => {
               const diff = index - activeThemeIndex
-              
+
               // Basic wrapping logic for 4 items
               let position = diff
               if (diff > 2) position = diff - themes.length
@@ -94,9 +94,9 @@ function ExportableBadgeCard({ player, badge, onClose }) {
 
               const isCenter = index === activeThemeIndex
               const palette = getCategoryPalette(badge.category)
-              
+
               return (
-                <div 
+                <div
                   key={theme.id}
                   className={`carousel-item ${isCenter ? 'active' : ''}`}
                   style={{
@@ -104,18 +104,20 @@ function ExportableBadgeCard({ player, badge, onClose }) {
                     '--abs-offset': Math.abs(position),
                     ...palette
                   }}
+                  aria-hidden={!isCenter}
+                  aria-label={isCenter ? `${theme.name} theme` : undefined}
                 >
-                  <theme.Component 
-                    player={player} 
-                    badge={badge} 
-                    cardRef={isCenter ? cardRef : null} 
+                  <theme.Component
+                    player={player}
+                    badge={badge}
+                    cardRef={isCenter ? cardRef : null}
                   />
                 </div>
               )
             })}
           </div>
 
-          <button className="carousel-nav next" onClick={handleNext}>›</button>
+          <button className="carousel-nav next" onClick={handleNext} aria-label="Next theme">›</button>
         </div>
 
         <div className="export-actions">

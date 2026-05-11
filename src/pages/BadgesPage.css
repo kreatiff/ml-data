@@ -139,6 +139,12 @@
   font-weight: 700;
   color: var(--spotify-white);
   margin-bottom: 0.2rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: default;
 }
 
 .badge-desc {
@@ -165,6 +171,12 @@
 .badge-player-name {
   color: var(--spotify-green);
   font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: default;
 }
 
 .badge-player-stat {
@@ -403,6 +415,12 @@
   opacity: 0.8;
 }
 
+.badge-name-achieved:focus-visible {
+  outline: 2px solid var(--spotify-green);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .badge-player-name-admin {
   cursor: pointer;
   text-decoration: underline;
@@ -414,6 +432,12 @@
   color: var(--spotify-white);
 }
 
+.badge-player-name-admin:focus-visible {
+  outline: 2px solid var(--spotify-green);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .badge-player-name-clickable {
   cursor: pointer;
 }
@@ -421,6 +445,12 @@
 .badge-player-name-clickable:hover {
   text-decoration: underline;
   color: var(--spotify-white);
+}
+
+.badge-player-name-clickable:focus-visible {
+  outline: 2px solid var(--spotify-green);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 @media (max-width: 600px) {

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import InitialsAvatar from '../InitialsAvatar'
+import BadgeAvatar from './BadgeAvatar'
+import BadgeStatsList from './BadgeStatsList'
 import { CATEGORY_COLORS, hexToRgba } from '../../utils/themeHelpers'
 
 function seededRand(seed) {
@@ -7,20 +8,23 @@ function seededRand(seed) {
   return x - Math.floor(x)
 }
 
-function drawVinylDisc(canvas, primaryColor, size = 240) {
+function drawVinylDisc(canvas, primaryColor, size = 240, dpr = 1) {
   const ctx = canvas.getContext('2d')
+  const scaledSize = size * dpr
+  canvas.width = scaledSize
+  canvas.height = scaledSize
+  ctx.scale(dpr, dpr)
+
   const cx = size / 2
   const cy = size / 2
   const outerR = size / 2 - 1
 
   ctx.clearRect(0, 0, size, size)
 
-  // Clip to circle
   ctx.beginPath()
   ctx.arc(cx, cy, outerR, 0, Math.PI * 2)
   ctx.clip()
 
-  // Disc base – dark radial gradient for depth
   const base = ctx.createRadialGradient(cx * 0.7, cy * 0.65, 0, cx, cy, outerR)
   base.addColorStop(0,   '#2a2a2a')
   base.addColorStop(0.4, '#111')
@@ -28,7 +32,6 @@ function drawVinylDisc(canvas, primaryColor, size = 240) {
   ctx.fillStyle = base
   ctx.fillRect(0, 0, size, size)
 
-  // Groove rings with variable brightness
   const startR = outerR * 0.44
   for (let r = startR; r < outerR - 2; r += 2.2) {
     const brightness = 0.015 + seededRand(r * 13.7) * 0.035
@@ -39,7 +42,6 @@ function drawVinylDisc(canvas, primaryColor, size = 240) {
     ctx.stroke()
   }
 
-  // Specular rainbow shimmer — now tinted by category primary
   const sweeps = [
     { x: cx * 1.5, y: cy * 0.4, r: outerR * 1.1, c: hexToRgba(primaryColor, 0.12) },
     { x: cx * 1.6, y: cy * 0.5, r: outerR * 1.0, c: 'rgba(80,200,255,0.06)' },
@@ -57,7 +59,6 @@ function drawVinylDisc(canvas, primaryColor, size = 240) {
   })
   ctx.globalCompositeOperation = 'source-over'
 
-  // Outer edge rim highlight
   const rim = ctx.createRadialGradient(cx, cy, outerR * 0.88, cx, cy, outerR)
   rim.addColorStop(0,   'transparent')
   rim.addColorStop(0.5, 'rgba(255,255,255,0.04)')
@@ -68,26 +69,19 @@ function drawVinylDisc(canvas, primaryColor, size = 240) {
 
 function VinylBadgeCard({ player, badge, cardRef }) {
   const canvasRef = useRef(null)
+  const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
 
   useEffect(() => {
     if (!canvasRef.current) return
-    const size = 240
-    canvasRef.current.width = size
-    canvasRef.current.height = size
-    
     const primaryColor = CATEGORY_COLORS[badge.category] || CATEGORY_COLORS['Performance']
-    drawVinylDisc(canvasRef.current, primaryColor, size)
-  }, [badge.category])
+    drawVinylDisc(canvasRef.current, primaryColor, 240, dpr)
+  }, [badge.category, dpr])
 
   return (
     <div className="badge-export-card vinyl-theme" ref={cardRef}>
-
-      {/* Dark disc well at the top */}
       <div className="vinyl-disc-container">
         <div className="vinyl-disc-ring">
-          <canvas ref={canvasRef} className="vinyl-disc-canvas" width="240" height="240" />
-
-          {/* Center label overlaid on canvas */}
+          <canvas ref={canvasRef} className="vinyl-disc-canvas" style={{ width: 240, height: 240 }} />
           <div className="vinyl-disc-label">
             <div className="vinyl-disc-label-track">RECORDED LIVE</div>
             <div className="vinyl-disc-label-title">{badge.name}</div>
@@ -97,7 +91,6 @@ function VinylBadgeCard({ player, badge, cardRef }) {
         </div>
       </div>
 
-      {/* Cream paper sleeve body */}
       <div className="vinyl-sleeve-body">
         <div className="vinyl-sleeve-top-rule" />
 
@@ -107,11 +100,7 @@ function VinylBadgeCard({ player, badge, cardRef }) {
             <div className="vinyl-sleeve-player-name">{player.name.toUpperCase()}</div>
           </div>
           <div className="vinyl-sleeve-avatar-col">
-            {player.avatar_url ? (
-              <img src={player.avatar_url} alt={player.name} className="vinyl-wax-avatar" />
-            ) : (
-              <InitialsAvatar name={player.name} size={56} className="vinyl-wax-avatar" variant="vinyl" borderRadius="50%" />
-            )}
+            <BadgeAvatar player={player} size={56} className="vinyl-wax-avatar" variant="vinyl" borderRadius="50%" />
           </div>
         </div>
 
@@ -120,14 +109,13 @@ function VinylBadgeCard({ player, badge, cardRef }) {
         <div className="vinyl-sleeve-badge-name">{badge.name}</div>
         <div className="vinyl-sleeve-description">{badge.description}</div>
 
-        <div className="vinyl-sleeve-stats">
-          {(player.stats || []).map((s, i) => (
-            <div key={i} className="vinyl-sleeve-stat">
-              <span className="vinyl-sleeve-stat-label">{s.label}</span>
-              <strong className="vinyl-sleeve-stat-value">{s.value}</strong>
-            </div>
-          ))}
-        </div>
+        <BadgeStatsList
+          stats={player.stats}
+          className="vinyl-sleeve-stats"
+          itemClassName="vinyl-sleeve-stat"
+          labelClassName="vinyl-sleeve-stat-label"
+          valueClassName="vinyl-sleeve-stat-value"
+        />
 
         <div className="vinyl-sleeve-footer">
           <span>℗ {new Date().getFullYear()} MUSIC LEAGUE RECORDINGS</span>

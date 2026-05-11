@@ -31,6 +31,7 @@ export const CATEGORY_COLORS = {
   'Standings': '#FD04DC',
   'Voting': '#259ADD',
   'Social': '#FD5D22',
+  'Meta': '#FFD700',
 };
 
 export function getCategoryPalette(category = 'Performance') {
