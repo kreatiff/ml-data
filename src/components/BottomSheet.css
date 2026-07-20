@@ -167,3 +167,35 @@
   letter-spacing: 2px;
   font-size: 1rem;
 }
+
+/* Playful Theme Overrides */
+.theme-playful .bottom-sheet {
+  background: #FFFDF5;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border-top: 2px solid #1E293B;
+  box-shadow: 0 -6px 0px #1E293B;
+}
+
+.theme-playful .bottom-sheet-header {
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+.theme-playful .bottom-sheet-handle {
+  background: var(--spotify-green);
+  opacity: 0.6;
+}
+
+.theme-playful .bottom-sheet-header h3 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .bottom-sheet-section-header {
+  color: #1E293B;
+}
+
+.theme-playful .bottom-sheet-label {
+  color: #64748B;
+}

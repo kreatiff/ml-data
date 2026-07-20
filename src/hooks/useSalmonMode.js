@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { SALMON_NAMES } from '../constants/leagues'
+import { themes } from '../constants/themes'
 
 const STORAGE_KEY = 'salmon_mode'
 const EVENT_NAME = 'salmonModeChanged'
@@ -26,13 +27,9 @@ export function useSalmonMode() {
       root.style.setProperty('--spotify-green-hover', '#ff9a8d')
     } else {
       const theme = localStorage.getItem('app_theme') || 'cyber'
-      if (theme === 'cyber') {
-        root.style.setProperty('--spotify-green', '#CCFF00')
-        root.style.setProperty('--spotify-green-hover', '#DDFF33')
-      } else {
-        root.style.setProperty('--spotify-green', '#1DB954')
-        root.style.setProperty('--spotify-green-hover', '#1ED760')
-      }
+      const colors = themes[theme]?.colors || themes.cyber.colors
+      root.style.setProperty('--spotify-green', colors['--spotify-green'])
+      root.style.setProperty('--spotify-green-hover', colors['--spotify-green-hover'])
     }
   }, [])
 

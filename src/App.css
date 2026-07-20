@@ -478,6 +478,10 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.theme-playful .table-avatar {
+  border-color: rgba(30, 41, 59, 0.2);
+}
+
 /* Clickable round names (desktop table + mobile cards) */
 .round-name-clickable {
   cursor: pointer;

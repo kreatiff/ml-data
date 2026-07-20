@@ -1,0 +1,477 @@
+/* ============================================
+   PLAYFUL GEOMETRIC THEME
+   Memphis-inspired, tactile, optimistic UI
+   ============================================ */
+
+.theme-playful {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  /* Firefox: default scrollbar-color (--spotify-card on --spotify-bg) is two
+     near-white pastels under this theme and reads as invisible */
+  scrollbar-color: #CBD5E1 #F1F5F9;
+}
+
+.theme-playful ::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+.theme-playful ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-color: #F1F5F9;
+}
+
+.theme-playful ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.theme-playful .app {
+  background-color: #FFFDF5;
+  background-image: radial-gradient(circle, rgba(30, 41, 59, 0.12) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  padding: 0;
+  max-width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   BANNER HEADER - Hero with confetti shapes
+   ============================================ */
+
+.theme-playful .banner-header {
+  margin: 0 0 2rem 0;
+  padding: 2rem 2rem 1rem;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.theme-playful .banner-header::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #FBBF24;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.theme-playful .banner-content {
+  background: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 2px solid #1E293B;
+  border-radius: 24px;
+  padding: 2rem 2.5rem;
+  box-shadow: 8px 8px 0px #F472B6;
+  margin-top: clamp(1.5rem, 8vh, 6em);
+}
+
+.theme-playful .header-text {
+  margin-bottom: 1.5rem;
+}
+
+.theme-playful .banner-header h1 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1E293B;
+  text-shadow: none;
+  margin: 0;
+}
+
+/* The RGB-split glitch animation doesn't fit the playful vibe - disable it */
+.theme-playful .banner-header h1.glitch-text {
+  animation: none;
+}
+
+.theme-playful .banner-header h1.glitch-text::before,
+.theme-playful .banner-header h1.glitch-text::after {
+  display: none;
+}
+
+.theme-playful .banner-header .subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  color: #64748B;
+  font-weight: 500;
+  margin: 0.5rem 0 0 0;
+}
+
+/* ============================================
+   THEME SELECTOR - Pill dropdown
+   ============================================ */
+
+.theme-playful .theme-selector {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 0.75rem 2.75rem 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #1E293B;
+  font-weight: 700;
+  box-shadow: 4px 4px 0px #1E293B;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231E293B' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-position: right 1.25rem center;
+}
+
+.theme-playful .theme-selector option {
+  background: #FFFFFF;
+  color: #1E293B;
+  font-weight: 600;
+}
+
+.theme-playful .theme-selector:hover {
+  background-color: #FBBF24;
+  border-color: #1E293B;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1E293B;
+}
+
+.theme-playful .theme-selector:focus {
+  border-color: var(--spotify-green);
+  background-color: #FFFFFF;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+/* ============================================
+   FILTERS ROW
+   ============================================ */
+
+.theme-playful .filters-row {
+  border-top: 2px dashed #E2E8F0;
+  padding-top: 1.5rem;
+}
+
+.theme-playful .search-container::before {
+  content: "🔎";
+  opacity: 0.8;
+}
+
+.theme-playful .search-input {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 1rem 1.5rem 1rem 3.5rem;
+  border: 2px solid #CBD5E1;
+  border-radius: 16px;
+  background: #FFFFFF;
+  color: #1E293B;
+  font-weight: 500;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 4px 4px 0px transparent;
+  transition: box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-playful .search-input::placeholder {
+  color: #94A3B8;
+  opacity: 1;
+}
+
+.theme-playful .search-input:hover {
+  background: #FFFFFF;
+  border-color: #1E293B;
+  box-shadow: 4px 4px 0px transparent;
+}
+
+.theme-playful .search-input:focus {
+  background: #FFFFFF;
+  border-color: var(--spotify-green);
+  box-shadow: 4px 4px 0px var(--spotify-green);
+  transform: translate(-2px, -2px);
+}
+
+/* ============================================
+   FILTER SELECTS - Pill dropdowns
+   ============================================ */
+
+.theme-playful .filter-select {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 1rem 2.75rem 1rem 1.5rem;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #1E293B;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231E293B' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-position: right 1.25rem center;
+}
+
+.theme-playful .filter-select option {
+  background: #FFFFFF;
+  color: #1E293B;
+}
+
+.theme-playful .filter-select:hover {
+  background-color: #FBBF24;
+  border-color: #1E293B;
+}
+
+.theme-playful .filter-select:focus {
+  border-color: var(--spotify-green);
+  background-color: #FFFFFF;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+/* ============================================
+   CLEAR FILTERS BUTTON - "Candy Button"
+   ============================================ */
+
+.theme-playful .clear-filters-btn {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 0.875rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: 4px 4px 0px #1E293B;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.theme-playful .clear-filters-btn::before {
+  display: none;
+}
+
+.theme-playful .clear-filters-btn:hover {
+  background: var(--spotify-green-hover);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1E293B;
+}
+
+.theme-playful .clear-filters-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1E293B;
+}
+
+/* ============================================
+   RESULT COUNT - Confetti badge
+   ============================================ */
+
+.theme-playful .result-count {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  color: #1E293B;
+  background: #FBBF24;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  padding: 0.75rem 1.25rem;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ============================================
+   TABLE CONTAINER - Clean data pane
+   Square corners on purpose: this element has both a
+   sticky <thead> and a scrollbar sharing the scroll box,
+   and browsers don't clip either one to a border-radius
+   reliably, which shows up as a stray seam at the header
+   and the scrollbar cutting through the curve. Rounding
+   lives on the banner/buttons/badges instead.
+   ============================================ */
+
+.theme-playful .table-container {
+  margin: 0 2rem 2rem;
+  border-radius: 0;
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  box-shadow: 8px 8px 0px #34D399;
+  max-height: calc(100vh - 350px);
+  min-height: 600px;
+}
+
+/* ============================================
+   TABLE
+   ============================================ */
+
+.theme-playful .songs-table {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
+}
+
+.theme-playful .songs-table thead {
+  background: #F1F5F9;
+  border-bottom: 2px solid #1E293B;
+}
+
+.theme-playful .songs-table th {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.theme-playful .songs-table th.sortable:hover {
+  color: var(--spotify-green);
+}
+
+.theme-playful .songs-table td {
+  border-bottom: 1px solid #E2E8F0;
+  color: #1E293B;
+}
+
+.theme-playful .songs-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.theme-playful .songs-table tbody tr:hover {
+  background: #FDF2F8;
+}
+
+.theme-playful .song-name {
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .album {
+  color: #64748B;
+}
+
+.theme-playful .votes {
+  font-weight: 800;
+  color: var(--spotify-green);
+}
+
+.theme-playful .date {
+  color: #64748B;
+}
+
+/* ============================================
+   NO RESULTS / LOADING / ERROR
+   ============================================ */
+
+.theme-playful .no-results {
+  color: #64748B;
+  font-weight: 600;
+}
+
+.theme-playful .loading,
+.theme-playful .error {
+  margin: 2rem;
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 24px;
+  box-shadow: 6px 6px 0px #FBBF24;
+}
+
+.theme-playful .loading {
+  color: var(--spotify-green);
+  animation: playfulPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes playfulPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+.theme-playful .error {
+  color: #F472B6;
+  box-shadow: 6px 6px 0px #F472B6;
+}
+
+.theme-playful .error h2 {
+  font-family: 'Outfit', sans-serif;
+  color: #1E293B;
+}
+
+.theme-playful .error .hint {
+  background: #FEF2F2;
+  border-left: 4px solid #F472B6;
+  border-radius: 8px;
+  color: #1E293B;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1100px) and (min-width: 769px) {
+  .theme-playful .banner-content {
+    margin-top: 2em;
+    padding: 1.5rem;
+    box-shadow: 5px 5px 0px #F472B6;
+  }
+
+  .theme-playful .theme-selector {
+    box-shadow: 3px 3px 0px #1E293B;
+  }
+
+  .theme-playful .table-container {
+    min-height: 400px;
+    max-height: calc(100vh - 300px);
+  }
+}
+
+/* Playful Theme - Mobile Overrides */
+.theme-playful .mobile-search-bar {
+  background: #FFFDF5;
+  border-bottom: 2px solid #1E293B;
+}
+
+.theme-playful .mobile-search-bar::before {
+  content: "🔎";
+}
+
+.theme-playful .mobile-search-input {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 16px;
+  color: #1E293B;
+}
+
+.theme-playful .mobile-search-input::placeholder {
+  color: #94A3B8;
+}
+
+.theme-playful .mobile-search-input:focus {
+  border-color: var(--spotify-green);
+  box-shadow: 3px 3px 0px var(--spotify-green);
+}
+
+.theme-playful .mobile-filter-button {
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 50%;
+  box-shadow: 3px 3px 0px #1E293B;
+}
+
+.theme-playful .mobile-filter-button:active {
+  box-shadow: 1px 1px 0px #1E293B;
+  transform: translate(2px, 2px) scale(0.97);
+}
+
+.theme-playful .filter-badge {
+  background: #F472B6;
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-playful * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

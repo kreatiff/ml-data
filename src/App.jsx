@@ -8,6 +8,7 @@ import MobileTabBar from './components/MobileTabBar'
 import SongsPage from './pages/SongsPage'
 import './App.css'
 import './CyberTheme.css'
+import './PlayfulTheme.css'
 
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'))
 const BadgesPage = lazy(() => import('./pages/BadgesPage'))

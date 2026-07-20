@@ -81,6 +81,14 @@
   line-height: 1;
 }
 
+/* Playful Theme Overrides */
+.theme-playful .nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
 @media (max-width: 600px) {
   .nav-bar {
     padding: 0 1rem;

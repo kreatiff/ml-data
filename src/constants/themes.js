@@ -31,5 +31,19 @@ export const themes = {
             '--spotify-gray': '#666666',
             '--spotify-light-gray': '#999999',
         }
+    },
+    playful: {
+        name: 'Playful',
+        colors: {
+            '--spotify-black': '#1E293B',
+            '--spotify-bg': '#FFFDF5',
+            '--spotify-elevated': '#FFFFFF',
+            '--spotify-card': '#F1F5F9',
+            '--spotify-green': '#8B5CF6',
+            '--spotify-green-hover': '#7C3AED',
+            '--spotify-white': '#1E293B',
+            '--spotify-gray': '#64748B',
+            '--spotify-light-gray': '#475569',
+        }
     }
 }
