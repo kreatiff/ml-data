@@ -19,6 +19,7 @@ import MobilePageHeader from '../components/MobilePageHeader'
 import PageLoadingSkeleton from '../components/PageLoadingSkeleton'
 import ExportableBadgeCard from '../components/analytics/ExportableBadgeCard'
 import SectionExportButton from '../components/SectionExportButton'
+import './AnalyticsPage.css'
 import './MyStatsPage.css'
 
 const TOOLTIP_STYLE = {

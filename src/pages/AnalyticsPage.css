@@ -1,6 +1,8 @@
 .analytics-page {
   max-width: 1400px;
+  margin: 0 auto;
   padding: 1.5rem;
+  width: 100%;
 }
 
 .analytics-loading,

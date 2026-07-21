@@ -5,6 +5,7 @@ import { useSalmonMode } from './hooks/useSalmonMode'
 import { themes } from './constants/themes'
 import NavBar from './components/NavBar'
 import MobileTabBar from './components/MobileTabBar'
+import PlayfulBackgroundDecor from './components/PlayfulBackgroundDecor'
 import SongsPage from './pages/SongsPage'
 import './App.css'
 import './CyberTheme.css'
@@ -49,6 +50,7 @@ function App() {
 
   return (
     <div className={`app theme-${selectedTheme}`}>
+      {selectedTheme === 'playful' && <PlayfulBackgroundDecor />}
       <NavBar />
       <Suspense fallback={<div className="loading">Loading...</div>}>
         <Routes>

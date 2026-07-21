@@ -1,0 +1,37 @@
+/* Rendered as a direct child of .app (which establishes its own stacking
+   context via isolation:isolate in PlayfulTheme.css) - the negative z-index
+   here is scoped to that context, so it sinks below every other child of
+   .app regardless of their own position/z-index, without needing to touch
+   any of them. */
+.playful-bg-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.playful-bg-decor-wrap {
+  position: absolute;
+  will-change: transform;
+}
+
+.playful-bg-decor-circle {
+  border-radius: 50%;
+  animation: playful-bg-float 10s ease-in-out infinite;
+}
+
+@keyframes playful-bg-float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(16px, -20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playful-bg-decor-circle {
+    animation: none;
+  }
+}

@@ -26,8 +26,14 @@
 /* No fixed height/overflow here (unlike .theme-cyber): the Songs page manages
    its own fixed-height internal scroll region via .songs-page, but every
    other page (Analytics, Badges, etc.) relies on the app growing naturally
-   and the body scrolling, same as the Default theme. */
-.theme-playful .app {
+   and the body scrolling, same as the Default theme.
+
+   Note the compound selector (.theme-playful.app, no space) - App.jsx renders
+   a single div with className="app theme-playful", both classes on the same
+   element, not nested. A descendant-combinator selector (".theme-playful .app")
+   can never match an element against itself, so every rule in this block was
+   silently dead until this fix. */
+.theme-playful.app {
   background-color: #FFFDF5;
   background-image: radial-gradient(circle, rgba(30, 41, 59, 0.12) 1.5px, transparent 1.5px);
   background-size: 22px 22px;
@@ -36,14 +42,48 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Anchors the corner decoration's stacking context below - position:fixed
+     on the pseudo-element still positions against the viewport regardless.
+     isolation:isolate is required here, not just position:relative - without
+     it .app never actually becomes a stacking context, so the pseudo-element's
+     negative z-index escapes it entirely and sinks below .app's own opaque
+     background, making the circle invisible. */
+  position: relative;
+  isolation: isolate;
+}
+
+/* Confetti corner mark - pinned to the actual viewport corner (not the
+   banner/page content, which scrolls away), so it reads as a consistent
+   piece of chrome across every page rather than a one-off banner flourish. */
+.theme-playful.app::before {
+  content: '';
+  position: fixed;
+  top: -110px;
+  left: -110px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: #FBBF24;
+  opacity: 0.45;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .theme-playful.app::before {
+    width: 220px;
+    height: 220px;
+    top: -70px;
+    left: -70px;
+  }
 }
 
 /* App.css's own padding-bottom (which keeps scrolled content clear of the
    fixed MobileTabBar) loses to the flat "padding: 0" above regardless of
-   media query, since .theme-playful .app is more specific either way -
+   media query, since .theme-playful.app is more specific either way -
    restore it explicitly here. */
 @media (max-width: 768px) {
-  .theme-playful .app {
+  .theme-playful.app {
     padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom));
   }
 }
@@ -80,20 +120,6 @@
   margin: 0 0 2rem 0;
   padding: 2rem 2rem 1rem;
   border-radius: 0;
-  overflow: visible;
-}
-
-.theme-playful .banner-header::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  left: -60px;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: #FBBF24;
-  opacity: 0.5;
-  z-index: 0;
 }
 
 .theme-playful .banner-content {

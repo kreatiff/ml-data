@@ -1,6 +1,7 @@
 /* ── My Stats Page ── */
 .mystats-page {
   max-width: 1400px;
+  margin: 0 auto;
   padding: 1.5rem;
   animation: fadeIn 0.3s ease;
 }
