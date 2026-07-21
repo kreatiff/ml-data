@@ -25,11 +25,13 @@ export function useSalmonMode() {
     if (active) {
       root.style.setProperty('--spotify-green', '#fa8072')
       root.style.setProperty('--spotify-green-hover', '#ff9a8d')
+      root.style.setProperty('--spotify-green-rgb', '250, 128, 114')
     } else {
       const theme = localStorage.getItem('app_theme') || 'cyber'
       const colors = themes[theme]?.colors || themes.cyber.colors
       root.style.setProperty('--spotify-green', colors['--spotify-green'])
       root.style.setProperty('--spotify-green-hover', colors['--spotify-green-hover'])
+      root.style.setProperty('--spotify-green-rgb', colors['--spotify-green-rgb'])
     }
   }, [])
 

@@ -95,3 +95,37 @@
   color: var(--spotify-green);
   border: 1px solid rgba(29, 185, 84, 0.2);
 }
+
+/* Playful Theme Overrides */
+.theme-playful .mobile-tab-bar {
+  background: rgba(255, 253, 245, 0.92);
+  border-top: 2px solid #1E293B;
+}
+
+.theme-playful .tab-item {
+  color: #64748B;
+}
+
+.theme-playful .tab-item.active {
+  color: #1E293B;
+}
+
+.theme-playful .tab-item.active .tab-icon {
+  color: var(--spotify-green);
+}
+
+.theme-playful .more-menu-link {
+  color: #1E293B;
+  background: #F1F5F9;
+  border: 2px solid transparent;
+}
+
+.theme-playful .more-menu-link:active {
+  background: #E2E8F0;
+}
+
+.theme-playful .more-menu-link.active {
+  background: rgba(var(--spotify-green-rgb), 0.1);
+  color: var(--spotify-green);
+  border-color: var(--spotify-green);
+}

@@ -8,14 +8,20 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.03) 25%, 
-    rgba(255, 255, 255, 0.08) 50%, 
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
     rgba(255, 255, 255, 0.03) 75%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 2.5s infinite linear;
   border-radius: 8px;
+}
+
+/* Playful Theme Overrides */
+.theme-playful .skeleton {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
 }
 
 .page-loading-skeleton {

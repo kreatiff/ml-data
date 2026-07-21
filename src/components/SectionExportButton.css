@@ -85,3 +85,32 @@
     margin-left: 8px;
   }
 }
+
+/* Playful Theme Overrides */
+.theme-playful .section-export-btn {
+  background: #F1F5F9;
+  border: 2px solid #1E293B;
+  color: #64748B;
+}
+
+.theme-playful .section-export-btn:hover {
+  background: #FBBF24;
+  border-color: #1E293B;
+  color: #1E293B;
+}
+
+.theme-playful .section-export-btn.is-copied {
+  background: rgba(var(--spotify-green-rgb), 0.12);
+  border-color: var(--spotify-green);
+  color: var(--spotify-green);
+}
+
+.theme-playful .export-tooltip {
+  background: #1E293B;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.theme-playful .export-tooltip::after {
+  border-top-color: #1E293B;
+}

@@ -23,7 +23,7 @@ import './MyStatsPage.css'
 
 const TOOLTIP_STYLE = {
   background: 'var(--spotify-elevated)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  border: '2px solid var(--spotify-black)',
   borderRadius: '4px',
   color: 'var(--spotify-white)',
   fontSize: '0.85rem'
@@ -361,7 +361,7 @@ function MyStatsPage() {
                 <Line
                   type="monotone"
                   dataKey="Field Avg"
-                  stroke="rgba(255,255,255,0.25)"
+                  stroke="rgba(148,163,184,0.55)"
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   dot={false}
@@ -656,7 +656,7 @@ function MyStatsPage() {
                     />
                     <Legend wrapperStyle={{ fontSize: '0.72rem' }} />
                     <Bar dataKey="myPts" fill={themeGreen} name={myName} radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="theirPts" fill="#FF6B6B" name={headToHead.compareName} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="theirPts" fill="#DC2626" name={headToHead.compareName} radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

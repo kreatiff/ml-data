@@ -18,7 +18,7 @@ import './RoundRecapPage.css'
 
 const TOOLTIP_STYLE = {
   background: 'var(--spotify-elevated)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  border: '2px solid var(--spotify-black)',
   borderRadius: '4px',
   color: 'var(--spotify-white)',
   fontSize: '0.85rem'

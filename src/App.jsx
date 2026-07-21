@@ -29,7 +29,7 @@ function App() {
     const theme = themes[selectedTheme]
     if (theme) {
       Object.entries(theme.colors).forEach(([key, value]) => {
-        if (salmonMode && (key === '--spotify-green' || key === '--spotify-green-hover')) return
+        if (salmonMode && (key === '--spotify-green' || key === '--spotify-green-hover' || key === '--spotify-green-rgb')) return
         document.documentElement.style.setProperty(key, value)
       })
       localStorage.setItem('app_theme', selectedTheme)

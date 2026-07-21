@@ -329,6 +329,16 @@
   color: var(--spotify-black);
 }
 
+/* Playful Theme Override
+   This carousel/overlay is a deliberately theme-independent dark "trading
+   card" surface (matches Cyber's behavior too) - only fixing the one real
+   accessibility bug: #1E293B text on the #8B5CF6 fill is ~3.6:1 contrast,
+   which happens to work fine on Cyber's near-black-on-lime pairing but
+   fails here. */
+.theme-playful .export-button.btn-primary {
+  color: #FFFFFF;
+}
+
 .btn-primary:hover {
   background: var(--spotify-green-hover);
   box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);

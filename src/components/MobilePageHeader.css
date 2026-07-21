@@ -45,3 +45,20 @@
   height: 36px !important;
   border-radius: 6px !important;
 }
+
+/* Playful Theme Overrides */
+.theme-playful .mobile-page-header {
+  background: rgba(255, 253, 245, 0.9);
+  border-bottom: 2px solid #1E293B;
+}
+
+.theme-playful .mobile-page-title {
+  color: #1E293B;
+}
+
+.theme-playful .mobile-page-header .filter-select,
+.theme-playful .mobile-page-header .theme-selector {
+  background-color: #FFFFFF !important;
+  border: 2px solid #1E293B !important;
+  color: #1E293B !important;
+}

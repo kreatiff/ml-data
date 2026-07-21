@@ -164,7 +164,7 @@
 }
 
 .theme-playful .song-card-votes {
-  color: var(--spotify-green);
+  color: var(--spotify-green-hover);
 }
 
 .theme-playful .song-card-avatar {

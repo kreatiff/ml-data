@@ -38,12 +38,31 @@
   flex-direction: column;
 }
 
+/* App.css's own padding-bottom (which keeps scrolled content clear of the
+   fixed MobileTabBar) loses to the flat "padding: 0" above regardless of
+   media query, since .theme-playful .app is more specific either way -
+   restore it explicitly here. */
+@media (max-width: 768px) {
+  .theme-playful .app {
+    padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom));
+  }
+}
+
 /* NavBar.css floats the nav as its own rounded card (1rem top margin + 2px
    border on each side) instead of a flush 56px bar - these two spots sized
    themselves against that exact old 56px, so they need the extra ~20px
    accounted for or they clip / sit under the navbar. */
 .theme-playful .songs-page {
   height: calc(100vh - 76px);
+}
+
+/* Below 768px the floating navbar is hidden in favor of the 56px
+   MobilePageHeader, and the fixed MobileTabBar eats into the bottom of the
+   viewport too - the desktop calc above accounts for neither. */
+@media (max-width: 768px) {
+  .theme-playful .songs-page {
+    height: calc(100vh - 56px - var(--tab-bar-height) - var(--safe-area-bottom));
+  }
 }
 
 @media (min-width: 1024px) {
@@ -308,7 +327,6 @@
   border: 2px solid #1E293B;
   box-shadow: 8px 8px 0px #34D399;
   max-height: calc(100vh - 350px);
-  min-height: 600px;
 }
 
 /* ============================================
@@ -362,7 +380,7 @@
 
 .theme-playful .votes {
   font-weight: 800;
-  color: var(--spotify-green);
+  color: var(--spotify-green-hover);
 }
 
 .theme-playful .date {
@@ -437,7 +455,6 @@
   }
 
   .theme-playful .table-container {
-    min-height: 400px;
     max-height: calc(100vh - 300px);
   }
 }
@@ -780,7 +797,7 @@
   background: #FFFFFF;
   border: 2px solid #1E293B;
   border-radius: 24px;
-  box-shadow: 10px 10px 0px #8B5CF6;
+  box-shadow: 10px 10px 0px var(--spotify-green);
 }
 
 .theme-playful .racing-modal-header {
@@ -843,13 +860,13 @@
 
 @keyframes racing-pulse-playful {
   0% {
-    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(139, 92, 246, 0.5);
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(var(--spotify-green-rgb), 0.5);
   }
   50% {
-    box-shadow: 3px 3px 0px #1E293B, 0 0 0 10px rgba(139, 92, 246, 0);
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 10px rgba(var(--spotify-green-rgb), 0);
   }
   100% {
-    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(139, 92, 246, 0);
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(var(--spotify-green-rgb), 0);
   }
 }
 
@@ -995,7 +1012,7 @@
 
 /* Race replay banner */
 .theme-playful .recap-race-banner {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(var(--spotify-green-rgb), 0.1);
   border: 2px solid #1E293B;
   border-radius: 16px;
   box-shadow: 4px 4px 0px #34D399;
@@ -1003,7 +1020,7 @@
 }
 
 .theme-playful .recap-race-banner:hover {
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(var(--spotify-green-rgb), 0.18);
   border-color: #1E293B;
   box-shadow: 6px 6px 0px #34D399;
   transform: translate(-2px, -2px);
@@ -1269,6 +1286,13 @@
   opacity: 1;
 }
 
+/* Base .badge-player-name text is small/bold - the brighter accent violet
+   dips under AA contrast at that size, so text uses the darker hover
+   shade while buttons/borders/large text elsewhere keep the brighter one */
+.theme-playful .badge-player-name {
+  color: var(--spotify-green-hover);
+}
+
 .theme-playful .badge-view-more {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background: #FFFFFF;
@@ -1292,7 +1316,7 @@
   background: #FFFFFF;
   border: 2px solid #1E293B;
   border-radius: 20px;
-  box-shadow: 8px 8px 0px #8B5CF6;
+  box-shadow: 8px 8px 0px var(--spotify-green);
 }
 
 .theme-playful .badge-modal-header {
@@ -1536,7 +1560,7 @@
 
 .theme-playful .mystats-round-card.round-win {
   border-color: var(--spotify-green);
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(var(--spotify-green-rgb), 0.08);
 }
 
 .theme-playful .mystats-round-card.round-top3 {
@@ -1587,7 +1611,7 @@
 }
 
 .theme-playful .mystats-page .analytics-table tbody tr:nth-child(even) td {
-  background: #FAFAF5;
+  background: #F8FAFC;
 }
 
 .theme-playful .mystats-page .analytics-table tbody tr:hover td {
@@ -1595,12 +1619,12 @@
 }
 
 .theme-playful .round-win-row td {
-  background: rgba(139, 92, 246, 0.08) !important;
+  background: rgba(var(--spotify-green-rgb), 0.08) !important;
   border-left: 3px solid var(--spotify-green);
 }
 
 .theme-playful .round-top3-row td:first-child {
-  border-left: 3px solid rgba(139, 92, 246, 0.4);
+  border-left: 3px solid rgba(var(--spotify-green-rgb), 0.4);
 }
 
 .theme-playful .placement-total {
@@ -1734,7 +1758,7 @@
 }
 
 .theme-playful .h2h-val.h2h-winning {
-  color: var(--spotify-green);
+  color: var(--spotify-green-hover);
 }
 
 .theme-playful .h2h-vs {
@@ -1743,6 +1767,203 @@
 
 .theme-playful .mystats-h2h-chart {
   border-top: 2px dashed #E2E8F0;
+}
+
+/* ============================================
+   PROFILE PAGE
+   ============================================ */
+
+.theme-playful .profile-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+  text-shadow: none;
+  animation: none;
+}
+
+.theme-playful .profile-title::before,
+.theme-playful .profile-title::after {
+  display: none;
+}
+
+.theme-playful .profile-card {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px var(--spotify-green);
+}
+
+.theme-playful .profile-grid .profile-card:nth-child(2) {
+  box-shadow: 8px 8px 0px #F472B6;
+}
+
+.theme-playful .profile-avatar-large {
+  border: 3px solid #1E293B;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+.theme-playful .avatar-upload-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #FFFFFF;
+  color: #1E293B;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: 3px 3px 0px #1E293B;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-playful .avatar-upload-label:hover {
+  background: #FBBF24;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #1E293B;
+}
+
+.theme-playful .form-group label {
+  color: #475569;
+}
+
+.theme-playful .profile-form input {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  background: #F8FAFC;
+  color: #1E293B;
+}
+
+.theme-playful .profile-form input:hover:not(:disabled) {
+  background: #FFFFFF;
+  border-color: #1E293B;
+}
+
+.theme-playful .profile-form input:focus {
+  background: #FFFFFF;
+  border-color: var(--spotify-green);
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+.theme-playful .readonly-input {
+  background: #F1F5F9 !important;
+}
+
+.theme-playful .input-hint {
+  color: #64748B;
+}
+
+.theme-playful .status-message.success {
+  background: rgba(var(--spotify-green-rgb), 0.08);
+  color: var(--spotify-green);
+  border-left: 4px solid var(--spotify-green);
+}
+
+.theme-playful .status-message.error {
+  background: rgba(220, 38, 38, 0.08);
+  color: #DC2626;
+  border-left: 4px solid #DC2626;
+}
+
+.theme-playful .save-button {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: 4px 4px 0px #1E293B;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-playful .save-button:hover:not(:disabled) {
+  background: var(--spotify-green-hover);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1E293B;
+}
+
+.theme-playful .save-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1E293B;
+}
+
+.theme-playful .profile-loading {
+  color: #64748B;
+}
+
+/* ============================================
+   RESET PASSWORD PAGE
+   ============================================ */
+
+.theme-playful .reset-password-container {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px var(--spotify-green);
+}
+
+.theme-playful .reset-password-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+  text-shadow: none;
+}
+
+.theme-playful .reset-password-subtitle {
+  color: #64748B;
+}
+
+.theme-playful .reset-password-input {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  background: #F8FAFC;
+  color: #1E293B;
+}
+
+.theme-playful .reset-password-input:hover {
+  background: #FFFFFF;
+  border-color: #1E293B;
+}
+
+.theme-playful .reset-password-input:focus {
+  background: #FFFFFF;
+  border-color: var(--spotify-green);
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+.theme-playful .reset-password-button {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: 4px 4px 0px #1E293B;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-playful .reset-password-button:hover:not(:disabled) {
+  background: var(--spotify-green-hover);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1E293B;
+}
+
+.theme-playful .reset-password-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1E293B;
+}
+
+.theme-playful .reset-password-error {
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.08);
+  border-left: 4px solid #DC2626;
+}
+
+.theme-playful .reset-password-message {
+  color: var(--spotify-green);
+  background: rgba(var(--spotify-green-rgb), 0.08);
+  border-left: 4px solid var(--spotify-green);
 }
 
 @media (prefers-reduced-motion: reduce) {
