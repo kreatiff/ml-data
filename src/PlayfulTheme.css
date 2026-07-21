@@ -23,16 +23,34 @@
   background: #94A3B8;
 }
 
+/* No fixed height/overflow here (unlike .theme-cyber): the Songs page manages
+   its own fixed-height internal scroll region via .songs-page, but every
+   other page (Analytics, Badges, etc.) relies on the app growing naturally
+   and the body scrolling, same as the Default theme. */
 .theme-playful .app {
   background-color: #FFFDF5;
   background-image: radial-gradient(circle, rgba(30, 41, 59, 0.12) 1.5px, transparent 1.5px);
   background-size: 22px 22px;
   padding: 0;
   max-width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* NavBar.css floats the nav as its own rounded card (1rem top margin + 2px
+   border on each side) instead of a flush 56px bar - these two spots sized
+   themselves against that exact old 56px, so they need the extra ~20px
+   accounted for or they clip / sit under the navbar. */
+.theme-playful .songs-page {
+  height: calc(100vh - 76px);
+}
+
+@media (min-width: 1024px) {
+  .theme-playful .recap-stats-column {
+    top: 6rem;
+    max-height: calc(100vh - 8rem);
+  }
 }
 
 /* ============================================
@@ -467,6 +485,1264 @@
   background: #F472B6;
   color: #FFFFFF;
   border: 2px solid #1E293B;
+}
+
+/* ============================================
+   ANALYTICS PAGE
+   ============================================ */
+
+.theme-playful .analytics-header h1 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+  letter-spacing: -0.01em;
+}
+
+.theme-playful .summary-stat {
+  color: #64748B;
+}
+
+.theme-playful .summary-stat strong {
+  color: var(--spotify-green);
+}
+
+.theme-playful .summary-divider {
+  color: #CBD5E1;
+}
+
+.theme-playful .team-badge strong {
+  color: #F472B6;
+}
+
+/* Sticker cards, one per section - shadow color rotates through the
+   confetti palette so the page doesn't read as one flat block */
+.theme-playful .analytics-section {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px #FBBF24;
+}
+
+.theme-playful section.analytics-section:nth-of-type(3n+2) {
+  box-shadow: 6px 6px 0px #F472B6;
+}
+
+.theme-playful section.analytics-section:nth-of-type(3n) {
+  box-shadow: 6px 6px 0px #34D399;
+}
+
+.theme-playful .section-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .section-desc {
+  color: #64748B;
+}
+
+/* Analytics table (Player Stats, Underdog Triumphs) */
+.theme-playful .analytics-table thead th {
+  font-family: 'Outfit', sans-serif;
+  color: #475569;
+  border-bottom: 2px solid #1E293B;
+}
+
+.theme-playful .analytics-table thead th:hover,
+.theme-playful .sortable:hover {
+  color: var(--spotify-green);
+}
+
+.theme-playful .analytics-table tbody td {
+  color: #1E293B;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.theme-playful .analytics-table tbody tr:hover {
+  background: #FDF2F8;
+}
+
+.theme-playful .best-song-label {
+  color: #64748B;
+}
+
+/* Mobile player / underdog cards */
+.theme-playful .player-card,
+.theme-playful .underdog-card {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 14px;
+  box-shadow: 3px 3px 0px #E2E8F0;
+}
+
+.theme-playful .player-card-rank {
+  color: #64748B;
+}
+
+.theme-playful .player-card-name,
+.theme-playful .underdog-winner {
+  font-family: 'Outfit', sans-serif;
+  color: #1E293B;
+}
+
+.theme-playful .player-card-stats,
+.theme-playful .underdog-meta {
+  color: #64748B;
+}
+
+.theme-playful .player-card-stats strong {
+  color: var(--spotify-green);
+}
+
+.theme-playful .underdog-rank-badge {
+  color: #FFFFFF;
+  background: var(--spotify-green);
+  border-radius: 9999px;
+  border: 2px solid #1E293B;
+  padding: 0.2rem 0.6rem;
+}
+
+.theme-playful .underdog-song {
+  color: #1E293B;
+}
+
+.theme-playful .underdog-artist {
+  color: #64748B;
+}
+
+.theme-playful .underdog-position {
+  color: var(--spotify-green);
+}
+
+/* Vote Collection Board ("Gotta Catch 'Em All!") */
+.theme-playful .vote-collection-row {
+  background: #F1F5F9;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+}
+
+.theme-playful .vcr-rank,
+.theme-playful .vcr-count,
+.theme-playful .vcr-missing {
+  color: #64748B;
+}
+
+.theme-playful .vcr-name {
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .vcr-bar-track {
+  background: #E2E8F0;
+}
+
+.theme-playful .vcr-bar-fill {
+  background: var(--spotify-green);
+  opacity: 1;
+}
+
+.theme-playful .vcr-bar-fill.vcr-complete {
+  background: linear-gradient(90deg, var(--spotify-green), #34D399);
+}
+
+.theme-playful .vcr-pct {
+  color: var(--spotify-green);
+}
+
+/* Smooth/Angled line toggle */
+.theme-playful .toggle-label {
+  color: #64748B;
+}
+
+.theme-playful .toggle-switch {
+  background: #E2E8F0;
+  border: 2px solid #1E293B;
+}
+
+.theme-playful .toggle-switch.active {
+  background: var(--spotify-green);
+}
+
+.theme-playful .toggle-knob {
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(30, 41, 59, 0.4);
+}
+
+/* Trajectory legend chips */
+.theme-playful .trajectory-legend-item {
+  color: #1E293B;
+  font-weight: 600;
+  border: 2px solid #1E293B;
+  background: #FFFFFF;
+}
+
+.theme-playful .trajectory-legend-item:hover {
+  background: #FBBF24;
+  border-color: #1E293B;
+  transform: translateY(-1px);
+}
+
+.theme-playful .trajectory-legend-item.dimmed {
+  opacity: 0.4;
+  border-color: #E2E8F0;
+  background: transparent;
+}
+
+.theme-playful .trajectory-legend-item.dimmed:hover {
+  opacity: 0.7;
+  background: #F1F5F9;
+}
+
+/* Expand / fullscreen / racing-leaderboard icon buttons */
+.theme-playful .expand-btn {
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  color: #1E293B;
+}
+
+.theme-playful .expand-btn:hover {
+  background: #FBBF24;
+  border-color: #1E293B;
+  color: #1E293B;
+}
+
+/* Trajectory fullscreen modal */
+.theme-playful .trajectory-modal {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px #F472B6;
+}
+
+.theme-playful .trajectory-modal-header {
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+/* Recharts internals: axis/grid colors are hardcoded rgba(255,255,255,...)
+   in TrajectorySection.jsx and TopArtistsChart.jsx for dark themes, which
+   is invisible against this theme's light background. CSS overrides the
+   SVG presentation attributes recharts sets on these elements. */
+.theme-playful .recharts-cartesian-grid-horizontal line,
+.theme-playful .recharts-cartesian-grid-vertical line {
+  stroke: #E2E8F0 !important;
+}
+
+.theme-playful .recharts-cartesian-axis-line,
+.theme-playful .recharts-cartesian-axis-tick-line {
+  stroke: #CBD5E1 !important;
+}
+
+.theme-playful .recharts-text,
+.theme-playful .recharts-cartesian-axis-tick text {
+  fill: #64748B !important;
+}
+
+/* Vote heatmap */
+.theme-playful .heatmap-wrapper {
+  border: 2px solid #1E293B;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0px #E2E8F0;
+}
+
+.theme-playful .heatmap-corner,
+.theme-playful .heatmap-row-header {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+}
+
+.theme-playful .heatmap-corner,
+.theme-playful .heatmap-col-header,
+.theme-playful .heatmap-row-header {
+  color: #475569;
+}
+
+.theme-playful .heatmap-row:hover {
+  background: #F1F5F9;
+}
+
+.theme-playful .heatmap-self {
+  color: #94A3B8 !important;
+}
+
+.theme-playful .heatmap-empty {
+  color: #64748B;
+}
+
+/* ============================================
+   RACING LEADERBOARD MODAL
+   RacingBarChartModal.css is shared by the standalone "Racing Leaderboard"
+   replay (Player Trajectory) and the embedded Vote Progression Race inside
+   .trajectory-modal - both get fixed by overriding this one stylesheet.
+   ============================================ */
+
+.theme-playful .racing-modal-content {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 24px;
+  box-shadow: 10px 10px 0px #8B5CF6;
+}
+
+.theme-playful .racing-modal-header {
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+.theme-playful .racing-modal-header h2 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+}
+
+.theme-playful .racing-modal-header p {
+  color: #64748B;
+}
+
+.theme-playful .racing-modal-close {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 2px solid #1E293B;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #1E293B;
+  transition: background 0.15s ease, transform 0.2s ease;
+}
+
+.theme-playful .racing-modal-close:hover {
+  background: #FBBF24;
+  color: #1E293B;
+  transform: rotate(90deg);
+}
+
+.theme-playful .racing-playback-controls {
+  background: #F8FAFC;
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+.theme-playful .racing-play-btn {
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  border: 2px solid #1E293B;
+  box-shadow: 3px 3px 0px #1E293B;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-playful .racing-play-btn:hover {
+  background: var(--spotify-green-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #1E293B;
+}
+
+.theme-playful .racing-play-btn.pulsating {
+  animation: racing-pulse-playful 1.5s infinite ease-in-out;
+}
+
+@keyframes racing-pulse-playful {
+  0% {
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(139, 92, 246, 0.5);
+  }
+  50% {
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    box-shadow: 3px 3px 0px #1E293B, 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.theme-playful .racing-slider {
+  background: #E2E8F0;
+}
+
+.theme-playful .racing-slider::-webkit-slider-thumb {
+  background: var(--spotify-green);
+  border: 2px solid #1E293B;
+  box-shadow: none;
+}
+
+.theme-playful .racing-slider-fill {
+  background: var(--spotify-green);
+}
+
+.theme-playful .racing-round-info {
+  color: #1E293B;
+}
+
+.theme-playful .racing-speed-controls {
+  background: #F1F5F9;
+  border: 2px solid #1E293B;
+  border-radius: 9999px;
+  padding: 3px;
+}
+
+.theme-playful .speed-btn {
+  color: #64748B;
+  border-radius: 9999px;
+}
+
+.theme-playful .speed-btn:hover {
+  color: #1E293B;
+  background: #E2E8F0;
+}
+
+.theme-playful .speed-btn.active {
+  background: var(--spotify-green);
+  color: #FFFFFF;
+}
+
+.theme-playful .racing-list-container {
+  background: #FFFDF5;
+}
+
+.theme-playful .racing-list-container::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
+.theme-playful .racing-list-container::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.theme-playful .racing-rank {
+  color: #94A3B8;
+}
+
+.theme-playful .racing-player-name {
+  color: #1E293B;
+  font-weight: 700;
+}
+
+.theme-playful .racing-bar-track {
+  background: #F1F5F9;
+  border: 2px solid #E2E8F0;
+  border-radius: 8px;
+}
+
+.theme-playful .racing-bar-fill {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+/* ============================================
+   ROUNDS / RECAP PAGE
+
+   Several rgba(255,255,255,X) "slightly lighter than the dark
+   card" overlays throughout this page (submitter chip, comment
+   bubble, rank badge, dividers) become invisible once the card
+   itself is white - each gets an explicit light-mode fill below.
+   ============================================ */
+
+.theme-playful .recap-page-title,
+.theme-playful .recap-songs-header {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+}
+
+.theme-playful .recap-songs-header {
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+.theme-playful .recap-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .recap-section-desc {
+  color: #64748B;
+}
+
+.theme-playful .recap-stats-column::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
+/* This column scrolls internally (overflow-y: auto) and only had right
+   padding - the last card's hard shadow was getting clipped right at the
+   scroll boundary with nowhere to bleed into below it */
+@media (min-width: 1024px) {
+  .theme-playful .recap-stats-column {
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* Winner card */
+.theme-playful .recap-winner-card {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px #FBBF24;
+}
+
+.theme-playful .recap-winner-trophy {
+  color: #B45309;
+}
+
+.theme-playful .recap-winner-song {
+  color: #1E293B;
+}
+
+.theme-playful .recap-winner-artist,
+.theme-playful .recap-winner-submitter {
+  color: #64748B;
+}
+
+.theme-playful .recap-winner-meta {
+  border-top: 2px dashed #E2E8F0;
+}
+
+/* Race replay banner */
+.theme-playful .recap-race-banner {
+  background: rgba(139, 92, 246, 0.1);
+  border: 2px solid #1E293B;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0px #34D399;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.theme-playful .recap-race-banner:hover {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: #1E293B;
+  box-shadow: 6px 6px 0px #34D399;
+  transform: translate(-2px, -2px);
+}
+
+.theme-playful .recap-race-banner-title {
+  color: #1E293B;
+  font-family: 'Outfit', sans-serif;
+}
+
+.theme-playful .recap-race-banner-desc {
+  color: #64748B;
+}
+
+/* Chart card + mover / controversy / prediction cards - each gets its own
+   shadow colour, rotating through the confetti palette so the sidebar
+   doesn't read as one repeated card */
+.theme-playful .recap-chart-container,
+.theme-playful .recap-mover-card,
+.theme-playful .recap-controversy-card,
+.theme-playful .recap-prediction-list {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 16px;
+}
+
+.theme-playful .recap-chart-container {
+  box-shadow: 4px 4px 0px #F472B6;
+}
+
+.theme-playful .recap-mover-card.recap-mover-up {
+  box-shadow: 4px 4px 0px #FBBF24;
+}
+
+.theme-playful .recap-mover-card.recap-mover-down {
+  box-shadow: 4px 4px 0px #34D399;
+}
+
+.theme-playful .recap-controversy-card {
+  box-shadow: 4px 4px 0px #F472B6;
+}
+
+.theme-playful .recap-prediction-list {
+  box-shadow: 4px 4px 0px #FBBF24;
+}
+
+.theme-playful .recap-mover-label,
+.theme-playful .recap-mover-positions,
+.theme-playful .recap-prediction-score {
+  color: #64748B;
+}
+
+.theme-playful .recap-mover-name {
+  color: #1E293B;
+}
+
+.theme-playful .recap-mover-up .recap-mover-change {
+  color: #15803D;
+}
+
+.theme-playful .recap-mover-down .recap-mover-change {
+  color: #DC2626;
+}
+
+.theme-playful .recap-controversy-song {
+  color: #1E293B;
+}
+
+.theme-playful .recap-controversy-song span,
+.theme-playful .recap-controversy-submitter,
+.theme-playful .recap-controversy-variance {
+  color: #64748B;
+}
+
+.theme-playful .recap-vote-pill {
+  border: 2px solid #1E293B;
+}
+
+.theme-playful .recap-prediction-name {
+  color: #1E293B;
+}
+
+.theme-playful .recap-prediction-bar-bg {
+  background: #F1F5F9;
+}
+
+.theme-playful .recap-prediction-bar-fill {
+  background: var(--spotify-green);
+}
+
+/* Song list (right column) */
+.theme-playful .recap-song-row {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0px #E2E8F0;
+}
+
+.theme-playful .recap-song-row:hover {
+  border-color: #1E293B;
+  box-shadow: 6px 6px 0px #E2E8F0;
+}
+
+.theme-playful .recap-song-details {
+  background: transparent;
+}
+
+.theme-playful .recap-song-rank-badge {
+  color: #475569;
+  background-color: #F1F5F9;
+  border: 2px solid #E2E8F0;
+  box-shadow: none;
+}
+
+.theme-playful .recap-song-title {
+  font-family: 'Outfit', sans-serif;
+  color: #1E293B;
+}
+
+.theme-playful .recap-song-artist {
+  color: #64748B;
+}
+
+.theme-playful .recap-song-submitter-block {
+  background: #F1F5F9;
+  border: 2px solid #E2E8F0;
+}
+
+.theme-playful .recap-song-submitter-name {
+  color: #64748B;
+}
+
+.theme-playful .recap-song-comments {
+  border-top: 2px dashed #E2E8F0;
+}
+
+.theme-playful .recap-comment-bubble {
+  background: #F1F5F9;
+  color: #1E293B;
+  border-left: 3px solid var(--spotify-green);
+}
+
+.theme-playful .recap-comment-meta {
+  color: #64748B;
+}
+
+.theme-playful .recap-comment-author {
+  color: #475569;
+}
+
+/* ============================================
+   BADGES PAGE
+   ============================================ */
+
+.theme-playful .badges-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1E293B;
+}
+
+.theme-playful .badges-team-badge strong {
+  color: #F472B6;
+}
+
+.theme-playful .badges-category-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+  border-bottom: 2px dashed #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.theme-playful .badges-category-title::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: #FBBF24;
+  border: 2px solid #1E293B;
+  flex-shrink: 0;
+}
+
+.theme-playful .badges-category:nth-of-type(3n+2) .badges-category-title::before {
+  background: #F472B6;
+}
+
+.theme-playful .badges-category:nth-of-type(3n) .badges-category-title::before {
+  background: #34D399;
+}
+
+/* Sticker cards, one per badge - shadow color rotates through the confetti
+   palette (see .analytics-section for the same pattern) */
+.theme-playful .badge-card {
+  --card-shadow: #FBBF24;
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px var(--card-shadow);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+}
+
+.theme-playful .badges-grid .badge-card:nth-child(3n+2) {
+  --card-shadow: #F472B6;
+}
+
+.theme-playful .badges-grid .badge-card:nth-child(3n) {
+  --card-shadow: #34D399;
+}
+
+.theme-playful .badge-card:hover {
+  border-color: #1E293B;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--card-shadow);
+}
+
+/* Not-yet-earned badges read as "dormant" - dashed border, no confetti
+   shadow, so the achieved cards are the ones that pop */
+.theme-playful .badge-locked {
+  opacity: 1;
+  filter: grayscale(0.6);
+  border-style: dashed;
+  border-color: #CBD5E1;
+  background: #F8FAFC;
+  box-shadow: none;
+}
+
+.theme-playful .badge-locked:hover {
+  transform: none;
+  border-color: #CBD5E1;
+  box-shadow: none;
+}
+
+.theme-playful .badge-image {
+  border: 2px solid #1E293B;
+  border-radius: 16px;
+}
+
+.theme-playful .badge-image-locked {
+  filter: grayscale(1);
+  opacity: 0.6;
+  border-color: #CBD5E1;
+}
+
+.theme-playful .badge-name {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+}
+
+/* Base gradient fades green -> white, invisible once the card itself is
+   white - swap the fade to violet -> pink so it stays visible here */
+.theme-playful .badge-name-achieved {
+  background: linear-gradient(90deg, var(--spotify-green), #F472B6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-playful .badge-not-achieved {
+  opacity: 1;
+}
+
+.theme-playful .badge-view-more {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  color: #1E293B;
+  border-radius: 9999px;
+  font-weight: 700;
+  box-shadow: 3px 3px 0px #1E293B;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-playful .badge-view-more:hover {
+  background: var(--spotify-green);
+  color: #FFFFFF;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #1E293B;
+}
+
+/* Badge detail modal ("+N more" players) */
+.theme-playful .badge-modal {
+  background: #FFFFFF;
+  border: 2px solid #1E293B;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px #8B5CF6;
+}
+
+.theme-playful .badge-modal-header {
+  border-bottom: 2px dashed #E2E8F0;
+}
+
+.theme-playful .badge-modal-image {
+  border: 2px solid #1E293B;
+  border-radius: 12px;
+}
+
+.theme-playful .badge-modal-name {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+}
+
+.theme-playful .badge-modal-close {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  border: 2px solid #1E293B;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #1E293B;
+  transition: background 0.15s ease, transform 0.2s ease;
+}
+
+.theme-playful .badge-modal-close:hover {
+  background: #FBBF24;
+  transform: rotate(90deg);
+}
+
+.theme-playful .badge-modal-player {
+  border-bottom: 1px dashed #E2E8F0;
+}
+
+/* Infinity Gauntlet - full-width trophy card, deliberately louder than the
+   regular badge cards it sits above */
+.theme-playful .badge-card.badge-card-gauntlet {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FDF4FF 100%);
+  border: 3px solid #1E293B;
+  border-radius: 24px;
+  box-shadow: 10px 10px 0px #FBBF24;
+}
+
+.theme-playful .badge-card.badge-card-gauntlet:hover {
+  border-color: #1E293B;
+  transform: translate(-2px, -2px);
+  box-shadow: 12px 12px 0px #FBBF24;
+}
+
+.theme-playful .badge-image-gauntlet {
+  border: 3px solid #1E293B;
+  border-radius: 20px;
+}
+
+.theme-playful .gauntlet-closest {
+  border-top: 2px dashed #E2E8F0;
+}
+
+.theme-playful .gauntlet-closest-title {
+  font-family: 'Outfit', sans-serif;
+  color: #1E293B;
+}
+
+.theme-playful .gauntlet-contender {
+  border-bottom: 1px dashed #E2E8F0;
+}
+
+.theme-playful .gauntlet-badge-icon {
+  border: 2px solid #1E293B;
+  border-radius: 8px;
+}
+
+.theme-playful .gauntlet-badge-icon-locked {
+  filter: grayscale(1);
+  opacity: 0.5;
+  border-color: #CBD5E1;
+}
+
+.theme-playful .gauntlet-badge-icon-wrapper::after {
+  background: #1E293B;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+/* ============================================
+   MY STATS PAGE
+
+   Several box-shadow/background rules here read
+   rgba(var(--spotify-green-rgb, 204, 255, 0), X) - that custom property is
+   never actually set by any theme (App.jsx only sets --spotify-green as a
+   hex), so every theme has always silently fallen back to the literal
+   204,255,0 (Cyber's lime). Rather than chase that pre-existing app-wide
+   bug, each rule below is given an explicit playful-appropriate color.
+   ============================================ */
+
+.theme-playful .mystats-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #1E293B;
+}
+
+.theme-playful .mystats-gate h2 {
+  font-family: 'Outfit', sans-serif;
+  color: #1E293B;
+}
+
+.theme-playful .mystats-gate p {
+  color: #64748B;
+}
+
+.theme-playful .mystats-link {
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-error h2 {
+  font-family: 'Outfit', sans-serif;
+  color: #DC2626;
+}
+
+/* Hero card - reworked as the page's showpiece: chunky border, hard violet
+   shadow and a rotated star sticker peeking over the top corner */
+.theme-playful .mystats-hero {
+  background: #FFFFFF;
+  border: 3px solid #1E293B;
+  border-radius: 28px;
+  box-shadow: 10px 10px 0px var(--spotify-green);
+  overflow: visible;
+}
+
+.theme-playful .mystats-hero::before {
+  content: '⭐';
+  top: -22px;
+  left: auto;
+  right: 32px;
+  width: 44px;
+  height: 44px;
+  background: #FBBF24;
+  border: 2px solid #1E293B;
+  border-radius: 50%;
+  box-shadow: 3px 3px 0px #1E293B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  line-height: 1;
+  transform: rotate(-12deg);
+}
+
+.theme-playful .mystats-hero-avatar {
+  border: 3px solid #1E293B;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+}
+
+.theme-playful .mystats-hero-rank-badge {
+  background: #FBBF24;
+  color: #1E293B;
+  border: 2px solid #1E293B;
+  box-shadow: 2px 2px 0px #1E293B;
+}
+
+.theme-playful .mystats-hero-name {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: #1E293B;
+}
+
+.theme-playful .mystats-hero-subtitle {
+  color: #64748B;
+}
+
+.theme-playful .mystats-hero-subtitle strong {
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-stat-tile {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-playful .mystats-stat-tile:hover {
+  border-color: #1E293B;
+  background: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.theme-playful .mystats-stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-stat-label {
+  color: #64748B;
+}
+
+/* Personal Records (sits in a .analytics-section sticker card already) */
+.theme-playful .mystats-record-card {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-playful .mystats-record-card:hover {
+  border-color: #1E293B;
+  background: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.theme-playful .mystats-record-title {
+  color: #64748B;
+}
+
+.theme-playful .mystats-record-value {
+  color: #1E293B;
+}
+
+.theme-playful .mystats-record-meta {
+  color: #64748B;
+}
+
+/* Round-by-round (mobile cards) */
+.theme-playful .mystats-round-card {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+}
+
+.theme-playful .mystats-round-card.round-win {
+  border-color: var(--spotify-green);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.theme-playful .mystats-round-card.round-top3 {
+  border-left: 4px solid var(--spotify-green);
+}
+
+.theme-playful .mystats-round-placement {
+  color: #64748B;
+}
+
+.theme-playful .round-win .mystats-round-placement {
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-round-name {
+  color: #1E293B;
+}
+
+.theme-playful .mystats-round-song {
+  color: #475569;
+}
+
+.theme-playful .mystats-round-artist,
+.theme-playful .mystats-round-meta {
+  color: #64748B;
+}
+
+.theme-playful .mystats-round-meta strong {
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-round-art-placeholder,
+.theme-playful .mystats-art-placeholder,
+.theme-playful .mystats-art-thumb {
+  background: #F1F5F9;
+}
+
+/* Round-by-round (desktop table) */
+.theme-playful .mystats-page .analytics-table thead th {
+  background: #F1F5F9;
+  color: #475569;
+  border-bottom: 2px solid #1E293B;
+}
+
+.theme-playful .mystats-page .analytics-table tbody td {
+  border-bottom: 1px solid #E2E8F0;
+  color: #1E293B;
+}
+
+.theme-playful .mystats-page .analytics-table tbody tr:nth-child(even) td {
+  background: #FAFAF5;
+}
+
+.theme-playful .mystats-page .analytics-table tbody tr:hover td {
+  background: #FDF2F8;
+}
+
+.theme-playful .round-win-row td {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-left: 3px solid var(--spotify-green);
+}
+
+.theme-playful .round-top3-row td:first-child {
+  border-left: 3px solid rgba(139, 92, 246, 0.4);
+}
+
+.theme-playful .placement-total {
+  color: #64748B;
+}
+
+/* Voting DNA */
+.theme-playful .mystats-dna-label {
+  font-family: 'Outfit', sans-serif;
+  color: #475569;
+}
+
+/* Badges */
+.theme-playful .mystats-badge-progress-text {
+  color: #64748B;
+}
+
+.theme-playful .mystats-badge-progress-text strong,
+.theme-playful .mystats-badge-pct {
+  color: var(--spotify-green);
+}
+
+.theme-playful .mystats-badge-progress-bar {
+  background: #F1F5F9;
+}
+
+.theme-playful .mystats-badge-progress-fill.complete {
+  background: linear-gradient(90deg, var(--spotify-green), #34D399);
+}
+
+.theme-playful .mystats-badge-section-label {
+  font-family: 'Outfit', sans-serif;
+  color: #475569;
+}
+
+.theme-playful .mystats-badge-card {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+}
+
+.theme-playful .mystats-badge-card.earned {
+  border-color: #1E293B;
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.theme-playful .mystats-badge-card.earned:hover {
+  border-color: #1E293B;
+  box-shadow: 4px 4px 0px var(--spotify-green);
+  transform: translate(-2px, -2px);
+}
+
+.theme-playful .mystats-badge-card.locked {
+  opacity: 1;
+  filter: grayscale(0.6);
+  border-style: dashed;
+  border-color: #CBD5E1;
+}
+
+.theme-playful .mystats-badge-card.locked:hover {
+  opacity: 1;
+  border-color: #CBD5E1;
+}
+
+.theme-playful .mystats-badge-img {
+  border: 2px solid #E2E8F0;
+}
+
+.theme-playful .mystats-badge-card.earned .mystats-badge-img {
+  border-color: var(--spotify-green);
+}
+
+.theme-playful .mystats-badge-name {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.theme-playful .mystats-badge-desc {
+  color: #64748B;
+}
+
+/* Head-to-Head */
+.theme-playful .mystats-h2h-record {
+  background: #F1F5F9;
+  border: 2px solid #1E293B;
+  box-shadow: 3px 3px 0px #1E293B;
+}
+
+.theme-playful .h2h-wins {
+  color: var(--spotify-green);
+}
+
+.theme-playful .h2h-ties {
+  color: #64748B;
+}
+
+.theme-playful .h2h-losses {
+  color: #DC2626;
+}
+
+.theme-playful .h2h-sep {
+  color: #CBD5E1;
+}
+
+.theme-playful .h2h-record-label {
+  color: #64748B;
+}
+
+.theme-playful .mystats-h2h-comparison {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+}
+
+.theme-playful .h2h-col-name {
+  color: #1E293B;
+}
+
+.theme-playful .h2h-them .h2h-col-name {
+  border-bottom-color: #DC2626;
+}
+
+.theme-playful .h2h-label {
+  color: #64748B;
+}
+
+.theme-playful .h2h-val {
+  color: #475569;
+}
+
+.theme-playful .h2h-val.h2h-winning {
+  color: var(--spotify-green);
+}
+
+.theme-playful .h2h-vs {
+  color: #CBD5E1;
+}
+
+.theme-playful .mystats-h2h-chart {
+  border-top: 2px dashed #E2E8F0;
 }
 
 @media (prefers-reduced-motion: reduce) {
