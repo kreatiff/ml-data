@@ -2,12 +2,34 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 import { useIndexedDB } from './useIndexedDB'
 
+const PAGE_SIZE = 1000
+
+/**
+ * Fetch every row of a query, paginating past Supabase/PostgREST's default
+ * max-rows cap (1000) — a plain unbounded .select() silently truncates once
+ * a table grows past that, since a 206 partial response isn't an error.
+ */
+async function fetchAllRows(buildQuery) {
+  const rows = []
+  let from = 0
+
+  while (true) {
+    const { data, error } = await buildQuery().range(from, from + PAGE_SIZE - 1)
+    if (error) throw error
+    rows.push(...data)
+    if (data.length < PAGE_SIZE) break
+    from += PAGE_SIZE
+  }
+
+  return rows
+}
+
 /**
  * Fetch songs + aggregate votes from Supabase and return a merged array.
  * Single source of truth for the query shape and mapping logic.
  */
 async function fetchSongsFromSupabase() {
-  const { data: submissions, error: submissionsError } = await supabase
+  const submissions = await fetchAllRows(() => supabase
     .from('submissions')
     .select(`
       round_id,
@@ -20,14 +42,16 @@ async function fetchSongsFromSupabase() {
       round:rounds!submissions_round_fk(name, started_at)
     `)
     .order('created_at', { ascending: false })
+    .order('round_id')
+    .order('spotify_uri')
+  )
 
-  if (submissionsError) throw submissionsError
-
-  const { data: aggregateVotes, error: votesError } = await supabase
+  const aggregateVotes = await fetchAllRows(() => supabase
     .from('aggregate_votes')
     .select('round_id, spotify_uri, total_votes')
-
-  if (votesError) throw votesError
+    .order('round_id')
+    .order('spotify_uri')
+  )
 
   const votesMap = {}
   aggregateVotes.forEach(vote => {
